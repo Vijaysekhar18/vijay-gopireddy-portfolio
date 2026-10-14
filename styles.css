@@ -19,3 +19,17 @@
 .masthead .brand-name small{display:block;margin-top:7px;color:#453a25;font:800 10px/1.2 "DM Sans",sans-serif;letter-spacing:.13em}
 @media(max-width:700px){.masthead .logo{gap:7px;padding-right:2px}.masthead .brand-mark{width:42px;height:48px;min-width:42px}.masthead .brand-name{font-size:14px;letter-spacing:0}.masthead .brand-name small{font-size:8px;letter-spacing:.065em;margin-top:4px}}
 @media(max-width:380px){.masthead .brand-mark{width:36px;height:42px;min-width:36px}.masthead .brand-name{font-size:12px}.masthead .brand-name small{font-size:7px}}
+
+/* Accessible day/night control and restrained evening palette. */
+.day-night-toggle{font-size:22px;line-height:1;background:#f5f0e4;color:#172c47;transition:background .35s,color .35s,transform .2s}
+.day-night-toggle:hover{transform:translateY(-2px)}
+body.night-mode{--ink:#f2e8cc;--cream:#17263d;color:#f2e8cc;background:#17263d}
+body.night-mode .masthead .brand-name{color:#f8e9bd;text-shadow:0 1px 6px #0c1627}
+body.night-mode .masthead .brand-name small{color:#e9ce8b}
+body.night-mode .status,body.night-mode .left-rail,body.night-mode .title-group{color:#f0e5c8;text-shadow:0 2px 8px #0b162b}
+body.night-mode .left-rail .rail-line{background:#e9ce8b}
+body.night-mode .day-night-toggle{background:#233a58;color:#ffda77;border:1px solid #e2be6b}
+body.night-mode .scene-legend{background:#1c3045e8;color:#f5e9ce;border-color:#68809a}
+body.night-mode .toolbar button,body.night-mode .circle:not(.day-night-toggle){background:#233a58;color:#f5e9ce;border-color:#7188a0}
+body.night-mode .bottom-nav,body.night-mode .bottom-left,body.night-mode .bottom-right{color:#f5e9ce}
+@media(max-width:700px){.mast-right{gap:6px}.day-night-toggle{width:34px;height:34px;font-size:19px}}
