@@ -19,11 +19,80 @@ export function addNYCLandmarks(city, interact){
  // Chrysler — stainless tiered Art Deco crown and needle.
  landmark("chrysler","CHRYSLER BUILDING",9,-32,p=>{b(p,5.2,17,5.2,stone,0,8.5);windows(p,5.2,5.2,10,stone);for(let i=0;i<5;i++){const s=4.8-i*.72;const h=1.6;b(p,s,h,s,silver,0,17+i*1.5+h/2)}cone(p,1.1,2.6,silver,0,25.3);cyl(p,.12,.18,5,silver,0,28.9)}, "automation");
  // Hudson Yards: Edge — projecting sky deck; Vessel — tiered copper hexagon.
- landmark("edge","EDGE AT HUDSON YARDS",29,-27,p=>{b(p,5.4,18,5.4,glass,0,9);for(let i=1;i<18;i+=2){b(p,5.55,.1,5.55,silver,0,i)}b(p,8,.38,4.1,silver,-1.8,18.2);b(p,7.4,.13,3.8,glass,-1.8,18.45);for(let i=0;i<7;i++)b(p,.08,1.15,.08,glass,-5.4+i*1.1,18.9,2)}, "ai");
+ landmark("edge","EDGE AT HUDSON YARDS",29,-27,p=>{
+  // 30 Hudson Yards: tall faceted glass shaft, sloped roof and dramatic cantilevered deck.
+  b(p,6.5,.35,6.5,stone,0,.18);b(p,5.5,23,5.5,glass,0,11.7);
+  for(let i=1;i<23;i+=1.2){b(p,5.58,.065,5.58,silver,0,i+.3)}
+  for(let x=-2.3;x<2.6;x+=1.15){b(p,.065,22,.08,silver,x,11.7,2.82);b(p,.065,22,.08,silver,x,11.7,-2.82)}
+  // Top crown is angled, instead of a simple square cap.
+  const roof=mesh(p,new THREE.ConeGeometry(3.9,3.4,4),glass,0,24.9,0);roof.rotation.y=Math.PI/4;
+  // Edge projects visibly toward the street, supported by diagonal struts.
+  b(p,10.5,.48,5.1,silver,-4.2,22.2,1.1);
+  b(p,10,.18,4.65,glass,-4.2,22.55,1.1);
+  for(let x=-9;x<.5;x+=1.05){b(p,.08,1.55,.08,silver,x,23.2,3.55);b(p,.08,1.55,.08,silver,x,23.2,-1.3)}
+  for(let z=-1.2;z<3.7;z+=1){b(p,.08,1.55,.08,silver,-9.2,23.2,z)}
+  line(p,[-8.9,21.95,-1.1],[-2.5,17.5,-1.1],silver,.23);
+  line(p,[-8.9,21.95,3.3],[-2.5,17.5,3.3],silver,.23);
+}, "ai");
  landmark("vessel","THE VESSEL",29,-12,p=>{cyl(p,3.5,3.5,.5,stone);for(let j=0;j<6;j++){const r=2.3+j*.13,y=1+j*1.3;for(let i=0;i<10;i++){const a=i*Math.PI/5,an=(i+.5)*Math.PI/5;line(p,[Math.cos(a)*r,y,Math.sin(a)*r],[Math.cos(an)*(r+.2),y+1.15,Math.sin(an)*(r+.2)],copper,.17)}cyl(p,r,r,.15,copper,0,y+.7,0,10)}}, "ai");
  // Flatiron wedge and classic sidewalk street clock.
- landmark("flatiron","FLATIRON & CLOCK",26,28,p=>{const shape=new THREE.Shape();shape.moveTo(-4,-2);shape.lineTo(3,-2);shape.lineTo(3,1.8);shape.quadraticCurveTo(2.9,2.8,1.7,2.5);shape.lineTo(-4,-2);const geo=new THREE.ExtrudeGeometry(shape,{depth:13,bevelEnabled:false});geo.rotateX(-Math.PI/2);const body=mesh(p,geo,ivory,0,13,0);body.rotation.y=.08;for(let y=2;y<12;y+=1.3){b(p,5.3,.13,.15,stone,-.5,y,-2.25)}b(p,5.8,.45,4,stone,-.3,13.4);cyl(p,.12,.16,3,dark,4.7,1.5,2.6);cyl(p,.85,.85,.3,gold,4.7,3.1,2.6);const face=cyl(p,.69,.69,.06,white,4.7,3.3,2.6,20);face.rotation.x=Math.PI/2;line(p,[4.7,3.3,2.65],[4.7,3.7,2.65],dark,.045);line(p,[4.7,3.3,2.65],[5.05,3.18,2.65],dark,.045)}, "about");
- // Harbor: Statue of Liberty with green silhouette and raised torch.
- landmark("liberty","STATUE OF LIBERTY",-34,28,p=>{cyl(p,5,5,.3,water,0,.05);b(p,5,1.8,5,stone,0,1.1);b(p,3.4,2.2,3.4,ivory,0,3);cyl(p,.85,1.15,4.6,green,0,6.1);cone(p,1.55,3.7,green,0,9.8,0,7);cyl(p,.65,.65,1.3,green,0,12);for(let i=0;i<7;i++){let a=i*2*Math.PI/7;line(p,[Math.cos(a)*.55,12.8,Math.sin(a)*.55],[Math.cos(a)*1.15,13.7,Math.sin(a)*1.15],green,.1)}line(p,[.6,10.2,0],[1.6,15.2,0],green,.32);cyl(p,.5,.3,.5,gold,1.6,15.5,0);cone(p,.45,1.2,gold,1.6,16.5,0);line(p,[-.6,9.9,0],[-1.5,7.8,0],green,.25);b(p,1.4,1.7,.22,green,-1.65,7.3,0)}, "contact");
+ landmark("flatiron","FLATIRON & CLOCK",26,28,p=>{
+  // Genuine triangular footprint: pointed prow, broad rear, vertical extruded facade.
+  const footprint=new THREE.Shape();
+  footprint.moveTo(-5.6,0);footprint.lineTo(4.6,-3.1);footprint.lineTo(4.6,3.1);footprint.closePath();
+  const geom=new THREE.ExtrudeGeometry(footprint,{depth:17,bevelEnabled:true,bevelThickness:.12,bevelSize:.13,bevelSegments:1});
+  geom.rotateX(-Math.PI/2);
+  const body=mesh(p,geom,ivory,0,17.2,0);
+  // The wedge geometry is centered in elevation and its tip faces the foreground.
+  for(let y=2;y<17;y+=1.75){
+    line(p,[-5.6,y,0],[4.6,y,-3.1],stone,.10);
+    line(p,[-5.6,y,0],[4.6,y,3.1],stone,.10);
+    for(let t=.15;t<.95;t+=.16){
+      const x=-5.6+10.2*t;
+      line(p,[x,y+.28,-3.1*t],[x,y+1.18,-3.1*t],dark,.055);
+      line(p,[x,y+.28,3.1*t],[x,y+1.18,3.1*t],dark,.055);
+    }
+  }
+  b(p,9.9,.65,5.8,stone,-.2,17.65);
+  // Separate, larger vintage street clock on the plaza, facing the viewer.
+  const cx=-7.6,cz=5.2;
+  cyl(p,.21,.3,4.4,dark,cx,2.2,cz);
+  cyl(p,.43,.43,.25,gold,cx,4.5,cz);
+  const faceMat=white;
+  // Clock face vertical in XY plane, normal toward +Z.
+  const face=mesh(p,new THREE.CylinderGeometry(1.15,1.15,.32,32),gold,cx,5.5,cz);
+  face.rotation.x=Math.PI/2;
+  const dial=mesh(p,new THREE.CylinderGeometry(.96,.96,.34,32),faceMat,cx,5.5,cz+.06);
+  dial.rotation.x=Math.PI/2;
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;const tick=mesh(p,new THREE.BoxGeometry(.11,.22,.08),dark,cx+Math.sin(a)*.75,5.5+Math.cos(a)*.75,cz+.27);tick.rotation.z=-a}
+  line(p,[cx,5.5,cz+.31],[cx+.43,5.78,cz+.31],dark,.065);
+  line(p,[cx,5.5,cz+.32],[cx-.15,6.05,cz+.32],dark,.06);
+  cone(p,.38,.65,gold,cx,6.96,cz);
+}, "about");
+ landmark("liberty","STATUE OF LIBERTY",-34,28,p=>{
+  // Larger, deliberately recognizable neoclassical silhouette: draped robe, face, crown, tablet and torch.
+  cyl(p,6.2,6.2,.35,water,0,.12,0,32);
+  b(p,6.1,1.5,6.1,stone,0,.95);
+  b(p,4.4,2.9,4.4,ivory,0,3.2);
+  b(p,3.7,.65,3.7,stone,0,4.85);
+  // Feet and broad flared robe.
+  cyl(p,1.45,2.55,8.1,green,0,9.2,0,12);
+  for(let i=0;i<10;i++){const a=i*Math.PI/5;line(p,[Math.sin(a)*1.1,12.7,Math.cos(a)*1.1],[Math.sin(a)*2.32,5.5,Math.cos(a)*2.32],green,.14)}
+  // Shoulders, neck, head, nose and distinctive seven-ray crown.
+  cyl(p,1.38,1.7,2.1,green,0,14.0,0,12);
+  cyl(p,.38,.43,.6,green,0,15.3,0);
+  const head=mesh(p,new THREE.SphereGeometry(.96,16,12),green,0,16.45,0);
+  b(p,.35,.25,.25,green,0,16.25,.95);
+  cyl(p,1.08,1.08,.27,green,0,17.22,0,16);
+  for(let i=0;i<7;i++){const a=i*2*Math.PI/7;line(p,[Math.sin(a)*.76,17.32,Math.cos(a)*.76],[Math.sin(a)*1.68,18.9,Math.cos(a)*1.68],green,.15)}
+  // Raised right arm and bright torch.
+  line(p,[1.1,14.15,0],[2.4,17.4,0],green,.49);
+  line(p,[2.4,17.4,0],[2.65,21.0,0],green,.38);
+  cyl(p,.58,.42,.72,gold,2.65,21.4,0,12);
+  cone(p,.64,1.7,gold,2.65,22.55,0,9);
+  // Tablet in the left hand, separate from the body.
+  line(p,[-1.2,14.1,.15],[-2.25,11.9,.65],green,.39);
+  const tablet=b(p,1.65,2.8,.35,stone,-2.15,11.5,.95);tablet.rotation.z=-.16;
+}, "contact");
  return features;
 }
