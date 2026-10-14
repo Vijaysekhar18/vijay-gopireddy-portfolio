@@ -12,10 +12,33 @@ export function createCityLife(city){
  const plane=new THREE.Group();city.add(plane);const brown=material("#8c5a39"),tan=material("#c08a54");box(plane,4.2,.6,.7,brown,0,0,0);box(plane,1.15,.14,5.2,tan,-.3,0,0);box(plane,.65,1.3,.17,brown,-1.75,.5,0);box(plane,1.05,.13,2,tan,-1.6,0,0);sphere(plane,.38,glass,1.85,.05,0);
  const canvas=document.createElement("canvas");canvas.width=1024;canvas.height=240;const ctx=canvas.getContext("2d");ctx.fillStyle="#f8d747";ctx.fillRect(0,0,1024,240);ctx.fillStyle="#2e302c";ctx.font="bold 82px Arial";ctx.textAlign="center";ctx.fillText("VIJAY'S NYC STUDIO",512,148);const bannerTexture=new THREE.CanvasTexture(canvas);const bannerMaterial=new THREE.MeshBasicMaterial({map:bannerTexture,side:THREE.FrontSide});const banner=new THREE.Mesh(new THREE.PlaneGeometry(13,3.05),bannerMaterial);banner.position.set(-10.1,0,.015);plane.add(banner);const bannerBack=new THREE.Mesh(new THREE.PlaneGeometry(13,3.05),bannerMaterial);bannerBack.rotation.y=Math.PI;bannerBack.position.set(-10.1,0,-.015);plane.add(bannerBack);box(plane,6,.035,.035,black,-5.1,0,0);
  const guide=person(yellow);city.add(guide.group);guide.group.visible=false;
- const orb=sphere(city,.9,material("#ffe644",{emissive:"#ffda27",emissiveIntensity:1}),-19,1.1,36);
- const route=[[-19,36],[-19,22],[-19,7],[-5,7],[9,7],[23,7],[23,-8],[9,-8],[-5,-8],[-5,-23],[9,-23],[23,-23]];
- const perspective=new THREE.PerspectiveCamera(69,1,.1,210);let guideLocation=null;
- function walkCamera(progress){const seg=Math.min(Math.floor(progress),route.length-2),t=progress-seg;const a=route[seg],b=route[seg+1];const x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;const dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz)||1;guide.group.visible=true;guide.group.position.set(x,0,z);guideLocation={x,z};guide.group.rotation.y=Math.atan2(dx,dz);guide.left.rotation.x=Math.sin(progress*22)*.42;guide.right.rotation.x=-guide.left.rotation.x;guide.arm1.rotation.x=-guide.left.rotation.x;guide.arm2.rotation.x=guide.left.rotation.x;perspective.position.set(x-dx/len*3.2,2.9,z-dz/len*3.2);perspective.lookAt(x+dx/len*8,1.7,z+dz/len*8);return perspective}
- function update(time,walking,progress){const tourView=walking?walkCamera(progress):null;if(!walking)guideLocation=null;for(const t of taxis){const d=((time*t.speed+t.offset)%80)-40;if(t.vertical){t.car.position.set(t.lane,0,d);t.car.rotation.y=Math.PI/2}else{t.car.position.set(d,0,t.lane);t.car.rotation.y=0}}for(const p of people){const d=((time*p.speed+p.offset)%72)-36;if(p.vertical){p.group.position.set(p.lane,0,d);p.group.rotation.y=0}else{p.group.position.set(d,0,p.lane);p.group.rotation.y=Math.PI/2}if(guideLocation&&Math.hypot(p.group.position.x-guideLocation.x,p.group.position.z-guideLocation.z)<4){p.group.position.x+=p.vertical?2.4:0;p.group.position.z+=p.vertical?0:2.4}p.left.rotation.x=Math.sin(time*5+p.offset)*.48;p.right.rotation.x=-p.left.rotation.x;p.arm1.rotation.x=-p.left.rotation.x;p.arm2.rotation.x=p.left.rotation.x}plane.position.set(55-((time*4.8)%110),30,-16);plane.rotation.y=Math.PI;guide.group.visible=walking;orb.visible=!walking;return tourView}
- return {update,perspective,routeLength:route.length-1};
+ const orb=sphere(city,.9,material("#ffe644",{emissive:"#ffda27",emissiveIntensity:1}),-5,1.1,33);
+ const route=[[-5,33],[-5,33],[-5,22],[-19,22],[-33,22],[-33,22],[-19,22],[-5,22],[9,22],[23,22],[23,22],[23,7],[23,-8],[23,-23],[23,-23]];
+ const durations=[4,8,9,10,5,10,9,9,10,5,10,10,10,5];
+ const views={0:[0,35,5],4:[-34,28,13],9:[17,28,6],13:[29,-27,18]};
+ const perspective=new THREE.PerspectiveCamera(69,1,.1,210);
+ let guideLocation=null,canAdvance=true;
+ const look=new THREE.Vector3();
+ function walkCamera(progress,time){
+  const seg=Math.min(Math.floor(progress),route.length-2),t=progress-seg,a=route[seg],b=route[seg+1];
+  const x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;
+  let dx=b[0]-a[0],dz=b[1]-a[1];
+  if(Math.hypot(dx,dz)<.01){const v=views[seg]||[x,z+5,4];dx=v[0]-x;dz=v[1]-z}
+  const len=Math.hypot(dx,dz)||1,ux=dx/len,uz=dz/len;
+  guide.group.visible=true;guide.group.position.set(x,0,z);guideLocation={x,z};
+  guide.group.rotation.y=Math.atan2(ux,uz);
+  const stride=(Math.hypot(b[0]-a[0],b[1]-a[1])>.01&&canAdvance)?Math.sin(time*7)*.42:0;
+  guide.left.rotation.x=stride;guide.right.rotation.x=-stride;
+  guide.arm1.rotation.x=-stride;guide.arm2.rotation.x=stride;
+  perspective.position.set(x-ux*2.2,2.9,z-uz*2.2);
+  const v=views[seg];
+  const target=v?new THREE.Vector3(v[0],v[2],v[1]):new THREE.Vector3(x+ux*8,2,z+uz*8);
+  if(look.lengthSq()===0)look.copy(target);
+  look.lerp(target,.045);perspective.lookAt(look);
+  return perspective
+ }
+ function tourStepDuration(progress){return durations[Math.min(Math.floor(progress),durations.length-1)]}
+ function mayAdvance(){return canAdvance}
+ function update(time,walking,progress){const tourView=walking?walkCamera(progress,time):null;if(!walking)guideLocation=null;for(const t of taxis){const d=((time*t.speed+t.offset)%80)-40;if(t.vertical){t.car.position.set(t.lane,0,d);t.car.rotation.y=Math.PI/2}else{t.car.position.set(d,0,t.lane);t.car.rotation.y=0}}for(const p of people){const d=((time*p.speed+p.offset)%72)-36;if(p.vertical){p.group.position.set(p.lane,0,d);p.group.rotation.y=0}else{p.group.position.set(d,0,p.lane);p.group.rotation.y=Math.PI/2}if(guideLocation&&Math.hypot(p.group.position.x-guideLocation.x,p.group.position.z-guideLocation.z)<4){p.group.position.x+=p.vertical?2.4:0;p.group.position.z+=p.vertical?0:2.4}p.left.rotation.x=Math.sin(time*5+p.offset)*.48;p.right.rotation.x=-p.left.rotation.x;p.arm1.rotation.x=-p.left.rotation.x;p.arm2.rotation.x=p.left.rotation.x}canAdvance=!walking||!guideLocation||!taxis.some(t=>Math.hypot(t.car.position.x-guideLocation.x,t.car.position.z-guideLocation.z)<3.6);plane.position.set(55-((time*4.8)%110),30,-16);plane.rotation.y=Math.PI;guide.group.visible=walking;orb.visible=!walking;return tourView}
+ return {update,perspective,routeLength:route.length-1,tourStepDuration,mayAdvance};
 }
