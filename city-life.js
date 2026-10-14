@@ -12,9 +12,9 @@ export function createCityLife(city){
  const plane=new THREE.Group();city.add(plane);const brown=material("#8c5a39"),tan=material("#c08a54");box(plane,4.2,.6,.7,brown,0,0,0);box(plane,1.15,.14,5.2,tan,-.3,0,0);box(plane,.65,1.3,.17,brown,-1.75,.5,0);box(plane,1.05,.13,2,tan,-1.6,0,0);sphere(plane,.38,glass,1.85,.05,0);
  const canvas=document.createElement("canvas");canvas.width=1024;canvas.height=240;const ctx=canvas.getContext("2d");ctx.fillStyle="#f8d747";ctx.fillRect(0,0,1024,240);ctx.fillStyle="#2e302c";ctx.font="bold 82px Arial";ctx.textAlign="center";ctx.fillText("VIJAY'S NYC STUDIO",512,148);const bannerTexture=new THREE.CanvasTexture(canvas);const bannerMaterial=new THREE.MeshBasicMaterial({map:bannerTexture,side:THREE.FrontSide});const banner=new THREE.Mesh(new THREE.PlaneGeometry(13,3.05),bannerMaterial);banner.position.set(-10.1,0,.015);plane.add(banner);const bannerBack=new THREE.Mesh(new THREE.PlaneGeometry(13,3.05),bannerMaterial);bannerBack.rotation.y=Math.PI;bannerBack.position.set(-10.1,0,-.015);plane.add(bannerBack);box(plane,6,.035,.035,black,-5.1,0,0);
  const guide=person(yellow);city.add(guide.group);guide.group.visible=false;
- const orb=sphere(city,.9,material("#ffe644",{emissive:"#ffda27",emissiveIntensity:1}),-19,1.1,22);
- const route=[[-19,22],[-19,22],[-33,22],[-33,22],[-33,7],[-33,-8],[-33,-23],[-19,-23],[-5,-23],[9,-23],[23,-23],[23,-23]];
- const durations=[4,11,5,10,10,10,10,10,10,10,5];
+ const orb=sphere(city,.9,material("#ffe644",{emissive:"#ffda27",emissiveIntensity:1}),-19,1.1,22.8);
+ const route=[[-19,22.8],[-19,22.8],[-38,22.8],[-38,22.8],[-38,7],[-38,-8],[-38,-25.2],[-19,-25.2],[-5,-25.2],[9,-25.2],[23,-25.2],[23,-25.2]];
+ const durations=[4,11,5,11,11,11,11,11,11,11,5];
  const views={0:[0,35,5],2:[-34,28,13],4:[-28,5,8],5:[-34,-30,26],10:[29,-27,18]};
  const perspective=new THREE.PerspectiveCamera(69,1,.1,210);
  let guideLocation=null,canAdvance=true;
