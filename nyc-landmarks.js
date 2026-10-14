@@ -45,4 +45,30 @@ export function addNYCLandmarks(city, interact){
  line(p,[cx,5.65,cz+.29],[cx+.46,5.96,cz+.29],dark,.07);line(p,[cx,5.65,cz+.3],[cx-.18,6.22,cz+.3],dark,.07);
  cone(p,.36,.68,copper,cx,7.15,cz);
 }, "about");
- }
+ landmark("liberty","STATUE OF LIBERTY",-34,28,p=>{
+  // Larger, deliberately recognizable neoclassical silhouette: draped robe, face, crown, tablet and torch.
+  cyl(p,6.2,6.2,.35,water,0,.12,0,32);
+  b(p,6.1,1.5,6.1,stone,0,.95);
+  b(p,4.4,2.9,4.4,ivory,0,3.2);
+  b(p,3.7,.65,3.7,stone,0,4.85);
+  // Feet and broad flared robe.
+  cyl(p,1.45,2.55,8.1,green,0,9.2,0,12);
+  for(let i=0;i<10;i++){const a=i*Math.PI/5;line(p,[Math.sin(a)*1.1,12.7,Math.cos(a)*1.1],[Math.sin(a)*2.32,5.5,Math.cos(a)*2.32],green,.14)}
+  // Shoulders, neck, head, nose and distinctive seven-ray crown.
+  cyl(p,1.38,1.7,2.1,green,0,14.0,0,12);
+  cyl(p,.38,.43,.6,green,0,15.3,0);
+  const head=mesh(p,new THREE.SphereGeometry(.96,16,12),green,0,16.45,0);
+  b(p,.35,.25,.25,green,0,16.25,.95);
+  cyl(p,1.08,1.08,.27,green,0,17.22,0,16);
+  for(let i=0;i<7;i++){const a=i*2*Math.PI/7;line(p,[Math.sin(a)*.76,17.32,Math.cos(a)*.76],[Math.sin(a)*1.68,18.9,Math.cos(a)*1.68],green,.15)}
+  // Raised right arm and bright torch.
+  line(p,[1.1,14.15,0],[2.4,17.4,0],green,.49);
+  line(p,[2.4,17.4,0],[2.65,21.0,0],green,.38);
+  cyl(p,.58,.42,.72,gold,2.65,21.4,0,12);
+  cone(p,.64,1.7,gold,2.65,22.55,0,9);
+  // Tablet in the left hand, separate from the body.
+  line(p,[-1.2,14.1,.15],[-2.25,11.9,.65],green,.39);
+  const tablet=b(p,1.65,2.8,.35,stone,-2.15,11.5,.95);tablet.rotation.z=-.16;
+}, "contact");
+ return features;
+}
