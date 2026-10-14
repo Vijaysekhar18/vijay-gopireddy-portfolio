@@ -13,7 +13,7 @@ function streetlamp(x,z){cylinder(.065,.08,3.1,M.dark,x,1.55,z,7);box(.65,.15,.2
 for(let i=0;i<135;i++){const gx=Math.floor(i/9),gz=i%9,x=-36+gx*5.2,z=-36+gz*8.7;if(roadCenters.some(r=>Math.abs(x-r)<3.2)||[-23,-8,7,22].some(r=>Math.abs(z-r)<3.2))continue;if(Math.abs(x)<18&&Math.abs(z)<19)continue;const h=2.5+random(i+14)*7.5;building(x,z,2.5+random(i+55)*1.5,3.2+random(i+23)*1.2,h,random(i+17)>.5?M.white:M.stone,i);if(i%4===0)tree(x+2.1,z+1.8,.75)}
 // Signature Manhattan landmarks: distinct yellow districts.
 building(-13,3,5,5,8.7,M.gold,201,"about");for(let k=0;k<4;k++){const ring=cylinder(2.9-k*.24,2.9-k*.24,.23,M.goldSide,-13,2+k*1.9,3,28);ring.userData.project="about";interact.push(ring)}cylinder(3.15,3.15,.35,M.gold,-13,9.2,3,24);
-building(-1,2,5.4,5.3,14.2,M.gold,202,"cloud");building(-1,2,4.1,4,4,M.goldSide, -1,16.3,2); // Extra roof accent below corrected separately
+building(-1,2,5.4,5.3,14.2,M.gold,202,"cloud");box(4.1,1.5,4,M.goldSide,-1,15.1,2); // Extra roof accent below corrected separately
 building(11,-3,5.3,5.4,12.6,M.gold,203,"automation");box(4.5,.4,4.5,M.goldSide,11,13.3,-3);
 building(1,-13,6,5.3,10.6,M.gold,204,"ai");box(4,.4,3,M.goldSide,1,11.1,-13);
 building(16,11,4.5,5.1,8.3,M.gold,205,"contact");
