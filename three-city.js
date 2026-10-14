@@ -9,6 +9,11 @@ scene.add(new THREE.HemisphereLight("#fff7e2","#837e6c",2.7));const sun=new THRE
 const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.92,metalness:0,...extra});const M={ground:mat("#c7bda5"),road:mat("#817e70"),lane:mat("#e3dbc3"),sidewalk:mat("#b1a996"),roof:mat("#888677"),white:mat("#e2d9c3"),stone:mat("#b6b1a0"),dark:mat("#313d3c"),glass:mat("#263438"),gold:mat("#e8b21b"),goldSide:mat("#c59112"),green:mat("#6a9a4c"),tree:mat("#669b4d"),trunk:mat("#725b41"),water:mat("#6c9f9b"),glow:mat("#fff078",{emissive:"#f8ce27",emissiveIntensity:.7})};
 const city=new THREE.Group();scene.add(city);const interact=[];const points={about:new THREE.Vector3(-13,8,3),cloud:new THREE.Vector3(-1,13,2),automation:new THREE.Vector3(11,15,-3),ai:new THREE.Vector3(1,9,-13),contact:new THREE.Vector3(16,8,11)};
 function box(w,h,d,material,x,y,z,parent=city,cast=true){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=cast;mesh.receiveShadow=true;parent.add(mesh);return mesh}function cylinder(r1,r2,h,material,x,y,z,n=12){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;city.add(mesh);return mesh}
+// Quiet continuous waterfront surrounding the 90x90 island, with a narrow border for mobile framing.
+const harborMat=mat("#5a9eaf",{roughness:.42,metalness:.08});
+box(122,.12,122,harborMat,0,-1.12,0,city,false);
+const shoreMat=mat("#b8d5cd",{roughness:.82});
+for(const side of [-1,1]){box(90,.045,.42,shoreMat,0,-.99,side*45.3,city,false);box(.42,.045,90,shoreMat,side*45.3,-.99,0,city,false)}
 box(90,.8,90,M.ground,0,-.6,0);const roadCenters=[-19,-5,9,23];for(const x of roadCenters){box(3.4,.05,85,M.road,x,-.14,0,city,false);for(let z=-39;z<40;z+=4)box(.09,.055,1.5,M.lane,x,-.105,z,city,false)}for(const z of [-23,-8,7,22]){box(85,.05,3.4,M.road,0,-.13,z,city,false);for(let x=-39;x<40;x+=4)box(1.5,.055,.09,M.lane,x,-.1,z,city,false)}// Two understated zebra crossings, kept low to the road so the miniature stays uncluttered.
 const crossingPaint=mat("#eee8d5",{roughness:1});
 function crosswalk(x,z,acrossX){
