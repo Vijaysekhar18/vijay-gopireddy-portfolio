@@ -10,3 +10,12 @@
 
 /* Monogram identity and legible welcome copy */
 .logo{display:flex;align-items:center;gap:11px;letter-spacing:normal;line-height:1.1}.brand-mark{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:49px;height:49px;border:2px solid #33352f;border-radius:11px;background:#f2e6c4;font:800 24px "Space Grotesk",sans-serif;letter-spacing:-.11em}.brand-mark span{position:absolute;right:-8px;top:-8px;font-size:20px;color:#d5a70b}.brand-name{display:block;font:800 18px "Space Grotesk",sans-serif;letter-spacing:-.045em;white-space:nowrap}.brand-name small{font:800 8px "DM Sans",sans-serif;letter-spacing:.15em;margin-top:4px}.title-group h1{letter-spacing:-.02em;word-spacing:.15em;line-height:1.16}.central-tag{background:#f9d93c;color:#2b2719;border:2px solid #8e6c16;font-size:13px;box-shadow:0 4px 14px #493b1c55}@media(max-width:650px){.brand-mark{min-width:37px;height:37px;font-size:18px}.brand-name{font-size:13px}.brand-name small{font-size:6px}.logo{gap:8px}.title-group h1{font-size:17px}}
+
+/* Refined navy-and-gold VS crest: compact, legible identity on every screen. */
+.masthead .logo{display:flex;align-items:center;gap:12px;line-height:1.1;letter-spacing:normal;min-width:0;padding:5px 8px 5px 0;border-radius:12px;text-shadow:0 1px 3px #f4ebd8}
+.masthead .brand-mark{display:flex;align-items:center;justify-content:center;flex:none;width:56px;height:63px;min-width:56px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
+.masthead .brand-crest{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 5px #2c251b35)}
+.masthead .brand-name{display:flex;flex-direction:column;color:#192334;font:800 20px/1.1 "Space Grotesk",sans-serif;letter-spacing:.025em;white-space:nowrap;text-shadow:0 1px 4px #f7f0df}
+.masthead .brand-name small{display:block;margin-top:7px;color:#453a25;font:800 10px/1.2 "DM Sans",sans-serif;letter-spacing:.13em}
+@media(max-width:700px){.masthead .logo{gap:7px;padding-right:2px}.masthead .brand-mark{width:42px;height:48px;min-width:42px}.masthead .brand-name{font-size:14px;letter-spacing:0}.masthead .brand-name small{font-size:8px;letter-spacing:.065em;margin-top:4px}}
+@media(max-width:380px){.masthead .brand-mark{width:36px;height:42px;min-width:36px}.masthead .brand-name{font-size:12px}.masthead .brand-name small{font-size:7px}}
