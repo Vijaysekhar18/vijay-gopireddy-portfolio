@@ -15,7 +15,11 @@ sign(4.2,5,-7.13,6.5,3.25,"AUTOMATION","API MIGRATION · JAVA · QE","automation
 sign(-9.64,4.6,-1.5,4.4,2.5,"AI & INNOVATION","PLAYWRIGHT · AI TOOLS","ai",Math.PI/2);
 sign(9.64,4.6,-1.5,4.4,2.5,"LEADERSHIP","TEST STRATEGY · DELIVERY","leadership",-Math.PI/2);
 function desk(x,z){cube(4,.18,1.65,white,x,1.65,z);for(const dx of [-1.65,1.65])for(const dz of [-.55,.55])cube(.12,1.55,.12,steel,x+dx,.85,z+dz);cube(1.45,1.1,.08,screen,x,2.32,z-.25);cube(.14,.5,.14,steel,x,1.82,z-.25);cube(1.1,.08,.36,dark,x,1.77,z+.43);cube(.6,.12,.5,dark,x+1.25,1.75,z+.43);cyl(.43,.43,.2,dark,x,1.05,z+1.9);cube(.2,1.15,.2,steel,x,.6,z+1.9)}
-desk(-5.1,1.8);desk(4.8,1.8);desk(0,-3.2);\n// Monitor screens, keyboards, desk lamps and additional workstation details.\nfor(const x of [-5.1,4.8,0]){const z=x===0?-3.2:1.8;cube(1.1,.65,.045,material("#3a89ad",{emissive:"#155579",emissiveIntensity:.55}),x,2.35,z-.19);cube(.3,.18,.18,gold,x+1.7,1.85,z-.6);cyl(.11,.11,.45,steel,x+1.7,2.1,z-.6);const lamp=new THREE.Mesh(new THREE.ConeGeometry(.26,.33,10),gold);lamp.rotation.z=.6;lamp.position.set(x+1.5,2.35,z-.6);scene.add(lamp)}\nfor(let i=0;i<5;i++){cube(.28,.4,.28,material(["#e5bb38","#7babb4","#d88c65"][i%3]),-8.4+i*.4,3.6,-7.03)}\nfor(let i=0;i<7;i++){cube(.5,.6,.35,material(["#c9a66b","#7bb2a2","#e9b74a"][i%3]),-9.3,3+i*.6,-4.6)}
+desk(-5.1,1.8);desk(4.8,1.8);desk(0,-3.2);
+// Monitor screens, keyboards, desk lamps and additional workstation details.
+for(const x of [-5.1,4.8,0]){const z=x===0?-3.2:1.8;cube(1.1,.65,.045,material("#3a89ad",{emissive:"#155579",emissiveIntensity:.55}),x,2.35,z-.19);cube(.3,.18,.18,gold,x+1.7,1.85,z-.6);cyl(.11,.11,.45,steel,x+1.7,2.1,z-.6);const lamp=new THREE.Mesh(new THREE.ConeGeometry(.26,.33,10),gold);lamp.rotation.z=.6;lamp.position.set(x+1.5,2.35,z-.6);scene.add(lamp)}
+for(let i=0;i<5;i++){cube(.28,.4,.28,material(["#e5bb38","#7babb4","#d88c65"][i%3]),-8.4+i*.4,3.6,-7.03)}
+for(let i=0;i<7;i++){cube(.5,.6,.35,material(["#c9a66b","#7bb2a2","#e9b74a"][i%3]),-9.3,3+i*.6,-4.6)}
 function server(x,z){cube(1.35,4.6,1.3,dark,x,2.3,z);for(let i=0;i<10;i++){cube(.9,.13,.05,steel,x,.55+i*.38,z+.68);cube(.09,.09,.08,gold,x+.45,.55+i*.38,z+.73)}}
 server(7,-4.8);server(8.5,-4.8);
 function pot(x,z){cyl(.55,.38,.75,material("#bd845f"),x,.4,z);for(let i=0;i<6;i++){const a=i*Math.PI/3;const leaf=new THREE.Mesh(new THREE.ConeGeometry(.42,1.5,5),plant);leaf.position.set(x+Math.sin(a)*.25,1.5,z+Math.cos(a)*.25);leaf.rotation.z=Math.sin(a)*.32;scene.add(leaf)}}
