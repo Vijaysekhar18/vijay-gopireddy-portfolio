@@ -36,7 +36,7 @@ export function addNYCLandmarks(city, interact){
 }, "contact");
  landmark("vessel","THE VESSEL",29,-12,p=>{cyl(p,3.5,3.5,.5,stone);for(let j=0;j<6;j++){const r=2.3+j*.13,y=1+j*1.3;for(let i=0;i<10;i++){const a=i*Math.PI/5,an=(i+.5)*Math.PI/5;line(p,[Math.cos(a)*r,y,Math.sin(a)*r],[Math.cos(an)*(r+.2),y+1.15,Math.sin(an)*(r+.2)],copper,.17)}cyl(p,r,r,.15,copper,0,y+.7,0,10)}}, "about");
  // Flatiron wedge and classic sidewalk street clock.
- landmark("flatiron","FLATIRON STREET CLOCK",26,28,p=>{
+ landmark("flatiron","FLATIRON STREET CLOCK",5,-.5,p=>{
  // Keep the iconic freestanding cast-iron sidewalk clock without the Flatiron tower.
  const cx=0,cz=0;cyl(p,.32,.4,4.5,dark,cx,2.25,cz);cyl(p,.6,.6,.25,copper,cx,4.6,cz);
  const dialFrame=mesh(p,new THREE.CylinderGeometry(1.2,1.2,.38,32),gold,cx,5.65,cz);dialFrame.rotation.x=Math.PI/2;
