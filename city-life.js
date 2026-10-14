@@ -34,15 +34,15 @@ export function createCityLife(city){
  const views={0:[0,35,5],1:[-34,28,13],2:[-34,28,13],4:[-26,-8,8],5:[-34,-30,26],8:[29,-27,18]};
  const perspective=new THREE.PerspectiveCamera(69,1,.1,210);
  let guideLocation=null,canAdvance=true;
- const look=new THREE.Vector3();
- function walkCamera(progress,time){
+ const look=new THREE.Vector3();let heading=0;
+ function walkCamera(progress,time,dt){
   const seg=Math.min(Math.floor(progress),route.length-2),t=progress-seg,a=route[seg],b=route[seg+1];
   const x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t;
   let dx=b[0]-a[0],dz=b[1]-a[1];
   if(Math.hypot(dx,dz)<.01){const v=views[seg]||[x,z+5,4];dx=v[0]-x;dz=v[1]-z}
   const len=Math.hypot(dx,dz)||1,ux=dx/len,uz=dz/len;
   guide.group.visible=true;guide.group.position.set(x,0,z);guideLocation={x,z};
-  guide.group.rotation.y=Math.atan2(ux,uz);
+  const targetHeading=Math.atan2(ux,uz);heading+=Math.atan2(Math.sin(targetHeading-heading),Math.cos(targetHeading-heading))*(1-Math.exp(-7*dt));guide.group.rotation.y=heading;
   const stride=(Math.hypot(b[0]-a[0],b[1]-a[1])>.01&&canAdvance)?Math.sin(time*7)*.42:0;
   guide.left.rotation.x=stride;guide.right.rotation.x=-stride;
   guide.arm1.rotation.x=-stride;guide.arm2.rotation.x=stride;
@@ -50,11 +50,12 @@ export function createCityLife(city){
   const v=views[seg];
   const target=v?new THREE.Vector3(v[0],v[2],v[1]):new THREE.Vector3(x+ux*8,2,z+uz*8);
   if(look.lengthSq()===0)look.copy(target);
-  look.lerp(target,.045);perspective.lookAt(look);
+  look.lerp(target,1-Math.exp(-3*dt));perspective.lookAt(look);
   return perspective
  }
  function tourStepDuration(progress){return durations[Math.min(Math.floor(progress),durations.length-1)]}
  function mayAdvance(){return canAdvance}
- function update(time,walking,progress){const tourView=walking?walkCamera(progress,time):null;if(!walking)guideLocation=null;for(const t of taxis){const d=((time*t.speed+t.offset)%80)-40;if(t.vertical){t.car.position.set(t.lane,0,d);t.car.rotation.y=Math.PI/2}else{t.car.position.set(d,0,t.lane);t.car.rotation.y=0}}for(const p of people){const d=((time*p.speed+p.offset)%72)-36;if(p.vertical){p.group.position.set(p.lane,0,d);p.group.rotation.y=0}else{p.group.position.set(d,0,p.lane);p.group.rotation.y=Math.PI/2}if(guideLocation&&Math.hypot(p.group.position.x-guideLocation.x,p.group.position.z-guideLocation.z)<4){p.group.position.x+=p.vertical?2.4:0;p.group.position.z+=p.vertical?0:2.4}p.left.rotation.x=Math.sin(time*5+p.offset)*.48;p.right.rotation.x=-p.left.rotation.x;p.arm1.rotation.x=-p.left.rotation.x;p.arm2.rotation.x=p.left.rotation.x}canAdvance=true;cruise.position.set(-54,0,-43+((time*1.55)%86));cruise.rotation.y=Math.sin(time*.45)*.025;plane.position.set(55-((time*4.8)%110),30,-16);plane.rotation.y=Math.PI;guide.group.visible=walking;orb.visible=!walking;return tourView}
- return {update,perspective,routeLength:route.length-1,tourStepDuration,mayAdvance};
+ function resetTour(){look.set(0,0,0);heading=0}
+ function update(time,walking,progress,dt=1/60){const tourView=walking?walkCamera(progress,time,dt):null;if(!walking)guideLocation=null;for(const t of taxis){const d=((time*t.speed+t.offset)%80)-40;if(t.vertical){t.car.position.set(t.lane,0,d);t.car.rotation.y=Math.PI/2}else{t.car.position.set(d,0,t.lane);t.car.rotation.y=0}}for(const p of people){const d=((time*p.speed+p.offset)%72)-36;if(p.vertical){p.group.position.set(p.lane,0,d);p.group.rotation.y=0}else{p.group.position.set(d,0,p.lane);p.group.rotation.y=Math.PI/2}if(guideLocation&&Math.hypot(p.group.position.x-guideLocation.x,p.group.position.z-guideLocation.z)<4){p.group.position.x+=p.vertical?2.4:0;p.group.position.z+=p.vertical?0:2.4}p.left.rotation.x=Math.sin(time*5+p.offset)*.48;p.right.rotation.x=-p.left.rotation.x;p.arm1.rotation.x=-p.left.rotation.x;p.arm2.rotation.x=p.left.rotation.x}canAdvance=true;cruise.position.set(-54,0,-43+((time*1.55)%86));cruise.rotation.y=Math.sin(time*.45)*.025;plane.position.set(55-((time*4.8)%110),30,-16);plane.rotation.y=Math.PI;guide.group.visible=walking;orb.visible=!walking;return tourView}
+ return {update,perspective,routeLength:route.length-1,tourStepDuration,mayAdvance,resetTour};
 }
