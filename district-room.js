@@ -3,7 +3,7 @@ const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
  about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
- services:{title:"VSR INNOVATION CENTER",kicker:"03 / SERVICES",subtitle:"The Engineering Studio · Explore four engineering disciplines",wall:"#e8f1f5",floor:"#c59c72",accent:"#dfb86b"},
+ services:{title:"VSR INNOVATION CENTER",kicker:"03 / SERVICES",subtitle:"The Engineering Studio · Explore four engineering disciplines",wall:"#d8e2e8",floor:"#788a9b",accent:"#dfb86b"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
 };
@@ -25,33 +25,12 @@ function plaque(title,sub,x,y,z,action){
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.7,1.74),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));mesh.position.set(x,y,z);scene.add(mesh);mesh.userData.action=action;clickable.push(mesh);return mesh
 }
 if(safe==="services"){
- // Video-reference architecture: ONE cylindrical cutaway volume, not a disk inside a square.
- // 270-degree wrap leaves a generous front opening for the isometric camera.
- const start=Math.PI/4, sweep=Math.PI*1.5, radius=12.55;
- const lowerWall=new THREE.MeshStandardMaterial({color:"#e7e1d6",roughness:.95,side:THREE.DoubleSide});
- const upperWall=new THREE.MeshStandardMaterial({color:"#d9c6a7",roughness:.96,side:THREE.DoubleSide});
- const wood=new THREE.MeshStandardMaterial({color:"#c59c72",roughness:.87});
- const roundFloor=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,.45,96),wood);
- roundFloor.position.y=-.24;roundFloor.receiveShadow=true;scene.add(roundFloor);
- // The same radius and angular origin for all shell pieces makes the silhouette continuous.
- for(const [height,center,material] of [[4.2,2.1,lowerWall],[3.65,6.025,upperWall]]){
-  const shell=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,height,96,1,true,start,sweep),material);
-  shell.position.y=center;scene.add(shell);
- }
- // A thin horizontal brass belt follows the curvature, never a straight rectangular beam.
- const arc=(r,y,thickness,material)=>{
-  const pts=[];for(let i=0;i<=90;i++){const t=start+sweep*i/90;pts.push(new THREE.Vector3(r*Math.sin(t),y,r*Math.cos(t)))}
-  const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),90,thickness,5,false),material);scene.add(mesh);return mesh;
- };
- arc(radius-.025,4.2,.035,mat("#d4b98a"));arc(radius-.025,7.84,.055,mat("#c9a56d"));
- // Circular wood floor planks, clipped naturally to the floor disk by their radial layout.
- const grain=mat("#af845f");
- for(let r=2.3;r<12;r+=2.1)arc(r,.004,.013,grain);
- // Side cut edges are slim vertical trims; the front remains completely open.
- for(const t of [start,start+sweep]){
-  const x=radius*Math.sin(t),z=radius*Math.cos(t);
-  const post=box(.12,7.85,.12,mat("#c3a87f"),x,3.925,z);
- }
+ // Restore the original open-front rectangular Engineering Studio room.
+ box(24,.5,20,floor,0,-.25,0);
+ box(24,8,.4,wall,0,4,-10);
+ box(.4,8,20,wall,-12,4,0);
+ box(.4,8,20,wall,12,4,0);
+ box(24,.18,.28,trim,0,.2,-9.7);
 }else{
  box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
  box(24,.18,.28,trim,0,.2,-9.7);
@@ -232,10 +211,10 @@ if(safe==="about"){
  const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const animated=[];
  const glow=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,metalness:.26,roughness:.4});
- // The architectural shell is already complete: no inset disk, grid, square floor or wall panels.
- // A modest wall plaque, rather than a banner stretching across the cylinder.
- textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.35,-12.0,6.8,.95,{bg:"#223b4d",fg:"#fff3dd",edge:"#d4af75"});
- // Four stations remain visually separate but share one continuous wood floor.
+ // Square engineering showroom, with four differentiated exhibits.
+ box(22,.08,16,stone,0,.06,-.1);
+ box(22.5,1.2,.18,navy,0,6.95,-9.53);
+ textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.92,-9.3,16.5,1.02,{bg:"#10263d",fg:"#fff5df",edge:"#d8af69"});
  // Central VSR core: elevated so it remains visible without obstructing the aisle.
  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),glow("#f4ce82"));
  core.position.set(0,5.75,-7.85);scene.add(core);
@@ -540,7 +519,7 @@ function setServicesTour(active){
  servicesTourButton.textContent=active?"■ EXIT TOUR":"▶ GUIDED TOUR";
  servicesTourButton.setAttribute("aria-pressed",String(active));
  document.getElementById("servicesTourStatus").textContent=active?"Guided tour running · Select any exhibit to pause":"Select a station or start the guided tour.";
- if(!active){desiredTheta=.12;desiredPhi=safe==="services"?1.12:1.38;desiredRadius=safe==="services"?(root.clientWidth<600?36:28):(root.clientWidth<600?30:20)}
+ if(!active){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20}
 }
 function updateServicesTour(now){
  if(!servicesTour)return false;
@@ -765,10 +744,10 @@ function updateAiQuest(now){
  return true;
 }
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
-let theta=.12,phi=safe==="services"?1.12:1.38,radius=safe==="services"?28:20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
-const target=new THREE.Vector3(0,safe==="services"?3.0:2.6,safe==="services"?0:-3.4);
+let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
+const target=new THREE.Vector3(0,2.6,-3.4);
 function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
-function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(safe==="services"){if(mobile&&desiredRadius<33){desiredRadius=36;radius=36}}else if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
+function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
 let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
