@@ -2,7 +2,7 @@ name: NYC visual and routing smoke
 on:
   push:
     branches:
-      - feature/cutaway-rooms-vsr-train-20261016
+      - main
   pull_request:
     paths:
       - 'three-city.js'
@@ -12,6 +12,12 @@ on:
       - 'styles.css'
       - 'district-room.css'
       - 'tests/**'
+      - 'portfolio-guide.js'
+      - 'portfolio-guide.css'
+      - 'work.html'
+      - 'work-room.js'
+      - 'work-room.css'
+      - 'district.html'
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest

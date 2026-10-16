@@ -1,0 +1,29 @@
+/* Shared cross-room portfolio access layer: light, accessible and unobtrusive. */
+.vsr-quick-toggle{position:fixed;z-index:60;right:18px;bottom:18px;border:1px solid #d4ae67;border-radius:999px;padding:12px 18px;background:#172c42;color:#fff6df;font:800 12px/1.2 "DM Sans",system-ui,sans-serif;letter-spacing:.06em;box-shadow:0 8px 25px #0e243c55;cursor:pointer;min-height:44px}
+.vsr-quick-toggle:hover,.vsr-quick-emphasis{background:#f4d58e;color:#192b3c}
+.vsr-quick-toggle:focus-visible,.vsr-quick-panel :focus-visible,.vsr-skip:focus-visible{outline:3px solid #f0a829;outline-offset:3px}
+.vsr-skip{position:fixed;z-index:101;left:16px;top:-90px;background:#fff8e9;color:#182e42;padding:12px;border-radius:8px;font:700 13px system-ui;text-decoration:none}
+.vsr-skip:focus{top:10px}
+.vsr-quick-panel[hidden]{display:none!important}
+.vsr-quick-panel{position:fixed;z-index:59;top:0;right:0;bottom:0;width:min(470px,100vw);overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;background:#f7f3e9;color:#203348;padding:24px 28px 90px;box-shadow:-18px 0 65px #0a233b66;font-family:"DM Sans",system-ui,sans-serif}
+.vsr-quick-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;font-weight:800;letter-spacing:.1em}
+.vsr-quick-head button{min-width:44px;min-height:44px;border:1px solid #c6c4b9;border-radius:50%;background:#fff;color:#22364c;font-size:18px;cursor:pointer}
+.vsr-quick-eyebrow{margin:28px 0 6px;font-size:11px;font-weight:800;letter-spacing:.15em;color:#916b32}
+.vsr-quick-panel h2{font:800 clamp(27px,4vw,38px)/1.06 "Space Grotesk",system-ui,sans-serif;letter-spacing:-.045em;margin:0 0 13px}
+.vsr-quick-lead{font-size:15px;line-height:1.65;color:#3b4f60}
+.vsr-quick-highlights{display:grid;gap:9px;margin:22px 0}
+.vsr-quick-highlights article{display:grid;gap:4px;border:1px solid #ded8ca;border-radius:12px;padding:13px 14px;background:#fffdf7}
+.vsr-quick-highlights strong{font-size:11px;letter-spacing:.08em}
+.vsr-quick-highlights span{font-size:12px;line-height:1.55;color:#536373}
+.vsr-quick-panel h3{font-size:13px;letter-spacing:.1em;margin:25px 0 10px}
+#vsrQuickStops{display:grid;gap:8px}
+#vsrQuickStops a{display:grid;gap:4px;padding:13px 15px;border-radius:10px;border:1px solid #d5d5cc;color:#203348;background:#fff;text-decoration:none}
+#vsrQuickStops a:hover{background:#e7f1f2;border-color:#8aafb9}
+#vsrQuickStops b{font-size:13px}
+#vsrQuickStops small{font-size:12px;color:#596978;line-height:1.45}
+.vsr-quick-contact{display:flex;gap:10px;margin:20px 0}
+.vsr-quick-contact a{flex:1;text-align:center;border-radius:9px;background:#203e51;color:#fff;padding:14px 8px;font-size:12px;font-weight:800;text-decoration:none}
+.vsr-quick-foot{font-size:12px;color:#607181;line-height:1.5}
+.vsr-webgl-note{position:fixed;z-index:58;left:16px;bottom:16px;max-width:300px;background:#fff7e9;color:#1e3748;border:1px solid #d4ae67;border-radius:9px;padding:12px;font:12px/1.5 system-ui}
+@media(max-width:760px){.vsr-quick-toggle{right:10px;bottom:10px;padding:10px 13px;font-size:11px}.vsr-quick-panel{padding:20px 18px 85px}.vsr-quick-panel h2{font-size:30px}.vsr-webgl-note{bottom:70px;max-width:220px}}
+@media(prefers-reduced-motion:reduce){.vsr-quick-panel *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
