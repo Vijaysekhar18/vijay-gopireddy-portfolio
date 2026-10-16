@@ -189,11 +189,13 @@ if(safe==="about"){
  scene.background=new THREE.Color("#0b122c");
  box(23,7.7,.28,navy,0,4,-9.62);
  box(23,.15,18,mat("#152343"),0,-.05,0);
- // Three tracks, illuminated lane markers and recurring sleepers.
- for(const x of [-5.7,0,5.7]){
-  box(3.65,.14,18,mat("#1e3159"),x,.09,-.2);
-  for(const dx of [-1.45,1.45])box(.12,.15,18,neon("#44d8e8"),x+dx,.22,-.2);
-  for(let z=-8;z<8;z+=1.35)box(3.5,.13,.17,mat("#526384"),x,.24,z);
+ // Four aligned collectible lanes, with contrasting neon guide rails.
+ const aiLaneXs=[-8.2,-2.7,2.7,8.2];
+ const aiLaneColors=["#ffd063","#ff957a","#61cfff","#84edb1"];
+ for(const [lane,x] of aiLaneXs.entries()){
+  box(3.9,.14,18,mat("#1e3159"),x,.09,-.2);
+  for(const dx of [-1.8,1.8])box(.12,.15,18,neon(aiLaneColors[lane]),x+dx,.22,-.2);
+  for(let z=-8;z<8;z+=1.35)box(3.7,.13,.17,mat("#526384"),x,.24,z);
  }
  for(const x of [-11.2,11.2]){
   box(.2,7.3,18,navy,x,3.7,0);
@@ -223,21 +225,38 @@ if(safe==="about"){
   textSign("DISCOVER",token.sub,token.x,1.26,-5.08,3.15,.87,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
   floating.push({group,symbol,base:3.45,phase:token.x});
  }
- // Holographic final destination, with honest, unlocked-only project descriptions.
- const portal=new THREE.Mesh(new THREE.TorusGeometry(1.7,.17,16,64),neon("#54e6db"));portal.position.set(0,3.45,-8.5);scene.add(portal);
- textSign("INNOVATION VAULT","EXPLORE ALL FOUR TO UNLOCK",0,1.05,-8.14,5.8,.85,{bg:"#152449",fg:"#f5f8ff",edge:"#60dccc"},"innovation");
- // Hoverboard rider is deliberately simple and original (no third-party game character).
+ // The central hologram has a purpose: a glowing AI core and unlock status.
+ const portal=new THREE.Mesh(new THREE.TorusGeometry(1.27,.16,16,64),neon("#54e6db"));portal.position.set(0,3.8,-8.53);scene.add(portal);
+ const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.77,1),neon("#f5c665"));core.position.set(0,3.8,-8.5);scene.add(core);
+ const coreHalo=new THREE.PointLight("#7aeaff",4,6);coreHalo.position.set(0,3.8,-8.2);scene.add(coreHalo);
+ textSign("AI CORE","FOUR DISCOVERIES",0,3.8,-7.62,2.15,.9,{bg:"#122752",fg:"#fff5c8",edge:"#54e6db"});
+ // Keep the unlock instruction high above floating tokens, never hidden behind them.
+ textSign("INNOVATION VAULT","DISCOVER ALL 4 TO UNLOCK",0,5.34,-9.31,9.3,.8,{bg:"#17335a",fg:"#fff6d9",edge:"#f5c665"});
+
+ // Original human game character: proportioned head, hair, face, jacket, arms, legs and sneakers.
  const rider=new THREE.Group();scene.add(rider);
- const board=box(1.6,.16,.85,neon("#ffad51"),0,0,0,rider);
- box(.65,.63,.5,mat("#e8f0fa"),0,.62,0,rider);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),mat("#f7bd89"));head.position.y=1.2;rider.add(head);
- const visor=box(.5,.17,.2,neon("#59d9ff"),0,1.25,.26,rider);
+ const skin=mat("#d9966b"),hair=mat("#272034"),jacket=mat("#ffad42"),pants=mat("#314b9b"),shoe=mat("#f6f8ff");
+ box(1.45,.13,.85,neon("#43d6fa"),0,.05,0,rider); // hoverboard
+ box(.67,.92,.38,jacket,0,1.28,0,rider); // torso
+ box(.72,.13,.41,mat("#f8d264"),0,1.68,0,rider); // jacket collar
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.38,24,16),skin);head.position.set(0,2.02,0);rider.add(head);
+ const hairCap=new THREE.Mesh(new THREE.SphereGeometry(.39,24,12,0,Math.PI*2,0,Math.PI*.49),hair);hairCap.position.set(0,2.13,0);rider.add(hairCap);
+ for(const x of [-.14,.14]){box(.055,.055,.025,hair,x,2.04,.364,rider)}
+ box(.18,.045,.02,mat("#82452e"),0,1.86,.365,rider);
+ for(const x of [-.43,.43]){
+  const arm=box(.22,.75,.25,jacket,x,1.32,0,rider);arm.rotation.z=x>0?-.22:.22;
+  box(.21,.18,.22,skin,x*1.13,.9,.03,rider);
+ }
+ for(const x of [-.2,.2]){
+  box(.25,.69,.28,pants,x,.56,0,rider);
+  box(.33,.18,.47,shoe,x,.18,.13,rider);
+ }
  rider.position.set(0,.65,5.6);
- window.__aiQuestWorld={tokens,floating,portal,rider};
+ window.__aiQuestWorld={tokens,floating,portal,core,rider,aiLaneXs};
  window.__aiVaultAnimate=()=>{
   const t=performance.now()*.001;
   for(const item of floating){item.group.position.y=item.base+Math.sin(t*1.5+item.phase)*.17;item.group.rotation.y=Math.sin(t*.7+item.phase)*.23;item.symbol.position.y=item.group.position.y}
-  portal.rotation.z=t*.15;rider.position.y=.65+Math.sin(t*3)*.035;
+  portal.rotation.z=t*.15;core.rotation.y=t*.45;core.rotation.x=t*.2;rider.position.y=.65+Math.sin(t*3)*.035;
  };
 }else{
  // Four generously spaced contact stations: all props are real raycast targets.
@@ -275,7 +294,7 @@ if(safe==="about"){
 }
 if(safe==="ai"){
  const hud=document.createElement("section");hud.id="aiQuestHud";hud.className="ai-quest-hud";hud.setAttribute("aria-label","AI Quest controls");
- hud.innerHTML='<div class="ai-quest-top"><strong>⚡ AI QUEST</strong><span id="aiQuestProgress" role="status">0 / 4 DISCOVERED</span></div><div class="ai-quest-controls"><button type="button" id="aiQuestTour">▶ GUIDED JOURNEY</button><button type="button" id="aiQuestPlay">🎮 PLAY CHALLENGE</button><button type="button" id="aiQuestExit" hidden>■ EXIT MODE</button></div><p id="aiQuestHint">Choose a mode or tap a glowing collectible.</p><div class="ai-quest-move" hidden><button type="button" data-move="-1" aria-label="Move left">◀ LEFT</button><button type="button" data-move="1" aria-label="Move right">RIGHT ▶</button></div>';
+ hud.innerHTML='<div class="ai-quest-top"><strong>⚡ AI QUEST</strong><span id="aiQuestProgress" role="status">0 / 4 DISCOVERED</span></div><div class="ai-quest-controls"><button type="button" id="aiQuestTour">▶ GUIDED JOURNEY</button><button type="button" id="aiQuestPlay">🎮 PLAY CHALLENGE</button><button type="button" id="aiQuestExit" hidden>■ EXIT MODE</button><button type="button" id="aiQuestSound" aria-pressed="false">🔇 SOUND OFF</button></div><p id="aiQuestHint">Choose a mode or tap a glowing collectible.</p><div class="ai-quest-move" hidden><button type="button" data-move="-1" aria-label="Move left">◀ LEFT</button><button type="button" data-move="1" aria-label="Move right">RIGHT ▶</button></div>';
  document.body.append(hud);
  const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="ai-quest-shortcuts";quick.setAttribute("aria-label","AI collectibles");
  for(const [key,label] of [["openai","OpenAI"],["claude","Claude"],["hackathon","Hackathon"],["innovation","Innovations"]]){
@@ -330,30 +349,54 @@ function updateJourney(now){
 // Guided cinematic tour and optional keyboard/touch challenge.
 const aiKeys=["openai","claude","hackathon","innovation"];
 let aiMode="idle",aiStart=0,aiLane=1,aiProgress=0,aiCollected=new Set(),aiLast=0;
+let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
 const aiReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function aiQuestDiscover(key){
  if(!aiHud||!aiKeys.includes(key))return;
  aiCollected.add(key);
  aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";
- if(aiCollected.size===4){aiHud.querySelector("#aiQuestHint").textContent="✨ VAULT UNLOCKED · Explore the Innovation Vault!";aiHud.classList.add("ai-vault-unlocked")}
+ aiSound("collect");
+ if(aiCollected.size===4){aiSound("unlock");aiHud.querySelector("#aiQuestHint").textContent="✨ VAULT UNLOCKED · Explore the Innovation Vault!";aiHud.classList.add("ai-vault-unlocked")}
+}
+// Sound is opt-in; no autoplay or downloaded audio assets.
+function aiSound(kind){
+ if(!aiAudioEnabled)return;
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx)return;
+  aiAudioContext??=new AudioCtx();
+  if(aiAudioContext.state==="suspended")aiAudioContext.resume();
+  const now=aiAudioContext.currentTime;
+  const notes=kind==="unlock"?[523,659,784,1047]:kind==="collect"?[659,988]:kind==="move"?[330]:[440,554];
+  notes.forEach((hz,i)=>{
+   const osc=aiAudioContext.createOscillator(),gain=aiAudioContext.createGain();
+   osc.type="sine";osc.frequency.setValueAtTime(hz,now+i*.095);
+   gain.gain.setValueAtTime(.0001,now+i*.095);
+   gain.gain.exponentialRampToValueAtTime(.055,now+i*.095+.015);
+   gain.gain.exponentialRampToValueAtTime(.0001,now+i*.095+.16);
+   osc.connect(gain).connect(aiAudioContext.destination);
+   osc.start(now+i*.095);osc.stop(now+i*.095+.17);
+  });
+ }catch(_error){/* Audio is optional; game stays playable. */}
 }
 function aiSetMode(mode){
  if(!aiHud)return;
- aiMode=mode;aiStart=performance.now();aiLast=0;aiLane=1;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
+ aiMode=mode;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=1;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
  aiHud.querySelector("#aiQuestTour").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestPlay").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestExit").hidden=mode==="idle";
  aiHud.querySelector(".ai-quest-move").hidden=mode!=="play";
- aiHud.querySelector("#aiQuestHint").textContent=mode==="tour"?"Cinematic tour · Select a collectible to pause and read":mode==="play"?"Use ← → or touch controls to collect four AI coins.":"Choose a mode or tap a glowing collectible.";
+ aiHud.querySelector("#aiQuestHint").textContent=mode==="tour"?"Cinematic tour · Select a collectible to pause and read":mode==="play"?"Four tracks · Use ← → or touch to switch lanes and collect coins.":"Choose a mode or tap a glowing collectible.";
  if(mode==="idle"){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20;window.__aiQuestWorld?.rider.position.set(0,.65,5.6)}
 }
 if(aiHud){
  aiHud.querySelector("#aiQuestTour").onclick=()=>aiSetMode("tour");
  aiHud.querySelector("#aiQuestPlay").onclick=()=>aiSetMode("play");
  aiHud.querySelector("#aiQuestExit").onclick=()=>aiSetMode("idle");
- aiHud.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{aiLane=THREE.MathUtils.clamp(aiLane+Number(b.dataset.move),0,2)});
- window.addEventListener("keydown",e=>{if(aiMode!=="play"||dialog.open)return;if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();aiLane=Math.max(0,aiLane-1)}if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();aiLane=Math.min(2,aiLane+1)}if(e.key==="Escape")aiSetMode("idle")});
+ aiHud.querySelector("#aiQuestSound").onclick=()=>{aiAudioEnabled=!aiAudioEnabled;const b=aiHud.querySelector("#aiQuestSound");b.textContent=aiAudioEnabled?"🔊 SOUND ON":"🔇 SOUND OFF";b.setAttribute("aria-pressed",String(aiAudioEnabled));if(aiAudioEnabled)aiSound("start")};
+ aiHud.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{aiLane=THREE.MathUtils.clamp(aiLane+Number(b.dataset.move),0,3);aiSound("move")});
+ window.addEventListener("keydown",e=>{if(aiMode!=="play"||dialog.open)return;if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();aiLane=Math.max(0,aiLane-1);aiSound("move")}if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();aiLane=Math.min(3,aiLane+1);aiSound("move")}if(e.key==="Escape")aiSetMode("idle")});
  dialog.addEventListener("close",()=>{if(aiMode==="tour")aiStart=performance.now()-aiProgress*26000});
 }
 function updateAiQuest(now){
@@ -372,13 +415,13 @@ function updateAiQuest(now){
  }else{
   const dt=Math.min((now-(aiLast||now))/1000,.06);aiLast=now;
   aiProgress=Math.min(aiProgress+dt/26,1);
-  const lanes=[-5.7,0,5.7],targetX=lanes[aiLane];
+  const lanes=world.aiLaneXs,targetX=lanes[aiLane];
   world.rider.position.x+=(targetX-world.rider.position.x)*.14;
   world.rider.position.z=5.6-aiProgress*12.4;
   camera.position.lerp(new THREE.Vector3(world.rider.position.x,4.1,world.rider.position.z+6.2),.11);
   camera.lookAt(world.rider.position.x,2.2,world.rider.position.z-5.5);
   // Four encounter checkpoints: lane choices select a collectible.
-  const milestones=[.2,.4,.6,.8],keys=aiKeys,required=[0,2,1,2];
+  const milestones=[.2,.4,.6,.8],keys=aiKeys,required=[0,1,2,3];
   for(let i=0;i<4;i++){
    if(aiProgress>=milestones[i]&&!world["checkpoint"+i]){
     world["checkpoint"+i]=true;
