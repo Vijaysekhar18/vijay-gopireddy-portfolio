@@ -64,6 +64,11 @@ with sync_playwright() as p:
         page.locator("#aiQuestTour").click()
         assert page.locator("#aiQuestExit").is_visible()
         page.locator("#aiQuestExit").click()
+        assert page.locator("#aiQuestSound").get_attribute("aria-pressed")=="false"
+        page.locator("#aiQuestSound").click()
+        assert page.locator("#aiQuestSound").get_attribute("aria-pressed")=="true"
+        page.locator("#aiQuestSound").click()
+        assert page.locator("#aiQuestSound").get_attribute("aria-pressed")=="false"
         page.locator("#aiQuestPlay").click()
         assert page.locator(".ai-quest-move").is_visible()
         page.locator('[data-move="1"]').click()
