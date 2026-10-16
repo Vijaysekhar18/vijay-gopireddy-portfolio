@@ -81,6 +81,7 @@ with sync_playwright() as p:
         errors=[]
         page.on("pageerror",lambda err: errors.append(str(err)))
         page.goto(URL+"work.html",wait_until="domcontentloaded")
+        page.locator(".company-drawer summary").click()
         page.locator("#companyExhibits button").first.wait_for()
         assert page.locator("#companyExhibits button").count()==5
         page.locator('[data-company="td"]').click()
