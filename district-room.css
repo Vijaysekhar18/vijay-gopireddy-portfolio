@@ -12,3 +12,8 @@
 #districtDialog::backdrop{backdrop-filter:blur(5px)}
 .district-body:has(#districtTitle:not(:empty)) #districtScene{isolation:isolate}
 @media(max-width:600px){.coffee-menu a{align-items:flex-start;flex-direction:column;gap:5px}}
+
+.cafe-quick-actions{position:fixed;bottom:83px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:min(780px,92vw);pointer-events:auto}
+.cafe-quick-actions button{border:1px solid #b58e5c;border-radius:99px;padding:9px 13px;background:#fff5dfec;color:#293d3e;font-size:11px;font-weight:800;box-shadow:0 4px 15px #221a1026;cursor:pointer;transition:background .15s,transform .15s}
+.cafe-quick-actions button:hover,.cafe-quick-actions button:focus-visible{background:#ffe1a1;transform:translateY(-2px);outline:2px solid #795e3f}
+@media(max-width:600px){.cafe-quick-actions{bottom:70px;gap:5px}.cafe-quick-actions button{font-size:10px;padding:7px 9px}}
