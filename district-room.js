@@ -329,13 +329,16 @@ if(safe==="about"){
 }
 if(safe==="ai"){
  const hud=document.createElement("section");hud.id="aiQuestHud";hud.className="ai-quest-hud";hud.setAttribute("aria-label","AI Quest controls");
- hud.innerHTML='<div class="ai-quest-top"><strong>⚡ AI QUEST</strong><span id="aiQuestProgress" role="status">0 / 4 DISCOVERED</span></div><div class="ai-quest-controls"><button type="button" id="aiQuestTour">▶ GUIDED JOURNEY</button><button type="button" id="aiQuestPlay">🎮 PLAY CHALLENGE</button><button type="button" id="aiQuestExit" hidden>■ EXIT MODE</button><button type="button" id="aiQuestSound" aria-pressed="false">🔇 SOUND OFF</button></div><p id="aiQuestHint">Choose a mode or tap a glowing collectible.</p><div class="ai-quest-move" hidden><button type="button" data-move="-1" aria-label="Move left">◀ LEFT</button><button type="button" data-move="1" aria-label="Move right">RIGHT ▶</button></div>';
+ hud.innerHTML='<div class="ai-quest-top"><strong>⚡ AI QUEST</strong><span id="aiQuestProgress" role="status">0 / 4 DISCOVERED</span></div><div class="ai-quest-controls"><button type="button" id="aiQuestTour">▶ GUIDED JOURNEY</button><button type="button" id="aiQuestPlay">🎮 PLAY CHALLENGE</button><button type="button" id="aiQuestExit" hidden>■ EXIT MODE</button><button type="button" id="aiQuestSound" aria-pressed="false">🔇 SOUND OFF</button></div><p id="aiQuestHint">Choose a mode or tap a glowing collectible.</p><div class="ai-passport-title">ACHIEVEMENT PASSPORT · 4 CHECKPOINTS</div><div id="aiQuestPassport" class="ai-quest-passport"></div><button type="button" id="aiQuestVaultButton" hidden>✦ OPEN AI VAULT</button><div class="ai-quest-move" hidden><button type="button" data-move="-1" aria-label="Move left">◀ LEFT</button><button type="button" data-move="1" aria-label="Move right">RIGHT ▶</button></div>';
  document.body.append(hud);
  const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="ai-quest-shortcuts";quick.setAttribute("aria-label","AI collectibles");
  for(const [key,label] of [["openai","OpenAI"],["claude","Claude"],["hackathon","Hackathon"],["innovation","Innovations"]]){
   const button=document.createElement("button");button.type="button";button.dataset.collectible=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
  }
  document.body.append(quick);
+ const vault=document.createElement("section");vault.id="aiQuestVault";vault.className="ai-quest-vault";vault.hidden=true;
+ vault.innerHTML='<div class="ai-vault-header"><strong id="aiVaultStatus">AI VAULT UNLOCKED</strong><button type="button" id="aiVaultClose" aria-label="Close AI Vault">✕</button></div><p>Explore practical engineering experiments with synthetic sample data.</p><div class="ai-vault-actions"><button type="button" data-demo="api">COMPARE API RESPONSES</button><button type="button" data-demo="xpath">EXTRACT SELECTORS</button><a href="https://aiinsights80.wordpress.com/" target="_blank" rel="noopener noreferrer">AI FIELD NOTES ↗</a></div><pre id="aiDemoOutput" aria-live="polite">Select a demo to inspect how it works.</pre><button type="button" id="aiVaultReplay">↻ REPLAY QUEST</button>';
+ document.body.append(vault);
 }
 if(safe==="contact"){
  const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
@@ -386,6 +389,39 @@ const aiKeys=["openai","claude","hackathon","innovation"];
 let aiMode="idle",aiStart=0,aiLane=0,aiProgress=0,aiCollected=new Set(),aiLast=0,aiReturnAt=0,aiStage=0,aiStageHold=0,aiVaultOpen=false;
 let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
+const aiPassport=aiHud?.querySelector("#aiQuestPassport");
+const aiPassportLabels={openai:"OpenAI",claude:"Claude",hackathon:"Cognizant",innovation:"Innovation"};
+function aiRenderPassport(){
+ if(!aiPassport)return;
+ aiPassport.replaceChildren();
+ for(const key of aiKeys){
+  const button=document.createElement("button");button.type="button";button.className="ai-passport-stamp"+(aiCollected.has(key)?" earned":"");
+  button.textContent=(aiCollected.has(key)?"✓ ":"◇ ")+aiPassportLabels[key];
+  button.setAttribute("aria-label",aiPassportLabels[key]+(aiCollected.has(key)?" discovered":" not yet discovered"));
+  button.onclick=()=>openDetail(key);aiPassport.append(button);
+ }
+}
+function aiUnlockVault(){
+ if(aiVaultOpen)return;
+ aiVaultOpen=true;aiSound("unlock");aiHud?.classList.add("ai-vault-unlocked");
+ if(window.__aiQuestWorld){window.__aiQuestWorld.core.material.emissive.set("#ffe77d");window.__aiQuestWorld.core.scale.setScalar(1.3);window.__aiQuestWorld.coreHalo.color.set("#ffd27a")}
+ const vault=document.getElementById("aiQuestVault");
+ if(vault){vault.hidden=false;vault.querySelector("#aiVaultStatus").textContent="✨ AI QUEST COMPLETE · VAULT UNLOCKED"}
+ aiHud.querySelector("#aiQuestVaultButton").hidden=false;
+ aiHud.querySelector("#aiQuestHint").textContent="🏆 All four milestones unlocked! Explore the interactive demos in your Innovation Vault.";
+}
+function aiDemo(type){
+ const output=document.getElementById("aiDemoOutput");if(!output)return;
+ if(type==="api"){
+  const old={account:"DEMO-101",status:"ACTIVE",balance:1200},next={account:"DEMO-101",status:"ACTIVE",balance:1250};
+  const differences=Object.keys(old).filter(k=>old[k]!==next[k]).map(k=>k+": OLZ="+old[k]+" → NLZ="+next[k]);
+  output.textContent="SYNTHETIC API MIGRATION COMPARISON\\n"+JSON.stringify({oldLandingZone:old,newLandingZone:next},null,2)+"\\nDIFFERENCES: "+differences.join("; ");
+ }else{
+  const html='<main><button id="submit" data-testid="submit-order">Place Order</button></main>';
+  output.textContent="SYNTHETIC HTML\\n"+html+"\\nSUGGESTED SELECTORS\\n1. [data-testid=\\\"submit-order\\\"]\\n2. #submit\\n3. button:has-text(\\\"Place Order\\\")\\nDemo illustrates locator generation; no live AI service or client data.";
+ }
+}
+
 let aiCelebrationTimer=null;
 const aiReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function aiCelebrate(key){
@@ -402,9 +438,9 @@ function aiQuestDiscover(key){
  if(!aiHud||!aiKeys.includes(key))return;
  const isNew=!aiCollected.has(key);aiCollected.add(key);
  if(isNew)aiCelebrate(key);
- aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";
+ aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";aiRenderPassport();
  if(isNew)aiSound("collect");
- if(aiCollected.size===4){aiSound("unlock");aiHud.querySelector("#aiQuestHint").textContent="✨ VAULT UNLOCKED · Explore the Innovation Vault!";aiHud.classList.add("ai-vault-unlocked")}
+ if(aiCollected.size===4)aiUnlockVault();
 }
 // Sound is opt-in; no autoplay or downloaded audio assets.
 function aiSound(kind){
@@ -438,7 +474,12 @@ function aiSetMode(mode){
  if(mode==="idle"){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20;window.__aiQuestWorld?.rider.position.set(-8.2,.65,7.5)}
 }
 if(aiHud){
+ aiRenderPassport();
  aiHud.querySelector("#aiQuestTour").onclick=()=>aiSetMode("tour");
+ document.querySelectorAll("[data-demo]").forEach(b=>b.onclick=()=>aiDemo(b.dataset.demo));
+ document.getElementById("aiVaultClose").onclick=()=>document.getElementById("aiQuestVault").hidden=true;
+ document.getElementById("aiVaultReplay").onclick=()=>{document.getElementById("aiQuestVault").hidden=true;aiSetMode("play")};
+ aiHud.querySelector("#aiQuestVaultButton").onclick=()=>{document.getElementById("aiQuestVault").hidden=false};
  aiHud.querySelector("#aiQuestPlay").onclick=()=>aiSetMode("play");
  aiHud.querySelector("#aiQuestExit").onclick=()=>aiSetMode("idle");
  aiHud.querySelector("#aiQuestSound").onclick=()=>{aiAudioEnabled=!aiAudioEnabled;const b=aiHud.querySelector("#aiQuestSound");b.textContent=aiAudioEnabled?"🔊 SOUND ON":"🔇 SOUND OFF";b.setAttribute("aria-pressed",String(aiAudioEnabled));if(aiAudioEnabled)aiSound("start")};
