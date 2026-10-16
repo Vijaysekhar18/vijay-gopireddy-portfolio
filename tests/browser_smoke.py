@@ -180,6 +180,13 @@ with sync_playwright() as p:
             page.goto(URL+path,wait_until="domcontentloaded")
             toggle=page.locator("#vsrQuickToggle")
             toggle.wait_for(state="visible")
+            if path.startswith("district.html") or path=="work.html":
+                reset=page.locator("#districtReset" if path.startswith("district.html") else "#roomReset")
+                bounds_a=toggle.bounding_box()
+                bounds_b=reset.bounding_box()
+                assert bounds_a and bounds_b, "Quick View or reset button is not visible"
+                overlaps=(bounds_a["x"] < bounds_b["x"]+bounds_b["width"] and bounds_a["x"]+bounds_a["width"] > bounds_b["x"] and bounds_a["y"] < bounds_b["y"]+bounds_b["height"] and bounds_a["y"]+bounds_a["height"] > bounds_b["y"])
+                assert not overlaps, f"Quick View overlaps Reset View on {path} at {width}px"
             toggle.click()
             assert toggle.get_attribute("aria-expanded")=="true"
             assert page.locator("#vsrQuickPanel").is_visible()
