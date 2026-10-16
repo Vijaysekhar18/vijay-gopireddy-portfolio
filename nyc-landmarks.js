@@ -39,20 +39,20 @@ export function addNYCLandmarks(city, interact){
   // copper stair flights and open hexagonal honeycomb; no billboard background.
   const bronze=m("#b66b38",{metalness:.62,roughness:.32}),edge=m("#e1a36a",{metalness:.55,roughness:.36});
   cyl(p,3.8,3.8,.55,stone,0,.13,0,24);
-  const sides=12,levels=9;
+  const sides=12,levels=12;
   for(let j=0;j<levels;j++){
    const low=1.0+j*.95,high=low+.95;
-   const r0=1.65+j*.24,r1=r0+.24;
+   const r0=1.25+j*.29,r1=r0+.29;
    for(let i=0;i<sides;i++){
     const a=2*Math.PI*i/sides,an=2*Math.PI*(i+1)/sides;
     const q0=[Math.cos(a)*r0,low,Math.sin(a)*r0],q1=[Math.cos(an)*r0,low,Math.sin(an)*r0];
     const q2=[Math.cos(a)*r1,high,Math.sin(a)*r1],q3=[Math.cos(an)*r1,high,Math.sin(an)*r1];
-    line(p,q0,q3,bronze,.115);line(p,q1,q2,edge,.105);
-    line(p,q2,q3,bronze,.10);
+    line(p,q0,q3,bronze,.21);line(p,q1,q2,edge,.19);
+    line(p,q2,q3,bronze,.16);
     // Thin stair treads on alternating flights, with open air between flights.
     if((i+j)%2===0)for(let k=1;k<=4;k++){
      const t=k/5,ang=a+(an-a)*t,r=r0+.24*t;
-     const tread=b(p,.56,.075,.16,edge,Math.cos(ang)*r,low+.95*t,Math.sin(ang)*r);
+     const tread=b(p,.72,.095,.24,edge,Math.cos(ang)*r,low+.95*t,Math.sin(ang)*r);
      tread.rotation.y=-ang;
     }
    }
@@ -136,7 +136,7 @@ export function addNYCLandmarks(city, interact){
    const height=19.2,width=height*crop.w/crop.h;
    const photo=new THREE.Sprite(material);photo.position.set(0,5.4+height/2,0);photo.scale.set(width,height,1);
    // Hide only the procedural statue once the real image is ready.
-   liberty.group.children.forEach((child,index)=>{child.visible=index<5});
+   liberty.group.children.forEach((child,index)=>{child.visible=index<6});
    liberty.group.add(photo);photo.userData.project="contact";interact.push(photo);
   },undefined,()=>{ /* Preserve the procedural statue when offline. */ });
  }
