@@ -14,6 +14,8 @@ with sync_playwright() as p:
         page.locator("#subwayToggle").click()
         assert page.locator("#subwayPanel").is_visible(),"Map did not open"
         assert page.locator("[data-station]").count()==5
+        assert page.locator("#subwayHoverCard").count()==1
+        assert page.locator("#subwayHoverCard").get_attribute("hidden") is not None
         page.screenshot(path=f"test-screenshots/subway-map-{width}.png",full_page=True)
         page.locator('[data-station="contact"]').click()
         page.locator("#arrivalPrompt").wait_for(state="visible",timeout=12000)
