@@ -540,7 +540,7 @@ function setServicesTour(active){
  servicesTourButton.textContent=active?"■ EXIT TOUR":"▶ GUIDED TOUR";
  servicesTourButton.setAttribute("aria-pressed",String(active));
  document.getElementById("servicesTourStatus").textContent=active?"Guided tour running · Select any exhibit to pause":"Select a station or start the guided tour.";
- if(!active){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20}
+ if(!active){desiredTheta=.12;desiredPhi=safe==="services"?1.12:1.38;desiredRadius=safe==="services"?(root.clientWidth<600?36:28):(root.clientWidth<600?30:20)}
 }
 function updateServicesTour(now){
  if(!servicesTour)return false;
@@ -765,10 +765,10 @@ function updateAiQuest(now){
  return true;
 }
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
-let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
-const target=new THREE.Vector3(0,2.6,-3.4);
+let theta=.12,phi=safe==="services"?1.12:1.38,radius=safe==="services"?28:20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
+const target=new THREE.Vector3(0,safe==="services"?3.0:2.6,safe==="services"?0:-3.4);
 function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
-function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
+function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(safe==="services"){if(mobile&&desiredRadius<33){desiredRadius=36;radius=36}}else if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
 let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
