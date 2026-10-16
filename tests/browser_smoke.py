@@ -79,9 +79,26 @@ with sync_playwright() as p:
         assert "OpenAI Technical Practitioner" in page.locator("#districtDetailBody").inner_text()
         assert "MILESTONE UNLOCKED" in page.locator("#aiQuestCelebration").inner_text()
         assert "1 / 4 DISCOVERED" in page.locator("#aiQuestProgress").inner_text()
+        assert page.locator("#aiQuestPassport .earned").count()==1
+        assert page.locator("#aiQuestVault").is_hidden()
+
         page.locator("#districtClose").click()
         page.locator('[data-collectible="hackathon"]').click()
         assert "Cognizant" in page.locator("#districtDetailTitle").inner_text()
+        page.locator("#districtClose").click()
+        page.locator('[data-collectible="claude"]').click()
+        page.locator("#districtClose").click()
+        page.locator('[data-collectible="innovation"]').click()
+        page.locator("#districtClose").click()
+        assert page.locator("#aiQuestPassport .earned").count()==4
+        assert page.locator("#aiQuestVault").is_visible()
+        page.locator('[data-demo="api"]').click()
+        assert "SYNTHETIC API MIGRATION COMPARISON" in page.locator("#aiDemoOutput").inner_text()
+        page.locator('[data-demo="xpath"]').click()
+        assert "SUGGESTED SELECTORS" in page.locator("#aiDemoOutput").inner_text()
+        page.locator("#aiVaultClose").click()
+        assert page.locator("#aiQuestVault").is_hidden()
+
         page.close()
     # Contact café links and coffee menu must be functional on desktop and mobile.
     for width,height in [(1440,900),(390,844)]:

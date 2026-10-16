@@ -57,3 +57,20 @@
 @keyframes ai-quest-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.75)}12%,73%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.07)}}
 @keyframes ai-quest-burst{0%{opacity:1;transform:rotate(var(--angle)) translateX(0)}75%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateX(180px)}}
 @media(prefers-reduced-motion:reduce){.ai-quest-celebration.celebrate{animation:ai-quest-pop 2.2s steps(1,end) both}.celebrate .ai-quest-spark{animation:none}}
+
+/* AI Quest v2: four-checkpoint passport and unlocked innovation demos */
+.ai-passport-title{font-size:10px;font-weight:900;letter-spacing:.09em;color:#b9e9f9;margin:13px 0 7px}
+.ai-quest-passport{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.ai-quest-hud .ai-passport-stamp{padding:8px 3px;font-size:9px;min-width:0;border-color:#4c6484;background:#1a2c47;color:#b8c9df;overflow-wrap:anywhere}
+.ai-quest-hud .ai-passport-stamp.earned{border-color:#ffe08b;background:#395a49;color:#fff8d6}
+.ai-quest-hud #aiQuestVaultButton{width:100%;margin-top:9px;background:#8d6520;color:#fff8e4;border-color:#f3cf7b}
+.ai-quest-vault{position:fixed;z-index:14;top:50%;left:50%;transform:translate(-50%,-50%);width:min(680px,94vw);max-height:80vh;overflow:auto;padding:24px;background:#0e2141f5;color:#f6fbff;border:2px solid #f5d27c;border-radius:20px;box-shadow:0 0 70px #000b;font-family:system-ui,sans-serif}
+.ai-quest-vault[hidden]{display:none}
+.ai-vault-header{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#ffe7a4;font-size:clamp(14px,2vw,21px);font-weight:900}
+.ai-quest-vault p{color:#c5ddec;line-height:1.55}
+.ai-vault-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ai-quest-vault button,.ai-vault-actions a{display:inline-block;background:#1c5074;color:white;border:1px solid #67dcea;border-radius:9px;padding:11px;font-weight:800;font-size:11px;text-decoration:none;cursor:pointer}
+.ai-quest-vault button:focus-visible,.ai-vault-actions a:focus-visible{outline:3px solid #ffe18b;outline-offset:2px}
+.ai-quest-vault pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;background:#071328;border:1px solid #3d6e8c;border-radius:10px;padding:14px;font-size:12px;line-height:1.6}
+.ai-quest-vault #aiVaultReplay{margin-top:10px;background:#7255a9}
+@media(max-width:760px){.ai-quest-hud{max-height:58vh;overflow:auto}.ai-quest-vault{padding:14px}.ai-quest-hud .ai-passport-stamp{font-size:8px}}
