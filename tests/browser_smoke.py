@@ -107,19 +107,19 @@ with sync_playwright() as p:
         page.locator("#districtTitle").wait_for(state="visible")
         assert page.locator("#districtTitle").inner_text()=="COFFEE & CONNECTIONS"
         page.locator('#contactQuickActions [data-contact="phone"]').click()
-        assert page.locator('#districtDetailBody a[href="tel:+17744860732"]').count()==1
+        assert "774-486-****" in page.locator("#districtDetailBody").inner_text()
+        assert page.locator('#districtDetailBody a[href^="tel:"]').count()==0
         page.locator("#districtClose").click()
-        page.locator('#contactQuickActions [data-contact="email"]').click()
-        assert page.locator('#districtDetailBody a[href^="mailto:vijay.shekar18@gmail.com"]').count()==1
-        page.locator("#districtClose").click()
-        page.locator('#contactQuickActions [data-contact="linkedin"]').click()
-        assert page.locator('#districtDetailBody a[target="_blank"]').count()==1
-        page.locator("#districtClose").click()
+        assert page.locator('#contactQuickActions [data-contact="email"]').get_attribute("href").startswith("mailto:vijay.sekhar18@gmail.com")
+        assert page.locator('#contactQuickActions [data-contact="linkedin"]').get_attribute("href")=="https://www.linkedin.com/in/vijaygopireddy/"
+        assert page.locator('#contactQuickActions [data-contact="copy"]').count()==1
+        page.locator('#contactQuickActions [data-contact="email"]').evaluate("(el) => el.getBoundingClientRect().height >= 44")
         page.locator('#contactQuickActions [data-contact="location"]').click()
         assert "New York, NY" in page.locator("#districtDetailBody").inner_text()
         page.locator("#districtClose").click()
         page.locator('#contactQuickActions [data-contact="menu"]').click()
         assert page.locator(".coffee-menu a").count()==3
+        assert page.locator('.coffee-menu a[href^="mailto:vijay.sekhar18@gmail.com"]').count()==2
         page.screenshot(path=f"test-screenshots/cafe-interactions-{width}.png",full_page=True)
         page.close()
     # Verify the decorative train moves while the map is open, and stops after closing.
