@@ -7,7 +7,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color("#c9c0aa");scene.
 const camera=new THREE.OrthographicCamera(-27,27,17,-17,.1,300);const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.9;mount.appendChild(renderer.domElement);
 const ambient=new THREE.HemisphereLight("#fff7e2","#837e6c",2.7);scene.add(ambient);const sun=new THREE.DirectionalLight("#fff5d5",3.1);sun.position.set(-22,42,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-55;sun.shadow.camera.right=55;sun.shadow.camera.top=55;sun.shadow.camera.bottom=-55;sun.shadow.bias=-.0003;scene.add(sun);
 const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.92,metalness:0,...extra});const M={ground:mat("#c7bda5"),road:mat("#817e70"),lane:mat("#e3dbc3"),sidewalk:mat("#b1a996"),roof:mat("#888677"),white:mat("#e2d9c3"),stone:mat("#b6b1a0"),dark:mat("#313d3c"),glass:mat("#263438"),gold:mat("#e8b21b"),goldSide:mat("#c59112"),green:mat("#6a9a4c"),tree:mat("#669b4d"),trunk:mat("#725b41"),water:mat("#6c9f9b"),glow:mat("#fff078",{emissive:"#f8ce27",emissiveIntensity:.7})};
-const city=new THREE.Group();scene.add(city);const interact=[];const points={about:new THREE.Vector3(-13,100,3),cloud:new THREE.Vector3(-1,13,2),automation:new THREE.Vector3(11,15,-3),ai:new THREE.Vector3(1,9,-13),contact:new THREE.Vector3(16,8,11)};
+const city=new THREE.Group();scene.add(city);const interact=[];const points={about:new THREE.Vector3(1,13,-13),cloud:new THREE.Vector3(-1,13,2),automation:new THREE.Vector3(11,15,-3),ai:new THREE.Vector3(-13,12,3),contact:new THREE.Vector3(16,8,11)};
 function box(w,h,d,material,x,y,z,parent=city,cast=true){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=cast;mesh.receiveShadow=true;parent.add(mesh);return mesh}function cylinder(r1,r2,h,material,x,y,z,n=12){const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,n),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;city.add(mesh);return mesh}
 // Quiet continuous waterfront surrounding the 90x90 island, with a narrow border for mobile framing.
 const harborMat=new THREE.MeshBasicMaterial({color:"#3487a5",side:THREE.DoubleSide});
@@ -42,7 +42,7 @@ function tree(x,z,s=1){cylinder(.17*s,.22*s,2*s,M.trunk,x,1.1*s,z,8);const crown
 function streetlamp(x,z){cylinder(.065,.08,3.1,M.dark,x,1.55,z,7);box(.65,.15,.27,M.glow,x,3.15,z,city,false)}
 for(let i=0;i<135;i++){const gx=Math.floor(i/9),gz=i%9,x=-36+gx*5.2,z=-36+gz*8.7;if(roadCenters.some(r=>Math.abs(x-r)<3.2)||[-23,-8,7,22].some(r=>Math.abs(z-r)<3.2))continue;if(Math.abs(x)<18&&Math.abs(z)<19)continue;const h=2.5+random(i+14)*7.5;building(x,z,2.5+random(i+55)*1.5,3.2+random(i+23)*1.2,h,random(i+17)>.5?M.white:M.stone,i);if(i%4===0)tree(x+2.1,z+1.8,.75)}
 // Signature Manhattan landmarks: distinct yellow districts.
-building(-13,3,5,5,8.7,M.gold,201,"about");for(let k=0;k<4;k++){const ring=cylinder(2.9-k*.24,2.9-k*.24,.23,M.goldSide,-13,2+k*1.9,3,28);ring.userData.project="about";interact.push(ring)}cylinder(3.15,3.15,.35,M.gold,-13,9.2,3,24);
+building(-13,3,5,5,8.7,M.gold,201,"ai");for(let k=0;k<4;k++){const ring=cylinder(2.9-k*.24,2.9-k*.24,.23,M.goldSide,-13,2+k*1.9,3,28);ring.userData.project="about";interact.push(ring)}cylinder(3.15,3.15,.35,M.gold,-13,9.2,3,24);
 // A small stationary rooftop helicopter; only the rotors turn, preserving the calm city composition.
 const helicopter=new THREE.Group();helicopter.position.set(-13,9.65,3);helicopter.scale.setScalar(1.27);city.add(helicopter);
 const heliNavy=mat("#1d3651",{metalness:.22,roughness:.43}),heliGlass=mat("#79a8b8",{metalness:.2,roughness:.32}),heliGold=mat("#edc451");
@@ -61,7 +61,7 @@ heliPart(.09,.84,.08,heliGold,0,0,0,tailRotor);heliPart(.09,.08,.84,heliGold,0,0
 
 building(-1,2,5.4,5.3,14.2,M.gold,202,"cloud");box(4.1,1.5,4,M.goldSide,-1,15.1,2); // Extra roof accent below corrected separately
 building(11,-3,5.3,5.4,12.6,M.gold,203,"automation");box(4.5,.4,4.5,M.goldSide,11,13.3,-3);
-building(1,-13,6,5.3,10.6,M.gold,204,"ai");box(4,.4,3,M.goldSide,1,11.1,-13);
+building(1,-13,6,5.3,10.6,M.gold,204,"about");box(4,.4,3,M.goldSide,1,11.1,-13);
 building(16,11,4.5,5.1,8.3,M.gold,205,"contact");
 for(const [key,p]of Object.entries(points)){const sphere=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),M.glow);sphere.position.set(p.x,p.y+.8,p.z);sphere.userData.project=key;city.add(sphere);interact.push(sphere)}
 // Urban park with pond, trees and little bridge.
