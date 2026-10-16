@@ -182,6 +182,13 @@ if(safe==="about"){
 const dialog=document.getElementById("districtDialog");
 function openDetail(key){const d=content[key];if(!d)return;document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
 document.getElementById("districtClose").onclick=()=>dialog.close();
+if(safe==="about"){
+ const quick=document.createElement("nav");quick.id="aboutQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","About gallery exhibits");
+ for(const [key,label] of [["story","My Story"],["journey","Journey"],["credentials","Milestones"],["personal","Beyond Work"]]){
+  const button=document.createElement("button");button.type="button";button.dataset.about=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
+ }
+ document.body.append(quick);
+}
 if(safe==="contact"){
  const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
  for(const [key,label] of [["linkedin","in LinkedIn"],["email","✉ Email"],["phone","☎ Phone"],["location","⌖ New York"],["menu","☕ Coffee Menu"]]){
