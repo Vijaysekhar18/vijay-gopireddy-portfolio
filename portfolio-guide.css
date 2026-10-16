@@ -51,3 +51,27 @@ body.district-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle,
 body.room-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle{
  visibility:hidden;
 }
+
+/* Interior rooms: Quick View is anchored to the bottom-left, away from the
+   top navigation, AI HUD and the Reset View action on the opposite side. */
+body.district-body .vsr-quick-toggle,
+body.room-body .vsr-quick-toggle{
+ top:auto;
+ right:auto;
+ bottom:max(16px,env(safe-area-inset-bottom));
+ left:max(16px,env(safe-area-inset-left));
+}
+@media(max-width:760px){
+ body.district-body .vsr-quick-toggle,
+ body.room-body .vsr-quick-toggle{
+  top:auto;
+  right:auto;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  left:max(10px,env(safe-area-inset-left));
+  min-height:44px;
+  padding:10px 12px;
+ }
+}
+/* The instruction line previously occupied the same bottom-left location.
+   Instructions remain visible in the room heading. */
+body.district-body .district-bottom > span{display:none}
