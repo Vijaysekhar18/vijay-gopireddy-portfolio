@@ -185,6 +185,13 @@ with sync_playwright() as p:
                 bounds_a=toggle.bounding_box()
                 bounds_b=reset.bounding_box()
                 assert bounds_a and bounds_b, "Quick View or reset button is not visible"
+                assert bounds_a["x"] < 45 and bounds_a["y"] > height-110, f"Quick View not bottom-left on {path} at {width}px"
+                if path=="work.html":
+                    rail=page.locator(".room-nav").bounding_box()
+                    assert rail
+                    rail_overlap=(bounds_a["x"] < rail["x"]+rail["width"] and bounds_a["x"]+bounds_a["width"] > rail["x"] and bounds_a["y"] < rail["y"]+rail["height"] and bounds_a["y"]+bounds_a["height"] > rail["y"])
+                    assert not rail_overlap, f"Quick View overlaps WORK navigation at {width}px"
+
                 overlaps=(bounds_a["x"] < bounds_b["x"]+bounds_b["width"] and bounds_a["x"]+bounds_a["width"] > bounds_b["x"] and bounds_a["y"] < bounds_b["y"]+bounds_b["height"] and bounds_a["y"]+bounds_a["height"] > bounds_b["y"])
                 assert not overlaps, f"Quick View overlaps Reset View on {path} at {width}px"
             toggle.click()
