@@ -94,7 +94,7 @@ export function addNYCLandmarks(city, interact){
    const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.04});
    const photo=new THREE.Sprite(material);photo.position.set(0,12.5,0);photo.scale.set(17.4,24,1);
    // Hide only the procedural statue once the real image is ready.
-   liberty.group.children.forEach(child=>child.visible=false);
+   liberty.group.children.forEach((child,index)=>{child.visible=index<6});
    liberty.group.add(photo);photo.userData.project="contact";interact.push(photo);
   },undefined,()=>{ /* Preserve the procedural statue when offline. */ });
  }
