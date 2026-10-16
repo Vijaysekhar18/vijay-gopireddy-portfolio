@@ -442,6 +442,53 @@ if(safe==="contact"){
  quick.append(status);document.body.append(quick);
 }
 
+// SERVICES-only optional guided walkthrough, with direct-access exhibit controls.
+let servicesTour=false,servicesTourStart=0,servicesTourPaused=false;
+const servicesReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let servicesTourButton=null;
+function setServicesTour(active){
+ if(safe!=="services")return;
+ servicesTour=active;servicesTourStart=performance.now();servicesTourPaused=false;
+ servicesTourButton.textContent=active?"■ EXIT TOUR":"▶ GUIDED TOUR";
+ servicesTourButton.setAttribute("aria-pressed",String(active));
+ document.getElementById("servicesTourStatus").textContent=active?"Guided tour running · Select any exhibit to pause":"Select a station or start the guided tour.";
+ if(!active){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20}
+}
+function updateServicesTour(now){
+ if(!servicesTour)return false;
+ if(dialog.open){servicesTourStart+=Math.min(50,now-(window.__servicesLastTourTime||now));window.__servicesLastTourTime=now;return true}
+ window.__servicesLastTourTime=now;
+ const stops=window.__servicesStations||[];
+ if(!stops.length)return false;
+ const duration=servicesReducedMotion?16000:28000;
+ const p=Math.min((now-servicesTourStart)/duration,1);
+ const segment=Math.min(3,Math.floor(p*4)),local=Math.min(1,p*4-segment);
+ const from=stops[segment],to=stops[Math.min(segment+1,3)];
+ const smooth=local*local*(3-2*local);
+ const x=THREE.MathUtils.lerp(from.x,to.x,smooth);
+ const dest=new THREE.Vector3(x,servicesReducedMotion?4.4:4.6,servicesReducedMotion?6.7:6.0);
+ camera.position.lerp(dest,servicesReducedMotion?1:.055);
+ camera.lookAt(x,2.7,-4.4);
+ const status=document.getElementById("servicesTourStatus");
+ if(status)status.textContent="EXHIBIT 0"+(segment+1)+" / 04 · "+stops[segment].name+" · Select to explore";
+ if(p>=1)setServicesTour(false);
+ return true;
+}
+if(safe==="services"){
+ const hud=document.createElement("section");hud.id="servicesHud";hud.className="services-hud";hud.setAttribute("aria-label","Engineering Studio navigation");
+ hud.innerHTML='<div class="services-hud-title"><strong>✦ ENGINEERING STUDIO</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
+ document.body.append(hud);
+ servicesTourButton=hud.querySelector("#servicesTour");
+ servicesTourButton.onclick=()=>setServicesTour(!servicesTour);
+ hud.querySelector("#servicesTourExit").onclick=()=>setServicesTour(false);
+ const labels=[["automation","01 · Automation"],["quality","02 · Quality"],["cloud","03 · Cloud & Data"],["aiEngineering","04 · AI Engineering"]];
+ for(const [key,label] of labels){
+  const b=document.createElement("button");b.type="button";b.dataset.service=key;b.textContent=label;
+  b.onclick=()=>{if(servicesTour)setServicesTour(false);openDetail(key)};
+  hud.querySelector(".services-hud-grid").append(b);
+ }
+ dialog.addEventListener("close",()=>{if(servicesTour)window.__servicesLastTourTime=performance.now()});
+}
 // ABOUT-only cinematic camera tour. The train stays parked; camera glides past its windows.
 let journeyActive=false,journeyStart=0,journeyPausedAt=0,journeyButton=null;
 const journeyDuration=30000;
@@ -630,13 +677,13 @@ function updateAiQuest(now){
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
-function update(){if(updateAiQuest(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
+function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
 function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
-let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
+let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
 renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
-renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
-document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
-function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();window.__cafeAnimate?.();renderer.render(scene,camera)}animate();
+renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
+document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
+function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();window.__cafeAnimate?.();window.__servicesAnimate?.();renderer.render(scene,camera)}animate();
