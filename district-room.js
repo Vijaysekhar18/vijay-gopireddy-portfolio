@@ -216,15 +216,23 @@ if(safe==="about"){
  for(const token of tokens){
   const material=neon(token.color);
   const group=new THREE.Group();group.position.set(token.x,3.45,-3.6);scene.add(group);
-  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.28,48),material);coin.rotation.x=Math.PI/2;group.add(coin);
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(.88,.085,12,48),mat("#fff3d2"));ring.position.z=.18;group.add(ring);
+  // Visible geometry remains in place while external SVG loads or fails.
+  // Face the camera directly, and never hide the fallback disc.
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.28,48),material);
+  coin.rotation.x=Math.PI/2;group.add(coin);clickableProp(coin,token.key);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.92,.09,12,48),mat("#fff3d2"));ring.position.z=.22;group.add(ring);
   const art={openai:"assets/ai-chatgpt-badge.svg",claude:"assets/ai-claude-mark.svg",hackathon:"assets/ai-cognizant-mark.svg"}[token.key];
-  if(art){const texture=new THREE.TextureLoader().load(art);texture.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(2.18,2.18),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false}));face.position.z=.28;group.add(face);clickableProp(face,token.key);coin.visible=false;ring.visible=false;}
-  const symbol=textSign(token.name,token.sub,token.x,2.05,-3.23,2.55,.75,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
+  if(art){
+   const texture=new THREE.TextureLoader().load(art,()=>{coin.visible=false;ring.visible=false},undefined,()=>{coin.visible=true;ring.visible=true});
+   texture.colorSpace=THREE.SRGBColorSpace;
+   const face=new THREE.Mesh(new THREE.PlaneGeometry(2.5,2.5),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthTest:false,depthWrite:false}));
+   face.position.z=.52;face.renderOrder=10;group.add(face);clickableProp(face,token.key);
+  }
+  const symbol=textSign(token.name,token.sub,token.x,1.85,-2.9,2.55,.75,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
   clickableProp(coin,token.key);
   box(3.55,.18,2.1,neon(token.color),token.x,.42,-3.95);
   box(3.35,.3,1.9,navy,token.x,.65,-3.95);
-  textSign("DISCOVER",token.sub,token.x,1.18,-3.05,3.15,.87,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
+  textSign("DISCOVER",token.sub,token.x,.95,-2.75,3.15,.72,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
   floating.push({group,symbol,base:3.45,phase:token.x});
  }
  // The central hologram has a purpose: a glowing AI core and unlock status.
