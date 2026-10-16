@@ -38,6 +38,19 @@ with sync_playwright() as p:
         page.screenshot(path=f"test-screenshots/{room}.png",full_page=True)
         assert not errors, f"{room}: {errors}"
         page.close()
+    # ABOUT gallery exhibits should be accessible on both desktop and mobile.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height})
+        page.goto(URL+"district.html?room=about",wait_until="domcontentloaded")
+        page.locator("#aboutQuickActions button").first.wait_for()
+        assert page.locator("#districtTitle").inner_text()=="THE STORY GALLERY"
+        assert page.locator("#aboutQuickActions button").count()==4
+        page.locator('[data-about="journey"]').click()
+        assert "TD Bank" in page.locator("#districtDetailBody").inner_text()
+        page.locator("#districtClose").click()
+        page.locator('[data-about="personal"]').click()
+        assert "scuba diving" in page.locator("#districtDetailBody").inner_text()
+        page.close()
     # Contact café links and coffee menu must be functional on desktop and mobile.
     for width,height in [(1440,900),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height})
