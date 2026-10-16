@@ -65,7 +65,7 @@ const content={
  automation:{k:"SERVICES / 01 · AUTOMATION ARCHITECTURE",t:"Build Reliable Automation at Scale",html:'<p>Design maintainable test automation ecosystems for complex enterprise applications, not just individual scripts.</p><p><strong>Engineering capabilities:</strong> Playwright with TypeScript, Selenium with Java, TestNG, Cucumber, REST Assured, reusable components, API and UI coverage, CI/CD integration and flakiness reduction.</p><p><strong>Approach:</strong> risk-based coverage, test-data strategy, parallel execution, reporting, and reliable release gates.</p><p><a href="work.html">Explore engineering experience ↗</a></p>'},
  quality:{k:"SERVICES / 02 · QUALITY ENGINEERING",t:"Quality Strategy & Engineering Leadership",html:'<p>Lead quality across planning, delivery and production readiness, aligning engineering teams around measurable release confidence.</p><p><strong>Capabilities:</strong> enterprise test strategy, QA governance, cross-team coordination, performance testing with JMeter and LoadRunner, regression planning, defect triage and risk communication.</p><p><strong>Experience:</strong> end-to-end migration quality strategy across functional, API, data, performance and automation workstreams.</p><p><a href="work.html">See the WORK Studio ↗</a></p>'},
  cloud:{k:"SERVICES / 03 · CLOUD & DATA",t:"Cloud, API & Data Reliability",html:'<p>Validate modern event-driven, cloud-native and data-intensive systems across integration boundaries.</p><p><strong>Technology:</strong> AWS Lambda, Step Functions, Glue, EventBridge, S3, CloudWatch, Athena, Kafka/MSK, SQL, API validation and ETL reconciliation.</p><p><strong>Focus:</strong> data consistency, integration contracts, migration comparisons, pipeline observability and resilience testing.</p><p><a href="work.html">View cloud engineering experience ↗</a></p>'},
- aiEngineering:{k:"SERVICES / 04 · AI-POWERED ENGINEERING",t:"Practical AI Engineering & Innovation",html:'<p>Build targeted tools that remove repetitive engineering effort while retaining human review and quality ownership.</p><p><strong>Examples:</strong> API Migration Testing Tool for comparing old and new API responses across many combinations; AI-assisted XPath Extractor for element discovery; experimentation with Claude, MCP and Playwright-assisted workflows.</p><p>Project examples use synthetic data and do not expose client systems.</p><p><a href="district.html?room=ai">Explore the AI Lab ↗</a></p>'}
+ aiEngineering:{k:"SERVICES / 04 · AI-POWERED ENGINEERING",t:"Practical AI Engineering & Innovation",html:'<p>Build targeted tools that remove repetitive engineering effort while retaining human review and quality ownership.</p><p><strong>Examples:</strong> Three engineering tool concepts on this workbench: <strong>API Validation Tool</strong> for validating response contracts and data consistency; <strong>Test Case Generator</strong> for drafting reviewable test scenarios from requirements; and <strong>Automation Script Converter</strong> for assisting with migration between automation frameworks. These are showcase concepts, not live integrated services. Other hands-on work includes an API migration comparison utility and AI-assisted XPath extraction.</p><p>Project examples use synthetic data and do not expose client systems.</p><p><a href="district.html?room=ai">Explore the AI Lab ↗</a></p>'}
 };
 // Reusable low-poly furniture, built from shared materials and simple geometry.
 function chair(x,z,rotation=0,upholstery=accent){
@@ -292,11 +292,16 @@ if(safe==="about"){
    for(let j=0;j<4;j++){const dot=new THREE.Mesh(new THREE.SphereGeometry(.105,8,6),light);dot.position.set(st.x-1.4+j*.6,2.52,-3.7);scene.add(dot);packets.push(dot)}
    animated.push({type:"pipeline",packets,x:st.x});
   }else{
-   // AI workbench: floating geometry, dual tool terminals and a rotating knowledge ring.
+   // AI workbench: three conceptual tool terminals with a floating knowledge core.
    box(4.05,.22,1.65,steel,st.x,1.48,-3.7);
-   for(const dx of [-1.15,1.15]){
-    box(1.52,1.15,.12,navy,st.x+dx,2.63,-4.62);
-    textSign(dx<0?"API DIFF":"XPATH","TOOL DEMO",st.x+dx,2.65,-4.52,1.42,.91,{bg:"#2d2850",fg:"#fff",edge:st.color},st.key);
+   const aiTools=[
+    {dx:-1.31,title:"API",sub:"VALIDATION TOOL"},
+    {dx:0,title:"TEST CASE",sub:"GENERATOR"},
+    {dx:1.31,title:"SCRIPT",sub:"CONVERTER"}
+   ];
+   for(const tool of aiTools){
+    box(1.24,1.15,.12,navy,st.x+tool.dx,2.63,-4.62);
+    textSign(tool.title,tool.sub,st.x+tool.dx,2.65,-4.52,1.17,.91,{bg:"#2d2850",fg:"#fff",edge:st.color},st.key);
    }
    const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.62,1),light);orb.position.set(st.x,3.75,-3.76);scene.add(orb);clickableProp(orb,st.key);
    const ring=new THREE.Mesh(new THREE.TorusGeometry(.87,.065,12,48),cream);ring.position.copy(orb.position);scene.add(ring);
