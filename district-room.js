@@ -380,7 +380,7 @@ function updateJourney(now){
 }
 // Guided cinematic tour and optional keyboard/touch challenge.
 const aiKeys=["openai","claude","hackathon","innovation"];
-let aiMode="idle",aiStart=0,aiLane=1,aiProgress=0,aiCollected=new Set(),aiLast=0;
+let aiMode="idle",aiStart=0,aiLane=1,aiProgress=0,aiCollected=new Set(),aiLast=0,aiReturnAt=0;
 let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
 let aiCelebrationTimer=null;
@@ -426,7 +426,7 @@ function aiSound(kind){
 }
 function aiSetMode(mode){
  if(!aiHud)return;
- aiMode=mode;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=1;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
+ aiMode=mode;aiReturnAt=0;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=1;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
  aiHud.querySelector("#aiQuestTour").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestPlay").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestExit").hidden=mode==="idle";
@@ -445,6 +445,7 @@ if(aiHud){
 }
 function updateAiQuest(now){
  if(aiMode==="idle"||!window.__aiQuestWorld)return false;
+ if(aiMode==="play"&&aiReturnAt){if(now>=aiReturnAt){aiSetMode("idle");aiHud.querySelector("#aiQuestHint").textContent="Milestone reached! Start another run to discover more.";}return true;}
  if(dialog.open){aiStart+=Math.min(now-(aiLast||now),60);aiLast=now;return true;}
  const world=window.__aiQuestWorld,elapsed=(now-aiStart)/1000;
  if(aiMode==="tour"){
@@ -464,16 +465,19 @@ function updateAiQuest(now){
   world.rider.position.z=5.6-aiProgress*12.4;
   camera.position.lerp(new THREE.Vector3(world.rider.position.x,4.1,world.rider.position.z+6.2),.11);
   camera.lookAt(world.rider.position.x,2.2,world.rider.position.z-5.5);
-  // Four encounter checkpoints: lane choices select a collectible.
-  const milestones=[.2,.4,.6,.8],keys=aiKeys,required=[0,1,2,3];
-  for(let i=0;i<4;i++){
-   if(aiProgress>=milestones[i]&&!world["checkpoint"+i]){
-    world["checkpoint"+i]=true;
-    if(aiLane===required[i]){openDetail(keys[i]);aiHud.querySelector("#aiQuestHint").textContent="✨ "+keys[i].toUpperCase()+" COLLECTED!";}
-    else aiHud.querySelector("#aiQuestHint").textContent="Missed a collectible · Try another lane or tap its shortcut.";
-   }
+  // Physical collection: stop at the display plane instead of driving through it.
+  // A run collects the chosen lane's badge; a new run starts from the entrance.
+  const badgeZ=-3.6,stopZ=badgeZ+1.65;
+  if(world.rider.position.z<=stopZ){
+   world.rider.position.z=stopZ;
+   world.rider.position.x=targetX;
+   const key=aiKeys[aiLane];
+   aiProgress=(5.6-stopZ)/12.4;
+   openDetail(key);
+   aiHud.querySelector("#aiQuestHint").textContent="✨ "+key.toUpperCase()+" COLLECTED · RETURNING TO START";
+   aiReturnAt=now+2100;
   }
-  if(aiProgress>=1){aiSetMode("idle");aiHud.querySelector("#aiQuestHint").textContent="Run complete! Replay or explore the collectibles below.";}
+
  }
  return true;
 }
