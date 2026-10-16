@@ -2,7 +2,7 @@ import * as THREE from "https://esm.sh/three@0.170.0";
 const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
- about:{title:"THE STORY GALLERY",kicker:"01 / ABOUT",subtitle:"From Hyderabad to New York · Engineering, curiosity and the journey between",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
+ about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
  services:{title:"SPACE RESERVED",kicker:"03 / SERVICES",subtitle:"A new district is being designed. Explore the room for now.",wall:"#e3ddd0",floor:"#aaa89d",accent:"#d8ad59"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
@@ -102,53 +102,52 @@ function libertySculpture(x,z){
 }
 
 if(safe==="about"){
- // Museum-like composition: four readable exhibits, one central sculptural bench, generous open floor.
- const galleryWalnut=mat("#624b3c"),galleryBrass=mat("#b99b69"),galleryInk=mat("#293d45");
- const galleryPaper=mat("#f4ead7");
- function galleryCard(title,sub,x,y,z,w,h,action){
-  box(w+.19,h+.2,.15,galleryWalnut,x,y,z);
-  box(w+.08,h+.09,.16,galleryBrass,x,y,z+.085);
-  textSign(title,sub,x,y,z+.18,w,h,{bg:"#f6eddf",fg:"#34454b",edge:"#c3a578"},action);
-  const light=new THREE.SpotLight("#ffe8bc",7,6,.5,.7);
-  light.position.set(x,y+1.6,z+1.6);scene.add(light);
+ // NYC Story Station: a tiled subway concourse, transit board, route tokens and turnstiles.
+ const navy=mat("#203e50"),tile=mat("#e7e0d1"),brass=mat("#d8aa57"),rail=mat("#77848b"),terracotta=mat("#b86b53");
+ // Ceramic subway tile rhythm and brass grout along the rear wall.
+ for(let y=.65;y<7.6;y+=.68)for(let x=-11.6;x<11.8;x+=1.28){
+  box(1.23,.62,.045,(Math.round(x*3+y*2)%7===0)?mat("#d5d8d0"):tile,x,y,-9.73);
  }
- // Three large framed exhibits on the rear wall.
- galleryCard("MY STORY","ENGINEER · EXPLORER · BUILDER",-7.45,4.35,-9.44,5.1,2.35,"story");
- galleryCard("MY JOURNEY","HYDERABAD → NEW YORK",0,4.35,-9.44,5.1,2.35,"journey");
- galleryCard("MILESTONES","AWARDS & LEARNING",7.45,4.35,-9.44,5.1,2.35,"credentials");
- // A fourth framed exhibit on a low reading lectern.
- box(5.2,.2,2.2,galleryWalnut,0,1.17,2.5);
- box(4.8,.12,1.9,galleryBrass,0,1.31,2.5);
- box(.25,1.2,1.4,galleryWalnut,-1.85,.6,2.5);box(.25,1.2,1.4,galleryWalnut,1.85,.6,2.5);
- const personalLabel=textSign("BEYOND WORK","TRAVEL · FOOD · CURIOSITY",0,1.7,3.05,3.95,.95,{bg:"#f4ead7",fg:"#34454b",edge:"#c3a578"},"personal");
- personalLabel.rotation.x=-.45;
- // Signature quiet seating, rather than cluttered display stands.
- chair(-5.2,3.2,.18,galleryWalnut);chair(5.2,3.2,-.18,galleryWalnut);
- planter(-10,6.5);planter(10,6.5);
- // Editorial headline on the rear upper wall.
- textSign("VIJAY SEKHAR REDDY","A STORY STILL BEING WRITTEN",0,7.1,-9.55,10.5,.82,{bg:"#efe1c8",fg:"#4b4139",edge:"#b99b69"});
- // Two original architectural prints, each positioned on an opposite side wall.
- function cityPrint(city){
-  const c=document.createElement("canvas");c.width=640;c.height=800;const g=c.getContext("2d");
-  const sky=g.createLinearGradient(0,0,0,800);sky.addColorStop(0,city==="nyc"?"#28495c":"#698b91");sky.addColorStop(1,"#f1c99b");g.fillStyle=sky;g.fillRect(0,0,640,800);
-  g.fillStyle="#f8e2b4";g.beginPath();g.arc(480,150,65,0,Math.PI*2);g.fill();
-  if(city==="nyc"){
-   for(let i=0;i<24;i++){const x=i*28,h=130+i*53%240;g.fillStyle=i%2?"#304b58":"#46606b";g.fillRect(x,630-h,27,h)}
-   g.fillStyle="#273f50";g.fillRect(285,200,62,430);g.fillRect(304,155,25,55);g.fillRect(315,100,4,58);
-  }else{
-   g.fillStyle="#d6a77d";g.fillRect(145,355,350,285);
-   for(const x of [140,500]){g.fillStyle="#efc79a";g.fillRect(x-30,210,60,430);g.fillStyle="#b17f59";for(const y of [285,420,550])g.fillRect(x-38,y,76,14);g.fillStyle="#e5ba8c";g.beginPath();g.arc(x,205,36,Math.PI,0);g.fill()}
-   g.fillStyle="#996b51";for(const x of [245,395]){g.beginPath();g.arc(x,485,53,Math.PI,0);g.fill();g.fillRect(x-53,485,106,155)}
-  }
-  g.fillStyle="#f6ecdc";g.fillRect(0,665,640,135);g.textAlign="center";g.fillStyle="#40505a";g.font="bold 42px Georgia";g.fillText(city==="nyc"?"NEW YORK":"HYDERABAD",320,725);g.font="20px Arial";g.fillText(city==="nyc"?"THE CITY OF IDEAS":"CHARMINAR · ROOTS",320,761);
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide});
+ // Dark enamel NYC station fascia with classic route medallions.
+ box(22.6,1.1,.18,navy,0,7.15,-9.65);
+ textSign("VSR EXPRESS","THE STORY STATION  ·  HYDERABAD  ↔  NEW YORK",0,7.15,-9.52,15.5,.85,{bg:"#203e50",fg:"#fff4d6",edge:"#d5ab59"});
+ // Four station stops arranged as a coherent route on a large destination board.
+ box(21.8,3.85,.28,navy,0,4.48,-9.36);
+ const stops=[
+  {x:-8.1,code:"H",name:"ROOTS",sub:"HYDERABAD",key:"story",color:"#e3ad48"},
+  {x:-2.7,code:"N",name:"JOURNEY",sub:"NEW YORK",key:"journey",color:"#70a8be"},
+  {x:2.7,code:"A",name:"MILESTONES",sub:"AWARDS & LEARNING",key:"credentials",color:"#a7c18e"},
+  {x:8.1,code:"X",name:"BEYOND WORK",sub:"LIFE & CURIOSITY",key:"personal",color:"#d18b78"}
+ ];
+ box(17,.075,.09,brass,0,4.78,-9.09);
+ for(const stop of stops){
+  const disc=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.13,48),mat(stop.color));
+  disc.rotation.x=Math.PI/2;disc.position.set(stop.x,4.78,-8.94);scene.add(disc);clickableProp(disc,stop.key);
+  textSign(stop.code,"",stop.x,4.78,-8.85,.75,.75,{bg:stop.color,fg:"#1c2f39",edge:"#f4e2b7"},stop.key);
+  textSign(stop.name,stop.sub,stop.x,3.55,-9.08,4.8,1.28,{bg:"#243e4d",fg:"#f9edcf",edge:stop.color},stop.key);
  }
- function sideFrame(x,rotation,city){
-  const g=new THREE.Group();g.position.set(x,4.4,-1.6);g.rotation.y=rotation;scene.add(g);
-  box(3.8,4.65,.15,galleryWalnut,0,0,0,g);
-  const print=new THREE.Mesh(new THREE.PlaneGeometry(3.53,4.38),cityPrint(city));print.position.z=.09;g.add(print);
+ // Four floor-level subway navigation markers create the game-like discovery path.
+ for(const [i,stop] of stops.entries()){
+  const token=new THREE.Mesh(new THREE.TorusGeometry(.55,.13,10,40),mat(stop.color));token.rotation.x=Math.PI/2;token.position.set(stop.x,.08,1.8+(i%2)*1.5);scene.add(token);
  }
- sideFrame(-11.75,Math.PI/2,"hyd");sideFrame(11.75,-Math.PI/2,"nyc");
+ // Vintage station clock and a compact ticket kiosk, with the floor mostly open.
+ const clockFace=new THREE.Mesh(new THREE.CircleGeometry(.76,40),new THREE.MeshBasicMaterial({color:"#fff1d8"}));
+ clockFace.position.set(0,5.95,-9.03);scene.add(clockFace);
+ const clockRim=new THREE.Mesh(new THREE.TorusGeometry(.77,.08,8,40),brass);clockRim.position.set(0,5.95,-8.99);scene.add(clockRim);
+ for(let i=0;i<12;i++){const angle=i*Math.PI/6;const mark=box(.045,.15,.02,navy,Math.sin(angle)*.62,5.95+Math.cos(angle)*.62,-8.96);mark.rotation.z=-angle}
+ const hour=box(.055,.43,.025,navy,-.1,6.12,-8.94);hour.rotation.z=.48;
+ const minute=box(.04,.58,.025,navy,.18,6.17,-8.93);minute.rotation.z=-.8;
+ box(3.1,1.75,1.3,navy,-9.6,.88,5.8);textSign("VSR","STORY TICKETS",-9.6,1.43,6.5,2.7,.8,{bg:"#e9c17a",fg:"#243c4a",edge:"#fff0cc"},"story");
+ // Three brass subway turnstiles on the right, visually quiet and non-obstructive.
+ for(const z of [3.7,5.1,6.5]){box(.2,1.05,.22,rail,9.4,.55,z);box(1.7,.08,.09,brass,9.0,1.08,z);box(.08,.68,.08,brass,8.3,.75,z)}
+ // Framed stylized city prints evoke the two cities, not personal photo galleries.
+ for(const [x,rot,title,sub] of [[-11.73,Math.PI/2,"HYDERABAD","WHERE MY STORY BEGAN"],[11.73,-Math.PI/2,"NEW YORK","THE CITY OF IDEAS"]]){
+  const group=new THREE.Group();group.position.set(x,4.05,-1.6);group.rotation.y=rot;scene.add(group);
+  box(4.4,3.2,.14,navy,0,0,0,group);
+  const p=textSign(title,sub,0,0,0,4,2.85,{bg:"#e9d5b2",fg:"#294759",edge:"#cba15c"});
+  scene.remove(p);group.add(p);p.position.set(0,0,.09);
+ }
+ planter(-10,7.8);planter(10,7.8);
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
