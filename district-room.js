@@ -24,17 +24,12 @@ function plaque(title,sub,x,y,z,action){
  const c=document.createElement("canvas");c.width=768;c.height=360;const ctx=c.getContext("2d");ctx.fillStyle="#fff8e6";ctx.fillRect(0,0,768,360);ctx.strokeStyle="#c9a04d";ctx.lineWidth=12;ctx.strokeRect(8,8,752,344);ctx.fillStyle="#253541";ctx.textAlign="center";ctx.font="bold 44px sans-serif";ctx.fillText(title,384,151);ctx.font="27px sans-serif";ctx.fillText(sub,384,215);
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.7,1.74),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));mesh.position.set(x,y,z);scene.add(mesh);mesh.userData.action=action;clickable.push(mesh);return mesh
 }
-if(safe==="services"){
- // Restore the original open-front rectangular Engineering Studio room.
- box(24,.5,20,floor,0,-.25,0);
- box(24,8,.4,wall,0,4,-10);
- box(.4,8,20,wall,-12,4,0);
- box(.4,8,20,wall,12,4,0);
- box(24,.18,.28,trim,0,.2,-9.7);
-}else{
- box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
- box(24,.18,.28,trim,0,.2,-9.7);
-}
+// All four interiors share the same open-front rectangular room shell.
+box(24,.5,20,floor,0,-.25,0);
+box(24,8,.4,wall,0,4,-10);
+box(.4,8,20,wall,-12,4,0);
+box(.4,8,20,wall,12,4,0);
+box(24,.18,.28,trim,0,.2,-9.7);
 if(safe==="services"){
  for(const x of [-7,0,7]){const l=new THREE.PointLight("#fff1d9",5,12);l.position.set(x,7.2,-3);scene.add(l)}
 }else{
