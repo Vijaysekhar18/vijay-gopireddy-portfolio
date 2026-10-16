@@ -27,3 +27,27 @@
 .vsr-webgl-note{position:fixed;z-index:58;left:16px;bottom:16px;max-width:300px;background:#fff7e9;color:#1e3748;border:1px solid #d4ae67;border-radius:9px;padding:12px;font:12px/1.5 system-ui}
 @media(max-width:760px){.vsr-quick-toggle{right:10px;bottom:10px;padding:10px 13px;font-size:11px}.vsr-quick-panel{padding:20px 18px 85px}.vsr-quick-panel h2{font-size:30px}.vsr-webgl-note{bottom:70px;max-width:220px}}
 @media(prefers-reduced-motion:reduce){.vsr-quick-panel *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Keep Quick View clear of the persistent reset/navigation controls in every interior.
+   Place it at the upper-right below the page header rather than on the bottom control rail. */
+body.district-body .vsr-quick-toggle,
+body.room-body .vsr-quick-toggle{
+ top:84px;
+ right:18px;
+ bottom:auto;
+}
+@media(max-width:760px){
+ body.district-body .vsr-quick-toggle,
+ body.room-body .vsr-quick-toggle{
+  top:74px;
+  right:10px;
+  bottom:auto;
+  font-size:10px;
+  padding:9px 12px;
+ }
+}
+/* Keep the drawer's close action and quick toggle separate while the drawer is open. */
+body.district-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle,
+body.room-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle{
+ visibility:hidden;
+}
