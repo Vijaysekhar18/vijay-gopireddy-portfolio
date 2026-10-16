@@ -31,6 +31,10 @@ const content={
  journey:{k:"ABOUT / THE JOURNEY",t:"From Hyderabad to New York",html:"<p><strong>HYDERABAD → NEW YORK</strong></p><p>My story connects Hyderabad, where my roots are, with the New York area, where I've built a new chapter in my engineering career.</p><p>My professional experience includes TD Bank (current chapter), LPL Financial, DBS, Wells Fargo and Cognizant, across quality strategy, cloud technology, test automation and engineering delivery.</p><p>Explore the WORK Studio for company-specific details.</p><p><a href='work.html'>Visit the WORK Studio ↗</a></p>"},
  credentials:{k:"ABOUT / MILESTONES",t:"Recognition & Continuous Learning",html:"<p><strong>RECOGNITION</strong></p><p>Super Techie · Performer of the Year · Associate of the Month (August 2025) · Star of the Month (April 2026).</p><p><strong>LEARNING</strong></p><p>OpenAI Technical Practitioner · ChatGPT Solutions Practitioner · Codex Solutions Practitioner · Introduction to Artificial Intelligence · Learning Cloud Computing: Core Concepts.</p><p>These are credentials shared for this portfolio; verification links and official badge art can be added once confirmed.</p>"},
  personal:{k:"ABOUT / OUTSIDE THE SCREEN",t:"Curiosity Has No Off Switch",html:"<p>When I'm not building software, I enjoy exploring cities, long drives, badminton, swimming and trying new vegetarian dishes—from pasta and Korean-inspired cooking to whatever recipe is trending.</p><p>I've tried scuba diving, love discovering new places, and have a personal goal of trying solo skydiving someday.</p><p>Travel, food, learning and a willingness to try something unfamiliar all influence how I approach engineering.</p>"},
+ openai:{k:"AI / OPENAI",t:"OpenAI Learning Collection",html:"<p><strong>Completed credentials</strong></p><p>OpenAI Technical Practitioner · ChatGPT Solutions Practitioner · Codex Solutions Practitioner.</p><p>Verification links can be added when supplied. This is an original collectible, not an official OpenAI badge.</p>"},
+ claude:{k:"AI / ANTHROPIC",t:"Claude Learning Journey",html:"<p>Exploration and learning involving Claude, Claude Code, Model Context Protocol (MCP), and AI-assisted engineering.</p><p>Individual course completions and official credentials will be listed after confirmation. Claude Certified Architect — Foundations has been a learning goal, not a claimed completed certification.</p>"},
+ hackathon:{k:"AI / EVENTS",t:"Cognizant Vibe Coding Hackathon",html:"<p>A place to document the Cognizant Vibe Coding Hackathon experience.</p><p>Project, participation status and any recognition will be added after details are confirmed. No award or placement is claimed here.</p>"},
+ innovation:{k:"AI / BUILDING",t:"Engineering Innovations",html:"<p>Explore my API Migration Testing Tool for comparing old and new API responses across hundreds of combinations, and my AI-assisted XPath Extractor for element discovery.</p><p>Public demonstrations will use synthetic data and won't expose client systems.</p>"},
  experiments:{k:"AI / EXPERIMENTS",t:"Engineering Experiments",html:"<p>Exploring AI-assisted quality engineering, Playwright automation, element discovery and practical engineering tools.</p>"},
  writing:{k:"AI / WRITING",t:"AI Field Notes",html:'<p>Notes on AI tools, engineering and learning.</p><p><a href="https://aiinsights80.wordpress.com/" target="_blank" rel="noopener">Explore AI Field Notes ↗</a></p>'},
  learning:{k:"AI / LEARNING",t:"Continuous Learning",html:"<p>Experimenting with modern AI tools and workflows, from automation assistants to model context protocols.</p>"},
@@ -151,9 +155,34 @@ if(safe==="about"){
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
- for(let x of [-7,0,7]){box(4.4,2.8,.35,dark,x,3,-9.3);box(4.6,.2,1.5,trim,x,.8,-8.5)}
- plaque("AI EXPERIMENTS","Tools and prototypes",-7,3,-9.05,"experiments");plaque("AI FIELD NOTES","Writing and ideas",0,3,-9.05,"writing");plaque("LEARNING LAB","What's next?",7,3,-9.05,"learning");
- for(let x of [-6,6]){box(4,.25,2,trim,x,.8,1);box(.3,1.2,.3,dark,x-1.5,.1,1);box(.3,1.2,.3,dark,x+1.5,.1,1);monitor(x,2,0.5);chair(x,3,Math.PI);box(1.2,3.8,1.3,dark,x,2,-6);for(let y of [1,2,3])box(.8,.13,.1,accent,x,y,-5.28)}planter(10,5)
+ // AI Collectibles Vault: floating, gently rotating category tokens with clickable detail cards.
+ const vaultNavy=mat("#183748"),vaultSteel=mat("#4c7181"),vaultGold=mat("#e5bb63");
+ box(22,4.2,.25,vaultNavy,0,5.2,-9.54);
+ textSign("THE COLLECTIBLES VAULT","LEARN · BUILD · EXPERIMENT",0,6.8,-9.33,12.5,1.1,{bg:"#173749",fg:"#d8f5ff",edge:"#64b9ce"});
+ const tokens=[
+  {x:-7.7,key:"openai",name:"OPENAI",sub:"CERTIFICATIONS",color:"#e4bc64"},
+  {x:-2.55,key:"claude",name:"CLAUDE",sub:"LEARNING",color:"#d78b6b"},
+  {x:2.55,key:"hackathon",name:"HACKATHON",sub:"COGNIZANT",color:"#78b9d0"},
+  {x:7.7,key:"innovation",name:"INNOVATION",sub:"ENGINEERING",color:"#8ac5a2"}
+ ];
+ const floatingTokens=[];
+ for(const token of tokens){
+  const metal=new THREE.MeshStandardMaterial({color:token.color,metalness:.64,roughness:.25,emissive:token.color,emissiveIntensity:.14});
+  const group=new THREE.Group();group.position.set(token.x,3.45,-6.3);scene.add(group);
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.13,1.13,.27,56),metal);coin.rotation.x=Math.PI/2;group.add(coin);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.89,.075,12,56),vaultGold);rim.position.z=.16;group.add(rim);
+  const label=textSign(token.name,token.sub,token.x,3.45,-5.99,2.3,1.1,{bg:"#193b4a",fg:"#fff0d5",edge:token.color},token.key);
+  label.userData.action=token.key;
+  clickableProp(coin,token.key);
+  // Clickable backing gives touch users a larger hit area.
+  const backing=box(3.35,2.1,.12,vaultNavy,token.x,1.3,-7.25);
+  textSign("EXPLORE",token.sub,token.x,1.3,-7.14,3.1,1.2,{bg:"#203f4e",fg:"#d7edf0",edge:token.color},token.key);
+  floatingTokens.push({group,label,base:3.45,phase:token.x});
+ }
+ // Animated collectible tokens; no extra floating objects or giant podiums.
+ const previousAnimate=window.__aiVaultAnimate;
+ window.__aiVaultAnimate=()=>{const t=performance.now()*.001;for(const token of floatingTokens){token.group.position.y=token.base+Math.sin(t*1.1+token.phase)*.16;token.group.rotation.y=Math.sin(t*.65+token.phase)*.2;token.label.position.y=token.group.position.y}};
+ for(const x of [-10.5,10.5])planter(x,6.7);
 }else{
  // Four generously spaced contact stations: all props are real raycast targets.
  tableScene(-6.8,1,"linkedin","LINKEDIN");
@@ -207,4 +236,4 @@ renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
 renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
 document.getElementById("districtReset").onclick=()=>{desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
-function animate(){requestAnimationFrame(animate);update();renderer.render(scene,camera)}animate();
+function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();renderer.render(scene,camera)}animate();
