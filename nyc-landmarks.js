@@ -34,30 +34,7 @@ export function addNYCLandmarks(city, interact){
   line(p,[-8.9,21.95,-1.1],[-2.5,17.5,-1.1],silver,.23);
   line(p,[-8.9,21.95,3.3],[-2.5,17.5,3.3],silver,.23);
 }, "contact");
- landmark("vessel","THE VESSEL",-26,-8,p=>{
-  // Detailed architectural miniature: Vessel's characteristic flared, stacked
-  // copper stair flights and open hexagonal honeycomb; no billboard background.
-  const bronze=m("#b66b38",{metalness:.62,roughness:.32}),edge=m("#e1a36a",{metalness:.55,roughness:.36});
-  cyl(p,3.8,3.8,.55,stone,0,.13,0,24);
-  const sides=12,levels=12;
-  for(let j=0;j<levels;j++){
-   const low=1.0+j*.95,high=low+.95;
-   const r0=1.25+j*.29,r1=r0+.29;
-   for(let i=0;i<sides;i++){
-    const a=2*Math.PI*i/sides,an=2*Math.PI*(i+1)/sides;
-    const q0=[Math.cos(a)*r0,low,Math.sin(a)*r0],q1=[Math.cos(an)*r0,low,Math.sin(an)*r0];
-    const q2=[Math.cos(a)*r1,high,Math.sin(a)*r1],q3=[Math.cos(an)*r1,high,Math.sin(an)*r1];
-    line(p,q0,q3,bronze,.21);line(p,q1,q2,edge,.19);
-    line(p,q2,q3,bronze,.16);
-    // Thin stair treads on alternating flights, with open air between flights.
-    if((i+j)%2===0)for(let k=1;k<=4;k++){
-     const t=k/5,ang=a+(an-a)*t,r=r0+.24*t;
-     const tread=b(p,.72,.095,.24,edge,Math.cos(ang)*r,low+.95*t,Math.sin(ang)*r);
-     tread.rotation.y=-ang;
-    }
-   }
-  }
- }, "about");
+ landmark("vessel","THE VESSEL",-26,-8,p=>{cyl(p,3.5,3.5,.5,stone);for(let j=0;j<6;j++){const r=2.3+j*.13,y=1+j*1.3;for(let i=0;i<10;i++){const a=i*Math.PI/5,an=(i+.5)*Math.PI/5;line(p,[Math.cos(a)*r,y,Math.sin(a)*r],[Math.cos(an)*(r+.2),y+1.15,Math.sin(an)*(r+.2)],copper,.17)}cyl(p,r,r,.15,copper,0,y+.7,0,10)}}, "about");
  // Flatiron wedge and classic sidewalk street clock.
  landmark("flatiron","FLATIRON STREET CLOCK",5,-.5,p=>{
  // Keep the iconic freestanding cast-iron sidewalk clock without the Flatiron tower.
@@ -73,7 +50,7 @@ export function addNYCLandmarks(city, interact){
   // seven-ray diadem, raised torch and tablet, kept lightweight for mobile.
   const patina=m("#70a78c",{roughness:.86,metalness:.08}),fold=m("#538f78",{roughness:.92}),highlight=m("#94bea1",{roughness:.85});
   const pedestal=m("#c9bda8"),plinth=m("#8e9b93");
-  cyl(p,6.2,6.2,.6,water,0,-.1,0,32);
+  cyl(p,6.2,6.2,.32,water,0,.10,0,32);
   b(p,6.0,.55,6.0,plinth,0,.48);
   b(p,5.35,1.1,5.35,pedestal,0,1.32);
   b(p,4.45,2.5,4.45,pedestal,0,3.15);
@@ -114,29 +91,10 @@ export function addNYCLandmarks(city, interact){
   const photoUrl="https://upload.wikimedia.org/wikipedia/commons/8/81/Statue_of_liberty_%28transparent%29.png";
   new THREE.TextureLoader().load(photoUrl,texture=>{
    texture.colorSpace=THREE.SRGBColorSpace;
-   // Trim transparent padding from the actual PNG; otherwise the visible feet
-   // float even when the rectangular sprite's bottom is mathematically grounded.
-   const image=texture.image,canvas=document.createElement("canvas");
-   const probe=document.createElement("canvas");probe.width=image.width;probe.height=image.height;
-   const ctx=probe.getContext("2d",{willReadFrequently:true});ctx.drawImage(image,0,0);
-   let crop={x:0,y:0,w:image.width,h:image.height};
-   try{
-    const pixels=ctx.getImageData(0,0,image.width,image.height).data;
-    let left=image.width,top=image.height,right=-1,bottom=-1;
-    for(let y=0;y<image.height;y+=2)for(let x=0;x<image.width;x+=2){
-     if(pixels[(y*image.width+x)*4+3]>35){left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y)}
-    }
-    if(right>left&&bottom>top)crop={x:Math.max(0,left-2),y:Math.max(0,top-2),w:Math.min(image.width-left+2,right-left+5),h:Math.min(image.height-top+2,bottom-top+5)};
-   }catch(e){/* Keep full image if canvas pixels are unavailable. */}
-   canvas.width=crop.w;canvas.height=crop.h;
-   canvas.getContext("2d").drawImage(image,crop.x,crop.y,crop.w,crop.h,0,0,crop.w,crop.h);
-   const cropped=new THREE.CanvasTexture(canvas);cropped.colorSpace=THREE.SRGBColorSpace;
-   texture.dispose();
-   const material=new THREE.SpriteMaterial({map:cropped,transparent:true,depthWrite:false,alphaTest:.04});
-   const height=19.2,width=height*crop.w/crop.h;
-   const photo=new THREE.Sprite(material);photo.position.set(0,5.4+height/2,0);photo.scale.set(width,height,1);
+   const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.04});
+   const photo=new THREE.Sprite(material);photo.position.set(0,12.5,0);photo.scale.set(17.4,24,1);
    // Hide only the procedural statue once the real image is ready.
-   liberty.group.children.forEach((child,index)=>{child.visible=index<6});
+   liberty.group.children.forEach(child=>child.visible=false);
    liberty.group.add(photo);photo.userData.project="contact";interact.push(photo);
   },undefined,()=>{ /* Preserve the procedural statue when offline. */ });
  }
