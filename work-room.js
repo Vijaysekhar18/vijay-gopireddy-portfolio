@@ -139,7 +139,8 @@ function showProject(k){if(k.startsWith("company:")){const d=companyData[k.slice
 document.getElementById("closeProject").onclick=()=>overlay.hidden=true;document.getElementById("roomNext").onclick=()=>showProject("company:td");
 const companyNav=document.getElementById("companyExhibits");
 if(companyNav)for(const button of companyNav.querySelectorAll("[data-company]"))button.addEventListener("click",()=>showProject("company:"+button.dataset.company));
-let yaw=.75,pitch=.45,distance=22,fp=false,fpYaw=0,fpPitch=0,fpPos=new THREE.Vector3(0,2.1,5),drag=false,lastX=0,lastY=0,moved=false;const keys=new Set();
+const WORK_ENTRY_YAW=0,WORK_ENTRY_PITCH=.35,WORK_ENTRY_DISTANCE=24;
+let yaw=WORK_ENTRY_YAW,pitch=WORK_ENTRY_PITCH,distance=WORK_ENTRY_DISTANCE,fp=false,fpYaw=0,fpPitch=0,fpPos=new THREE.Vector3(0,2.1,5),drag=false,lastX=0,lastY=0,moved=false;const keys=new Set();
 function enterFP(){fp=true;fpPos.set(0,2.1,5);fpYaw=0;fpPitch=0;document.getElementById("firstPerson").textContent="Exit First-Person";document.getElementById("roomHint").hidden=false;if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches)root.requestPointerLock?.()}
 function exitFP(){fp=false;if(document.pointerLockElement)document.exitPointerLock?.();document.getElementById("firstPerson").textContent="Enter First-Person";document.getElementById("roomHint").hidden=true}
 document.getElementById("firstPerson").onclick=()=>fp?exitFP():enterFP();
@@ -148,7 +149,7 @@ root.addEventListener("pointerdown",e=>{drag=true;moved=false;lastX=e.clientX;la
 window.addEventListener("pointermove",e=>{if(fp){if(document.pointerLockElement===root){fpYaw-=e.movementX*.0028;fpPitch=THREE.MathUtils.clamp(fpPitch-e.movementY*.0028,-1.2,1.2)}else if(drag){fpYaw-=(e.clientX-lastX)*.004;fpPitch=THREE.MathUtils.clamp(fpPitch-(e.clientY-lastY)*.004,-1.2,1.2)}}else if(drag){yaw-=(e.clientX-lastX)*.006;pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.004,.2,1.25)}if(Math.abs(e.clientX-lastX)+Math.abs(e.clientY-lastY)>5)moved=true;lastX=e.clientX;lastY=e.clientY});
 root.addEventListener("wheel",e=>{e.preventDefault();if(!fp)distance=THREE.MathUtils.clamp(distance+Math.sign(e.deltaY)*1.8,14,37)},{passive:false});
 const ray=new THREE.Raycaster();root.addEventListener("click",e=>{if(moved||fp)return;const r=root.getBoundingClientRect();ray.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),camera);const hit=ray.intersectObjects(clickable)[0];if(hit)showProject(hit.object.userData.kind)});
-document.getElementById("roomReset").onclick=()=>{exitFP();yaw=.75;pitch=.45;distance=22};
+document.getElementById("roomReset").onclick=()=>{exitFP();yaw=WORK_ENTRY_YAW;pitch=WORK_ENTRY_PITCH;distance=WORK_ENTRY_DISTANCE};
 document.getElementById("settingsToggle").onclick=()=>document.getElementById("settingsMenu").hidden=!document.getElementById("settingsMenu").hidden;
 let night=false;document.getElementById("themeToggle").onclick=()=>{night=!night;scene.background.set(night?"#151d29":"#dce7e9");light.intensity=night?.7:3;document.body.classList.toggle("night",night);document.getElementById("themeToggle").textContent=night?"☀ Day mode":"☾ Night mode"};
 const clock=new THREE.Clock();function resize(){camera.aspect=root.clientWidth/root.clientHeight;camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
