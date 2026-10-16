@@ -117,19 +117,11 @@ if(safe==="about"){
   box(1.15,.63,.045,ivory,x+((Math.round(y*10)%2)*.35),y,-9.72);
  }
  for(let x=-11.2;x<=11.2;x+=.38){box(.33,.29,.06,Math.round(x*7)%3?blue:gold,x,6.02,-9.65)}
- // Clear four-stop wayfinding ABOVE the train: every title is readable and clickable.
- // VSR Express stays a small route identifier, not the dominant headline.
- box(22.1,1.55,.16,charcoal,0,7.05,-9.55);
- textSign("VSR EXPRESS","ABOUT · STORY STATION",-9.75,7.06,-9.35,2.25,1.16,{bg:"#172d3d",fg:"#f8e9c5",edge:"#d4a35e"});
- const routeHeadings=[
-  {x:-6.05,title:"MY STORY",sub:"ROOTS",key:"story"},
-  {x:-1.9,title:"MY JOURNEY",sub:"HYD → NYC",key:"journey"},
-  {x:2.25,title:"MILESTONES",sub:"AWARDS",key:"credentials"},
-  {x:6.4,title:"BEYOND WORK",sub:"EXPLORE",key:"personal"}
- ];
- for(const stop of routeHeadings){
-  textSign(stop.title,stop.sub,stop.x,7.06,-9.34,3.86,1.17,{bg:"#123c68",fg:"#fff9e9",edge:"#d4a35e"},stop.key);
- }
+ // One prominent, uncluttered VSR EXPRESS sign above the train.
+ // Separate high-contrast backing and oversized lettering improve legibility.
+ box(16.6,1.68,.18,gold,0,7.03,-9.56);
+ box(16.25,1.39,.2,charcoal,0,7.03,-9.41);
+ textSign("VSR EXPRESS","",0,7.03,-9.24,15.7,1.24,{bg:"#102c42",fg:"#fffdf3",edge:"#d4a35e"});
  // Black steel girders, station lighting and a readable suspended wayfinding board.
  for(const x of [-10.9,10.9]){box(.37,7.85,.38,charcoal,x,4.05,1.8);for(let y=1;y<7.6;y+=.62)box(.4,.055,.42,gold,x,y,1.8)}
  for(const z of [-7.4,-3.3,1.2,5.2]){
