@@ -74,3 +74,22 @@
 .ai-quest-vault pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;background:#071328;border:1px solid #3d6e8c;border-radius:10px;padding:14px;font-size:12px;line-height:1.6}
 .ai-quest-vault #aiVaultReplay{margin-top:10px;background:#7255a9}
 @media(max-width:760px){.ai-quest-hud{max-height:58vh;overflow:auto}.ai-quest-vault{padding:14px}.ai-quest-hud .ai-passport-stamp{font-size:8px}}
+
+/* Coffee & Connections: accessible one-tap contact actions with a compact mobile layout. */
+.cafe-quick-actions{width:min(900px,94vw);bottom:80px;align-items:center;gap:8px}
+.cafe-quick-actions a,.cafe-quick-actions button{display:inline-flex;justify-content:center;align-items:center;min-height:44px;box-sizing:border-box;border:1px solid #b58e5c;border-radius:999px;padding:10px 15px;background:#fff5dfef;color:#293d3e;font:800 11px/1.2 system-ui,sans-serif;text-decoration:none;box-shadow:0 4px 15px #221a1026;cursor:pointer}
+.cafe-quick-actions a:hover,.cafe-quick-actions a:focus-visible,.cafe-quick-actions button:hover,.cafe-quick-actions button:focus-visible{background:#ffe1a1;transform:translateY(-2px);outline:2px solid #795e3f;outline-offset:2px}
+.cafe-quick-actions [data-contact="email"]{background:#274c46;color:#fff9df;border-color:#e4c48b}
+.cafe-quick-actions [data-contact="linkedin"]{background:#155b92;color:#fff;border-color:#9dc9e4}
+.cafe-copy-status{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);padding:5px 12px;border-radius:8px;background:#fff8e8;color:#283b3a;font-size:12px;font-weight:800;white-space:nowrap;box-shadow:0 3px 12px #0002}
+.cafe-copy-status:empty{display:none}
+@media(max-width:600px){
+ .cafe-quick-actions{bottom:62px;width:calc(100vw - 20px);gap:6px;padding:9px 7px;background:#fff8e8e8;border:1px solid #d9b98e;border-radius:17px;box-shadow:0 8px 24px #0003;backdrop-filter:blur(9px)}
+ .cafe-quick-actions a,.cafe-quick-actions button{flex:1 1 calc(33.333% - 8px);min-height:44px;padding:9px 5px;font-size:10px;white-space:normal;text-align:center}
+ .cafe-quick-actions [data-contact="phone"],.cafe-quick-actions [data-contact="location"]{flex:1 1 calc(50% - 8px)}
+ .cafe-copy-status{max-width:92vw;white-space:normal;text-align:center}
+ .district-body:has(.cafe-quick-actions) .district-bottom{bottom:10px}
+ .district-body:has(.cafe-quick-actions) .district-bottom span{display:none}
+ .district-body:has(.cafe-quick-actions) .district-bottom button{margin-left:auto;padding:7px 10px;font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.cafe-quick-actions a,.cafe-quick-actions button{transition:none}.cafe-quick-actions a:hover,.cafe-quick-actions button:hover{transform:none}}
