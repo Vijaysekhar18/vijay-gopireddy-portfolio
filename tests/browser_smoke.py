@@ -38,6 +38,21 @@ with sync_playwright() as p:
         page.screenshot(path=f"test-screenshots/{room}.png",full_page=True)
         assert not errors, f"{room}: {errors}"
         page.close()
+    # Verify the decorative train moves while the map is open, and stops after closing.
+    page=browser.new_page(viewport={"width":1440,"height":900},reduced_motion="no-preference")
+    page.goto(URL,wait_until="domcontentloaded")
+    page.locator("#subwayToggle").click()
+    train=page.locator("#subwayTrain")
+    start=train.get_attribute("transform")
+    page.wait_for_timeout(1300)
+    moved=train.get_attribute("transform")
+    assert moved!=start, f"Decorative train did not move: {start}"
+    page.locator("#subwayClose").click()
+    page.wait_for_timeout(200)
+    stopped=train.get_attribute("transform")
+    page.wait_for_timeout(450)
+    assert train.get_attribute("transform")==stopped, "Train continues animating when map is closed"
+    page.close()
     # Exercise the actual 2.6-second train animation (not reduced-motion shortcut).
     page=browser.new_page(viewport={"width":1440,"height":900},reduced_motion="no-preference")
     page.goto(URL,wait_until="domcontentloaded")
