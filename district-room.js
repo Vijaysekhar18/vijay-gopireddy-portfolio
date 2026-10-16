@@ -257,7 +257,7 @@ if(safe==="about"){
  window.__aiQuestWorld={tokens,floating,portal,core,rider,aiLaneXs};
  window.__aiVaultAnimate=()=>{
   const t=performance.now()*.001;
-  for(const item of floating){item.group.position.y=item.base+Math.sin(t*1.5+item.phase)*.17;item.group.rotation.y=Math.sin(t*.7+item.phase)*.23;item.symbol.position.y=item.group.position.y}
+  for(const item of floating){item.group.position.y=item.base+Math.sin(t*1.5+item.phase)*.17;item.group.rotation.y=Math.sin(t*.7+item.phase)*.23;item.symbol.position.y=2.05+Math.sin(t*1.5+item.phase)*.08}
   portal.rotation.z=t*.15;core.rotation.y=t*.45;core.rotation.x=t*.2;rider.position.y=.65+Math.sin(t*3)*.035;
  };
 }else{
