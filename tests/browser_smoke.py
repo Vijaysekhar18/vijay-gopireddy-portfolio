@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -177,6 +176,8 @@ with sync_playwright() as p:
     for path in ["", "work.html", "district.html?room=about", "district.html?room=services", "district.html?room=ai", "district.html?room=contact"]:
         for width,height in [(1440,900),(390,844)]:
             page=browser.new_page(viewport={"width":width,"height":height},reduced_motion="reduce")
+            errors=[]
+            page.on("pageerror",lambda err: errors.append(str(err)))
             page.goto(URL+path,wait_until="domcontentloaded")
             toggle=page.locator("#vsrQuickToggle")
             toggle.wait_for(state="visible")
@@ -205,6 +206,7 @@ with sync_playwright() as p:
             page.keyboard.press("Escape")
             assert not page.locator("#vsrQuickPanel").is_visible()
             assert toggle.get_attribute("aria-expanded")=="false"
+            assert not errors, f"Quick View JS errors on {path}: {errors}"
             page.close()
 
     # Engineering Studio: four accessible exhibits and optional guided camera tour.

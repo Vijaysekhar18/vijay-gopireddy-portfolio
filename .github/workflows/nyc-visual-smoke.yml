@@ -6,9 +6,10 @@ on:
   pull_request:
     paths:
       - 'three-city.js'
+      - 'city-life.js'
+      - 'nyc-landmarks.js'
       - 'district-room.js'
       - 'index.html'
-      - 'subway-nav.js'
       - 'styles.css'
       - 'district-room.css'
       - 'tests/**'
@@ -18,6 +19,8 @@ on:
       - 'work-room.js'
       - 'work-room.css'
       - 'district.html'
+      - 'subway-nav.js'
+      - '.github/workflows/nyc-visual-smoke.yml'
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest
