@@ -119,3 +119,10 @@
  .district-body:has(.services-hud) .district-bottom button{margin-left:auto;font-size:9px;padding:8px}
 }
 @media(prefers-reduced-motion:reduce){.services-hud button{transition:none}}
+
+/* SERVICES final polish: contextual station focus without altering square-room architecture. */
+.services-focus-status{display:inline-block!important;min-height:0!important;margin:0 0 10px!important;padding:4px 8px;border-radius:6px;background:#193e53;border:1px solid #74d8e8;color:#bcecf6!important;font-size:10px!important;letter-spacing:.06em;font-weight:800}
+.services-hud:has(.services-focus-status) .services-hud-grid button{transition:background .18s ease,border-color .18s ease}
+.services-hud:has(.services-focus-status) button:focus-visible{outline:3px solid #ffe2a1;outline-offset:2px}
+@media(max-width:760px){.services-focus-status{margin-bottom:6px!important;font-size:9px!important}}
+@media(prefers-reduced-motion:reduce){.services-hud:has(.services-focus-status) .services-hud-grid button{transition:none}}

@@ -172,8 +172,6 @@ with sync_playwright() as p:
     page.locator("#arrivalEnter").click()
     page.wait_for_url("**/work.html",timeout=10000)
     page.close()
-    browser.close()
-print("PASS: desktop/mobile subway arrival and entry, 4 interiors, JS error checks, screenshots")
 
     # Engineering Studio: four accessible exhibits and optional guided camera tour.
     for width,height in [(1440,900),(390,844)]:
@@ -184,6 +182,7 @@ print("PASS: desktop/mobile subway arrival and entry, 4 interiors, JS error chec
         assert page.locator("#districtTitle").inner_text()=="VSR INNOVATION CENTER"
         assert page.locator("#servicesHud [data-service]").count()==4
         assert page.locator("#servicesTour").is_visible()
+        assert page.locator("#servicesFocusStatus").count()==1
         page.locator("#servicesTour").click()
         assert page.locator("#servicesTour").get_attribute("aria-pressed")=="true"
         page.locator("#servicesTour").click()
@@ -191,8 +190,13 @@ print("PASS: desktop/mobile subway arrival and entry, 4 interiors, JS error chec
         for key in ["automation","quality","cloud","aiEngineering"]:
             page.locator(f'#servicesHud [data-service="{key}"]').click()
             assert page.locator("#districtDialog").is_visible()
+            assert "SPOTLIGHT" in page.locator("#servicesFocusStatus").inner_text()
             assert len(page.locator("#districtDetailBody").inner_text())>100
             page.locator("#districtClose").click()
+        page.locator("#servicesTourExit").click()
+        assert page.locator("#servicesFocusStatus").inner_text()=="ALL EXHIBITS"
         page.screenshot(path=f"test-screenshots/services-studio-{width}.png",full_page=True)
         assert not errors,f"SERVICES JS errors: {errors}"
         page.close()
+    browser.close()
+print("PASS: desktop/mobile subway arrival and entry, 4 interiors, SERVICES visual upgrade checks, screenshots")
