@@ -28,65 +28,9 @@
 @media(max-width:760px){.vsr-quick-toggle{right:10px;bottom:10px;padding:10px 13px;font-size:11px}.vsr-quick-panel{padding:20px 18px 85px}.vsr-quick-panel h2{font-size:30px}.vsr-webgl-note{bottom:70px;max-width:220px}}
 @media(prefers-reduced-motion:reduce){.vsr-quick-panel *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
-/* Keep Quick View clear of the persistent reset/navigation controls in every interior.
-   Place it at the upper-right below the page header rather than on the bottom control rail. */
+/* Shared interior control positions. Keep all placement rules together. */
 body.district-body .vsr-quick-toggle,
 body.room-body .vsr-quick-toggle{
- top:84px;
- right:18px;
- bottom:auto;
-}
-@media(max-width:760px){
- body.district-body .vsr-quick-toggle,
- body.room-body .vsr-quick-toggle{
-  top:74px;
-  right:10px;
-  bottom:auto;
-  font-size:10px;
-  padding:9px 12px;
- }
-}
-/* Keep the drawer's close action and quick toggle separate while the drawer is open. */
-body.district-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle,
-body.room-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle{
- visibility:hidden;
-}
-
-/* Interior rooms: Quick View is anchored to the bottom-left, away from the
-   top navigation, AI HUD and the Reset View action on the opposite side. */
-body.district-body .vsr-quick-toggle,
-body.room-body .vsr-quick-toggle{
- top:auto;
- right:auto;
- bottom:max(16px,env(safe-area-inset-bottom));
- left:max(16px,env(safe-area-inset-left));
-}
-@media(max-width:760px){
- body.district-body .vsr-quick-toggle,
- body.room-body .vsr-quick-toggle{
-  top:auto;
-  right:auto;
-  bottom:max(12px,env(safe-area-inset-bottom));
-  left:max(10px,env(safe-area-inset-left));
-  min-height:44px;
-  padding:10px 12px;
- }
-}
-/* The instruction line previously occupied the same bottom-left location.
-   Instructions remain visible in the room heading. */
-body.district-body .district-bottom > span{display:none}
-
-/* On narrow WORK screens the centered three-button navigation would reach
-   into the left corner. Raise that rail, leaving Quick View its own row. */
-@media(max-width:650px){
- body.room-body .room-nav{bottom:70px}
-}
-
-/* One consistent control contract for ALL interior sections:
-   Quick View = lower left; Reset View = lower right. */
-body.district-body .vsr-quick-toggle,
-body.room-body .vsr-quick-toggle{
- position:fixed;
  top:auto;
  right:auto;
  left:max(16px,env(safe-area-inset-left));
@@ -99,12 +43,8 @@ body.district-body .district-bottom{
  width:auto;
  z-index:5;
 }
-body.district-body .district-bottom #districtReset{
- margin:0;
- min-height:44px;
-}
-/* WORK originally embedded Reset View in a centered nav rail. Detach just
-   that button visually; retain the City and Explore controls in the rail. */
+body.district-body .district-bottom > span{display:none}
+body.district-body .district-bottom #districtReset{margin:0;min-height:44px}
 body.room-body #roomReset{
  position:fixed;
  top:auto;
@@ -120,11 +60,14 @@ body.room-body #roomReset{
  box-shadow:0 8px 25px #0e243c33;
 }
 body.room-body .room-nav{bottom:82px}
+body.district-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle,
+body.room-body:has(.vsr-quick-panel:not([hidden])) .vsr-quick-toggle{visibility:hidden}
 @media(max-width:760px){
  body.district-body .vsr-quick-toggle,
  body.room-body .vsr-quick-toggle{
   left:max(10px,env(safe-area-inset-left));
   bottom:max(10px,env(safe-area-inset-bottom));
+  min-height:44px;
  }
  body.district-body .district-bottom{
   right:max(10px,env(safe-area-inset-right));
