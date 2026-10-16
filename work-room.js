@@ -24,10 +24,64 @@ function server(x,z){cube(1.35,4.6,1.3,dark,x,2.3,z);for(let i=0;i<10;i++){cube(
 server(7,-4.8);server(8.5,-4.8);
 function pot(x,z){cyl(.55,.38,.75,material("#bd845f"),x,.4,z);for(let i=0;i<6;i++){const a=i*Math.PI/3;const leaf=new THREE.Mesh(new THREE.ConeGeometry(.42,1.5,5),plant);leaf.position.set(x+Math.sin(a)*.25,1.5,z+Math.cos(a)*.25);leaf.rotation.z=Math.sin(a)*.32;scene.add(leaf)}}
 pot(-8,5.6);pot(8,5.6);
+
+/* The Engineering Atelier — company exhibition and original NYC skyline artwork. */
+const companyData={
+ td:{name:"TD BANK",eyebrow:"CURRENT CHAPTER",summary:"My current chapter in banking technology and quality engineering. This exhibit introduces the work and experience I bring to TD Bank; project-specific details will be added once confirmed.",focus:"Banking technology · Quality engineering · Engineering collaboration",color:"#2d9d5c"},
+ lpl:{name:"LPL FINANCIAL",eyebrow:"FINANCIAL TECHNOLOGY",summary:"Led quality strategy and cross-functional QE coordination for Account View and the old-to-new AWS landing-zone migration, from analysis and testing through production readiness.",focus:"AWS Lambda · Step Functions · Glue · Kafka · Athena · API migration validation",color:"#5088b6"},
+ dbs:{name:"DBS",eyebrow:"BANKING EXPERIENCE",summary:"Part of my professional experience in banking technology, software quality and automation. More project-specific detail will be added after verification.",focus:"Banking · Software quality · Test automation",color:"#c64c4a"},
+ wells:{name:"WELLS FARGO",eyebrow:"BANKING EXPERIENCE",summary:"Experience supporting quality engineering in the banking domain. Project-specific responsibilities and outcomes will be expanded once verified.",focus:"Banking · Quality engineering · Testing",color:"#c54b43"},
+ cognizant:{name:"COGNIZANT",eyebrow:"ENGINEERING & DELIVERY",summary:"Engineering and quality leadership across complex client engagements, with a focus on test strategy, automation, cloud delivery and cross-functional collaboration.",focus:"Engineering delivery · Test strategy · Automation · Leadership",color:"#4075a8"}
+};
+const exhibitPositions=[[-7.55,3.8,"wells"],[-3.75,3.8,"dbs"],[0,4.2,"td"],[3.75,3.8,"lpl"],[7.55,3.8,"cognizant"]];
+const brass=material("#c7a56d",{metalness:.55,roughness:.34}),walnut=material("#503b33"),jade=material("#258650",{emissive:"#14552d",emissiveIntensity:.25});
+function museumLabel(title,subtitle,bg,fg="#fff8e6"){
+ const c=document.createElement("canvas");c.width=1024;c.height=512;const ctx=c.getContext("2d");
+ ctx.fillStyle=bg;ctx.fillRect(0,0,1024,512);ctx.strokeStyle="#caa46b";ctx.lineWidth=18;ctx.strokeRect(12,12,1000,488);
+ ctx.textAlign="center";ctx.fillStyle=fg;ctx.font="bold 94px Arial";ctx.fillText(title,512,216,930);
+ ctx.font="bold 37px Arial";ctx.fillText(subtitle,512,312,930);ctx.fillStyle="#d9b876";ctx.fillRect(170,367,684,5);
+ ctx.font="27px Arial";ctx.fillText("SELECT TO EXPLORE",512,436);
+ const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
+ return new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
+}
+for(const [x,z,key] of exhibitPositions){
+ const d=companyData[key],featured=key==="td";
+ const base=cube(featured?3.35:2.95,featured?.55:.35,2.25,featured?jade:walnut,x,featured?.275:.175,z);
+ const plinth=cube(featured?2.8:2.45,featured?1.15:.83,1.65,featured?material("#1c4532",{metalness:.25,roughness:.3}):material("#394a50",{metalness:.24,roughness:.36}),x,featured?1.13:.77,z);
+ const band=cube(featured?2.85:2.5,.09,1.73,brass,x,featured?1.72:1.22,z);
+ const signMesh=new THREE.Mesh(new THREE.PlaneGeometry(featured?2.6:2.3,featured?1.35:1.12),museumLabel(d.name,featured?"CURRENT CHAPTER":d.eyebrow,featured?"#125c35":"#243942"));
+ signMesh.position.set(x,featured?2.5:2.03,z+.91);scene.add(signMesh);
+ const plaque=cube(featured?2.65:2.35,.22,.24,brass,x,featured?1.8:1.31,z+.87);
+ for(const obj of [base,plinth,band,signMesh,plaque]){obj.userData.kind="company:"+key;clickable.push(obj)}
+ if(featured){
+  const spotlight=new THREE.SpotLight("#83ffb3",36,11,Math.PI/5,.5);spotlight.position.set(x,7,z+1);spotlight.target=plinth;scene.add(spotlight);
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(1.65,.055,8,48),material("#80e0a1",{emissive:"#2cbb72",emissiveIntensity:1.3}));halo.rotation.x=Math.PI/2;halo.position.set(x,.11,z);scene.add(halo);
+ }
+}
+// Framed original NYC-inspired skyline illustration, rendered locally without external assets.
+function skylineArt(){
+ const c=document.createElement("canvas");c.width=1400;c.height=520;const g=c.getContext("2d");
+ const sky=g.createLinearGradient(0,0,0,520);sky.addColorStop(0,"#1b3b55");sky.addColorStop(.6,"#bc7b64");sky.addColorStop(1,"#e4b57d");g.fillStyle=sky;g.fillRect(0,0,1400,520);
+ g.fillStyle="#f4d3a1";g.beginPath();g.arc(1050,170,76,0,Math.PI*2);g.fill();
+ for(let i=0;i<57;i++){const x=i*26,w=20+(i%3)*8,h=110+(i*47%200);g.fillStyle=i%2?"#243b4a":"#314c58";g.fillRect(x,440-h,w,h);for(let a=0;a<3;a++)for(let b=0;b<Math.floor(h/23);b++){g.fillStyle=(a+b+i)%3?"#e8bd78":"#6b8990";g.fillRect(x+4+a*8,445-h+b*23,3,7)}}
+ // Empire State Building silhouette.
+ g.fillStyle="#243b4a";g.fillRect(598,125,74,315);g.fillRect(614,88,42,40);g.fillRect(630,40,10,65);g.fillRect(634,17,3,32);
+ // One World Trade Center silhouette.
+ g.fillStyle="#294858";g.beginPath();g.moveTo(1100,440);g.lineTo(1110,122);g.lineTo(1140,70);g.lineTo(1170,122);g.lineTo(1180,440);g.closePath();g.fill();g.fillRect(1137,26,5,54);
+ g.fillStyle="#102936";g.fillRect(0,441,1400,79);
+ g.fillStyle="#f7e4bf";g.font="bold 35px Arial";g.fillText("NEW YORK  /  THE CITY OF IDEAS",42,493);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide});
+}
+const artFrame=cube(9.6,1.75,.18,brass,0,7.9,-7.17);
+const art=new THREE.Mesh(new THREE.PlaneGeometry(9.35,1.52),skylineArt());art.position.set(0,7.9,-7.04);scene.add(art);
+const rail=cube(17,.06,.12,brass,0,.09,5.9);
+
 const projects={cloud:["Cloud Landing Zone Migration","Led end-to-end QE strategy for AWS landing-zone modernization, from analysis to production, across functional, data, performance and automation testing.","AWS · Lambda · Glue · Kafka · Athena · CloudWatch"],automation:["API Migration Comparison","Built a tool to compare legacy and new API behavior across hundreds of input combinations, accelerating regression analysis.","Java · API Testing · Automation · Regression"],ai:["AI-Assisted QE","Experimented with AI-driven element discovery and practical engineering productivity tools, alongside AI Field Notes.","AI · Playwright · Engineering Tools"],leadership:["Quality Engineering Leadership","Led test strategy, release readiness, stakeholder coordination and cross-functional QE teams in financial services.","Test Strategy · Quality Metrics · Release Readiness"]};
 const overlay=document.getElementById("projectOverlay"),content=document.getElementById("projectContent");
-function showProject(k){if(!projects[k])return;const [title,description,tags]=projects[k];content.replaceChildren();for(const [tag,value] of [["h2",title],["p",description],["small",tags]]){const e=document.createElement(tag);e.textContent=value;content.append(e)}overlay.hidden=false;if(fp)exitFP()}
-document.getElementById("closeProject").onclick=()=>overlay.hidden=true;document.getElementById("roomNext").onclick=()=>showProject("cloud");
+function showProject(k){if(k.startsWith("company:")){const d=companyData[k.slice(8)];if(!d)return;content.replaceChildren();for(const [tag,value] of [["small",d.eyebrow],["h2",d.name],["p",d.summary],["small",d.focus]]){const e=document.createElement(tag);e.textContent=value;content.append(e)}overlay.hidden=false;if(fp)exitFP();return}if(!projects[k])return;const [title,description,tags]=projects[k];content.replaceChildren();for(const [tag,value] of [["h2",title],["p",description],["small",tags]]){const e=document.createElement(tag);e.textContent=value;content.append(e)}overlay.hidden=false;if(fp)exitFP()}
+document.getElementById("closeProject").onclick=()=>overlay.hidden=true;document.getElementById("roomNext").onclick=()=>showProject("company:td");
+const companyNav=document.getElementById("companyExhibits");
+if(companyNav)for(const button of companyNav.querySelectorAll("[data-company]"))button.addEventListener("click",()=>showProject("company:"+button.dataset.company));
 let yaw=.75,pitch=.45,distance=22,fp=false,fpYaw=0,fpPitch=0,fpPos=new THREE.Vector3(0,2.1,5),drag=false,lastX=0,lastY=0,moved=false;const keys=new Set();
 function enterFP(){fp=true;fpPos.set(0,2.1,5);fpYaw=0;fpPitch=0;document.getElementById("firstPerson").textContent="Exit First-Person";document.getElementById("roomHint").hidden=false;root.requestPointerLock?.()}
 function exitFP(){fp=false;if(document.pointerLockElement)document.exitPointerLock?.();document.getElementById("firstPerson").textContent="Enter First-Person";document.getElementById("roomHint").hidden=true}
