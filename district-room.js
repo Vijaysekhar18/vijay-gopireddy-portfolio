@@ -25,18 +25,19 @@ function plaque(title,sub,x,y,z,action){
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.7,1.74),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));mesh.position.set(x,y,z);scene.add(mesh);mesh.userData.action=action;clickable.push(mesh);return mesh
 }
 if(safe==="services"){
- // Curved open-front pavilion inspired by the supplied round-room reference.
- const shellMat=new THREE.MeshStandardMaterial({color:"#d8e3e9",roughness:.82,side:THREE.DoubleSide});
+ // Single continuous rear semicircle and circular floor, no enclosing square.
+ const shellMat=new THREE.MeshStandardMaterial({color:"#d8e3e9",roughness:.87,side:THREE.DoubleSide});
  const roundFloor=new THREE.Mesh(new THREE.CylinderGeometry(12.65,12.65,.48,96),floor);
  roundFloor.position.y=-.26;roundFloor.receiveShadow=true;scene.add(roundFloor);
- const roundRim=new THREE.Mesh(new THREE.TorusGeometry(12.56,.13,12,96),mat("#e0b878"));
- roundRim.rotation.x=Math.PI/2;roundRim.position.y=.045;scene.add(roundRim);
- const curvedWall=new THREE.Mesh(new THREE.CylinderGeometry(12.6,12.6,7.9,96,1,true,Math.PI/2,Math.PI),shellMat);
- curvedWall.position.y=4;curvedWall.receiveShadow=true;scene.add(curvedWall);
- // Thin gold coping follows the rear semicircle, rather than spanning the open front.
- const topCurve=new THREE.Mesh(new THREE.TorusGeometry(12.58,.12,10,96,Math.PI),mat("#d5ad6b"));
- topCurve.rotation.x=Math.PI/2;topCurve.rotation.z=Math.PI;topCurve.position.y=7.94;scene.add(topCurve);
- // No front wall or roof: the four exhibits remain visible in the cutaway.
+ const roundRim=new THREE.Mesh(new THREE.TorusGeometry(12.57,.11,12,96),mat("#cda66c"));
+ roundRim.rotation.x=Math.PI/2;roundRim.position.y=.015;scene.add(roundRim);
+ // Cylinder rear half (negative z): angles PI/2 through 3PI/2.
+ const curvedWall=new THREE.Mesh(new THREE.CylinderGeometry(12.55,12.55,7.85,96,1,true,Math.PI/2,Math.PI),shellMat);
+ curvedWall.position.y=3.92;scene.add(curvedWall);
+ // Rounded upper cornice built as a planar arc, not a rectangular beam.
+ const cornicePts=[];
+ for(let i=0;i<=64;i++){const t=Math.PI/2+i*Math.PI/64;cornicePts.push(new THREE.Vector3(12.55*Math.cos(t),7.84,-12.55*Math.sin(t)))}
+ const cornice=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(cornicePts),64,.085,6,false),mat("#d8af69"));scene.add(cornice);
 }else{
  box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
  box(24,.18,.28,trim,0,.2,-9.7);
@@ -220,18 +221,15 @@ if(safe==="about"){
   const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.035,8,96),mat("#607b8c"));
   ring.rotation.x=Math.PI/2;ring.position.y=.15;scene.add(ring);
  }
- // A circular walkway, with four exhibit islands instead of a rectangular grid.
- box(22.5,1.45,.18,navy,0,6.92,-9.52);
- textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.91,-9.31,17.7,1.08,{bg:"#10263d",fg:"#fff5df",edge:"#e7be75"});
- for(const x of [-10.95,10.95]){
-  box(.38,7.65,.42,steel,x,3.83,-5.8);
-  box(.32,7.65,.38,navy,x,3.83,3.7);
+ // Four curved architectural bays: the rear wall remains visible between exhibits.
+ const archMat=mat("#d6b477");
+ for(const angle of [-2.18,-1.77,-1.37,-.96]){
+  const px=Math.cos(angle)*11.8,pz=Math.sin(angle)*11.8;
+  const post=box(.16,5.25,.18,archMat,px,3.0,pz);
+  post.rotation.y=-angle-Math.PI/2;
  }
- for(let x=-9.5;x<=9.5;x+=1.9){
-  box(1.72,3.6,.11,navy,x,3.42,-9.4);
-  box(1.53,3.28,.12,mat("#4b718b"),x,3.42,-9.3);
-  for(let j=0;j<3;j++)box(.15,.35,.14,cream,x+Math.sin(x*3+j)*.45,2.5+j*.72,-9.18);
- }
+ // Freestanding center sign replaces the long rectangular rear wall.
+ textSign("VSR INNOVATION CENTER","FOUR ENGINEERING DISCIPLINES",0,6.9,-10.6,9.4,1.03,{bg:"#10263d",fg:"#fff5df",edge:"#e7be75"});
  // Central VSR core: elevated so it remains visible without obstructing the aisle.
  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),glow("#f4ce82"));
  core.position.set(0,5.75,-7.85);scene.add(core);
@@ -241,13 +239,13 @@ if(safe==="about"){
  // Each gallery bay has its own equipment, not the same screen recolored four times.
  for(const [i,st] of stations.entries()){
   const light=glow(st.color);
-  box(4.65,.13,8.5,navy,st.x,.23,-2.15);
-  box(4.52,.08,8.38,light,st.x,.32,-2.15);
-  box(4.34,.12,8.2,stone,st.x,.4,-2.15);
-  for(const dx of [-2.17,2.17])box(.13,5.5,.14,steel,st.x+dx,3.2,-5.9);
-  box(4.4,.18,.28,brass,st.x,5.95,-5.9);
-  textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,5.13,-5.63,4.05,.9,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
-  const platform=box(3.85,.3,1.15,navy,st.x,.69,1.15);clickableProp(platform,st.key);
+  const island=new THREE.Mesh(new THREE.CylinderGeometry(2.34,2.43,.22,40),navy);
+  island.position.set(st.x,.32,-2.15);scene.add(island);
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(2.28,.075,8,48),light);
+  halo.rotation.x=Math.PI/2;halo.position.set(st.x,.47,-2.15);scene.add(halo);
+  
+  textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,4.65,-5.15,3.9,.9,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
+  const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.67,1.8,.26,32),navy);platform.position.set(st.x,.7,1.15);scene.add(platform);clickableProp(platform,st.key);
   textSign("EXPLORE",st.sub,st.x,1.35,1.78,3.4,.73,{bg:"#142c43",fg:"#fff8e9",edge:st.color},st.key);
   const lamp=new THREE.PointLight(st.color,3.1,5.8);lamp.position.set(st.x,5.6,-3.8);scene.add(lamp);
   if(i===0){
@@ -306,8 +304,8 @@ if(safe==="about"){
   }
  }
  // Illuminated entrance threshold makes the visitor's starting point legible.
- box(21.5,.09,1.45,mat("#9faeae"),0,.16,6.8);
- for(let x=-9.5;x<=9.5;x+=1.9)box(1.3,.04,.09,brass,x,.23,6.25);
+ const entryArc=new THREE.Mesh(new THREE.TorusGeometry(10.7,.065,8,64,Math.PI),brass);
+ entryArc.rotation.x=Math.PI/2;entryArc.rotation.z=Math.PI;entryArc.position.y=.18;scene.add(entryArc);
  window.__servicesStations=stations;
  window.__servicesAnimate=()=>{
   if(motion)return;
