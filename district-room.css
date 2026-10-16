@@ -29,3 +29,20 @@
 .journey-button[aria-pressed="true"]{background:#c37a36!important;color:#182e3e!important}
 .journey-button:focus-visible{outline:3px solid #ffda8a;outline-offset:3px}
 @media(max-width:600px){.journey-button{font-size:10px!important;padding:9px!important;letter-spacing:0}}
+
+/* AI Quest — futuristic, readable game HUD, with touch and keyboard parity. */
+.ai-quest-hud{position:fixed;z-index:8;top:95px;right:18px;width:min(360px,calc(100vw - 36px));padding:15px;border:1px solid #5de1ed8a;border-radius:18px;background:#0b1731ed;color:#f2fbff;box-shadow:0 15px 45px #0008;font-family:system-ui,sans-serif;backdrop-filter:blur(14px)}
+.ai-quest-top,.ai-quest-controls,.ai-quest-move{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ai-quest-top strong{font-size:16px;letter-spacing:.1em}.ai-quest-top span{font-size:11px;color:#8fe7f3;font-weight:800}
+.ai-quest-controls{margin-top:13px;flex-wrap:wrap}
+.ai-quest-hud button,.ai-quest-shortcuts button{cursor:pointer;border:1px solid #65dcea;border-radius:9px;padding:10px 12px;background:#183d65;color:white;font-size:11px;font-weight:800}
+.ai-quest-hud button:hover,.ai-quest-shortcuts button:hover{background:#245c82}
+.ai-quest-hud button:focus-visible,.ai-quest-shortcuts button:focus-visible{outline:3px solid #f7c76b;outline-offset:3px}
+.ai-quest-hud button[hidden],.ai-quest-move[hidden]{display:none}
+.ai-quest-hud p{margin:11px 0 0;font-size:11px;line-height:1.5;color:#c8e5f4}
+.ai-quest-move{margin-top:12px}.ai-quest-move button{flex:1;background:#6043b0}
+.ai-vault-unlocked{border-color:#f6c56c;box-shadow:0 0 25px #f6c56c50}
+.ai-quest-shortcuts{position:fixed;bottom:83px;left:50%;transform:translateX(-50%);z-index:8;display:flex;gap:7px;justify-content:center;flex-wrap:wrap;width:min(720px,95vw)}
+.ai-quest-shortcuts button{background:#132e52e8;box-shadow:0 5px 15px #0004}
+@media(max-width:760px){.ai-quest-hud{top:105px;right:10px;padding:10px;width:min(280px,calc(100vw - 20px))}.ai-quest-hud .ai-quest-top strong{font-size:12px}.ai-quest-hud button{padding:8px;font-size:10px}.ai-quest-shortcuts{bottom:69px;gap:5px}.ai-quest-shortcuts button{padding:7px 9px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.ai-quest-hud,.ai-quest-shortcuts{scroll-behavior:auto}}

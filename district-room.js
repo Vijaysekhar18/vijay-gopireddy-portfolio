@@ -183,34 +183,62 @@ if(safe==="about"){
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
- // AI Collectibles Vault: floating, gently rotating category tokens with clickable detail cards.
- const vaultNavy=mat("#183748"),vaultSteel=mat("#4c7181"),vaultGold=mat("#e5bb63");
- box(22,4.2,.25,vaultNavy,0,5.2,-9.54);
- textSign("THE COLLECTIBLES VAULT","LEARN · BUILD · EXPERIMENT",0,6.8,-9.33,12.5,1.1,{bg:"#173749",fg:"#d8f5ff",edge:"#64b9ce"});
- const tokens=[
-  {x:-7.7,key:"openai",name:"OPENAI",sub:"CERTIFICATIONS",color:"#e4bc64"},
-  {x:-2.55,key:"claude",name:"CLAUDE",sub:"LEARNING",color:"#d78b6b"},
-  {x:2.55,key:"hackathon",name:"HACKATHON",sub:"COGNIZANT",color:"#78b9d0"},
-  {x:7.7,key:"innovation",name:"INNOVATION",sub:"ENGINEERING",color:"#8ac5a2"}
- ];
- const floatingTokens=[];
- for(const token of tokens){
-  const metal=new THREE.MeshStandardMaterial({color:token.color,metalness:.64,roughness:.25,emissive:token.color,emissiveIntensity:.14});
-  const group=new THREE.Group();group.position.set(token.x,3.45,-6.3);scene.add(group);
-  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.13,1.13,.27,56),metal);coin.rotation.x=Math.PI/2;group.add(coin);
-  const rim=new THREE.Mesh(new THREE.TorusGeometry(.89,.075,12,56),vaultGold);rim.position.z=.16;group.add(rim);
-  const label=textSign(token.name,token.sub,token.x,3.45,-5.99,2.3,1.1,{bg:"#193b4a",fg:"#fff0d5",edge:token.color},token.key);
-  label.userData.action=token.key;
-  clickableProp(coin,token.key);
-  // Clickable backing gives touch users a larger hit area.
-  const backing=box(3.35,2.1,.12,vaultNavy,token.x,1.3,-7.25);
-  textSign("EXPLORE",token.sub,token.x,1.3,-7.14,3.1,1.2,{bg:"#203f4e",fg:"#d7edf0",edge:token.color},token.key);
-  floatingTokens.push({group,label,base:3.45,phase:token.x});
+ // AI QUEST: original, neon subway-inspired interactive miniature world.
+ const navy=mat("#0b1834"),cyan=mat("#39d6e9"),violet=mat("#8c65ff"),gold=mat("#f4bb55");
+ const neon=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.72,metalness:.38,roughness:.25});
+ scene.background=new THREE.Color("#0b122c");
+ box(23,7.7,.28,navy,0,4,-9.62);
+ box(23,.15,18,mat("#152343"),0,-.05,0);
+ // Three tracks, illuminated lane markers and recurring sleepers.
+ for(const x of [-5.7,0,5.7]){
+  box(3.65,.14,18,mat("#1e3159"),x,.09,-.2);
+  for(const dx of [-1.45,1.45])box(.12,.15,18,neon("#44d8e8"),x+dx,.22,-.2);
+  for(let z=-8;z<8;z+=1.35)box(3.5,.13,.17,mat("#526384"),x,.24,z);
  }
- // Animated collectible tokens; no extra floating objects or giant podiums.
- const previousAnimate=window.__aiVaultAnimate;
- window.__aiVaultAnimate=()=>{const t=performance.now()*.001;for(const token of floatingTokens){token.group.position.y=token.base+Math.sin(t*1.1+token.phase)*.16;token.group.rotation.y=Math.sin(t*.65+token.phase)*.2;token.label.position.y=token.group.position.y}};
- for(const x of [-10.5,10.5])planter(x,6.7);
+ for(const x of [-11.2,11.2]){
+  box(.2,7.3,18,navy,x,3.7,0);
+  for(let z=-8;z<9;z+=3.1){box(.16,4,.18,neon("#7d69ff"),x-Math.sign(x)*.17,3.5,z);box(.15,.15,2.6,neon("#37bfcf"),x-Math.sign(x)*.2,5.9,z)}
+ }
+ for(const z of [-7,-2,3,8]){
+  box(22.8,.2,.25,neon("#5663a8"),0,7.55,z);
+  for(const x of [-8,0,8]){const l=new THREE.PointLight("#7dbaff",3,8);l.position.set(x,6.9,z);scene.add(l)}
+ }
+ textSign("AI QUEST","COLLECT · DISCOVER · BUILD",0,6.48,-9.35,13,1.2,{bg:"#122452",fg:"#effaff",edge:"#47dfe9"});
+ const tokens=[
+  {x:-8.2,key:"openai",name:"OPENAI",sub:"CREDENTIALS",color:"#f4c45e"},
+  {x:-2.7,key:"claude",name:"CLAUDE",sub:"EXPLORATION",color:"#ed9b7d"},
+  {x:2.7,key:"hackathon",name:"HACKATHON",sub:"EVENTS",color:"#66c9ff"},
+  {x:8.2,key:"innovation",name:"INNOVATION",sub:"PROJECTS",color:"#7ce1ac"}
+ ];
+ const floating=[];
+ for(const token of tokens){
+  const material=neon(token.color);
+  const group=new THREE.Group();group.position.set(token.x,3.45,-5.9);scene.add(group);
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.28,48),material);coin.rotation.x=Math.PI/2;group.add(coin);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.88,.085,12,48),mat("#fff3d2"));ring.position.z=.18;group.add(ring);
+  const symbol=textSign(token.name,token.sub,token.x,3.45,-5.5,2.3,.97,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
+  clickableProp(coin,token.key);
+  box(3.55,.18,2.1,neon(token.color),token.x,.42,-6.1);
+  box(3.35,.3,1.9,navy,token.x,.65,-6.1);
+  textSign("DISCOVER",token.sub,token.x,1.26,-5.08,3.15,.87,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
+  floating.push({group,symbol,base:3.45,phase:token.x});
+ }
+ // Holographic final destination, with honest, unlocked-only project descriptions.
+ const portal=new THREE.Mesh(new THREE.TorusGeometry(1.7,.17,16,64),neon("#54e6db"));portal.position.set(0,3.45,-8.5);scene.add(portal);
+ textSign("INNOVATION VAULT","EXPLORE ALL FOUR TO UNLOCK",0,1.05,-8.14,5.8,.85,{bg:"#152449",fg:"#f5f8ff",edge:"#60dccc"},"innovation");
+ // Hoverboard rider is deliberately simple and original (no third-party game character).
+ const rider=new THREE.Group();scene.add(rider);
+ const board=box(1.6,.16,.85,neon("#ffad51"),0,0,0,rider);
+ box(.65,.63,.5,mat("#e8f0fa"),0,.62,0,rider);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),mat("#f7bd89"));head.position.y=1.2;rider.add(head);
+ const visor=box(.5,.17,.2,neon("#59d9ff"),0,1.25,.26,rider);
+ rider.position.set(0,.65,5.6);
+ window.__aiQuestWorld={tokens,floating,portal,rider};
+ window.__aiVaultAnimate=()=>{
+  const t=performance.now()*.001;
+  for(const item of floating){item.group.position.y=item.base+Math.sin(t*1.5+item.phase)*.17;item.group.rotation.y=Math.sin(t*.7+item.phase)*.23;item.symbol.position.y=item.group.position.y}
+  portal.rotation.z=t*.15;rider.position.y=.65+Math.sin(t*3)*.035;
+ };
 }else{
  // Four generously spaced contact stations: all props are real raycast targets.
  tableScene(-6.8,1,"linkedin","LINKEDIN");
@@ -236,7 +264,7 @@ if(safe==="about"){
 
 }
 const dialog=document.getElementById("districtDialog");
-function openDetail(key){const d=content[key];if(!d)return;document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
+function openDetail(key){const d=content[key];if(!d)return;if(safe==="ai")aiQuestDiscover(key);document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
 document.getElementById("districtClose").onclick=()=>dialog.close();
 if(safe==="about"){
  const quick=document.createElement("nav");quick.id="aboutQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","About gallery exhibits");
@@ -246,7 +274,10 @@ if(safe==="about"){
  document.body.append(quick);
 }
 if(safe==="ai"){
- const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","AI collectibles");
+ const hud=document.createElement("section");hud.id="aiQuestHud";hud.className="ai-quest-hud";hud.setAttribute("aria-label","AI Quest controls");
+ hud.innerHTML='<div class="ai-quest-top"><strong>⚡ AI QUEST</strong><span id="aiQuestProgress" role="status">0 / 4 DISCOVERED</span></div><div class="ai-quest-controls"><button type="button" id="aiQuestTour">▶ GUIDED JOURNEY</button><button type="button" id="aiQuestPlay">🎮 PLAY CHALLENGE</button><button type="button" id="aiQuestExit" hidden>■ EXIT MODE</button></div><p id="aiQuestHint">Choose a mode or tap a glowing collectible.</p><div class="ai-quest-move" hidden><button type="button" data-move="-1" aria-label="Move left">◀ LEFT</button><button type="button" data-move="1" aria-label="Move right">RIGHT ▶</button></div>';
+ document.body.append(hud);
+ const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="ai-quest-shortcuts";quick.setAttribute("aria-label","AI collectibles");
  for(const [key,label] of [["openai","OpenAI"],["claude","Claude"],["hackathon","Hackathon"],["innovation","Innovations"]]){
   const button=document.createElement("button");button.type="button";button.dataset.collectible=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
  }
@@ -296,16 +327,79 @@ function updateJourney(now){
  if(t>=1){setJourney(false)}
  return true;
 }
+// Guided cinematic tour and optional keyboard/touch challenge.
+const aiKeys=["openai","claude","hackathon","innovation"];
+let aiMode="idle",aiStart=0,aiLane=1,aiProgress=0,aiCollected=new Set(),aiLast=0;
+const aiHud=document.getElementById("aiQuestHud");
+const aiReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function aiQuestDiscover(key){
+ if(!aiHud||!aiKeys.includes(key))return;
+ aiCollected.add(key);
+ aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";
+ if(aiCollected.size===4){aiHud.querySelector("#aiQuestHint").textContent="✨ VAULT UNLOCKED · Explore the Innovation Vault!";aiHud.classList.add("ai-vault-unlocked")}
+}
+function aiSetMode(mode){
+ if(!aiHud)return;
+ aiMode=mode;aiStart=performance.now();aiLast=0;aiLane=1;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
+ aiHud.querySelector("#aiQuestTour").hidden=mode!=="idle";
+ aiHud.querySelector("#aiQuestPlay").hidden=mode!=="idle";
+ aiHud.querySelector("#aiQuestExit").hidden=mode==="idle";
+ aiHud.querySelector(".ai-quest-move").hidden=mode!=="play";
+ aiHud.querySelector("#aiQuestHint").textContent=mode==="tour"?"Cinematic tour · Select a collectible to pause and read":mode==="play"?"Use ← → or touch controls to collect four AI coins.":"Choose a mode or tap a glowing collectible.";
+ if(mode==="idle"){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20;window.__aiQuestWorld?.rider.position.set(0,.65,5.6)}
+}
+if(aiHud){
+ aiHud.querySelector("#aiQuestTour").onclick=()=>aiSetMode("tour");
+ aiHud.querySelector("#aiQuestPlay").onclick=()=>aiSetMode("play");
+ aiHud.querySelector("#aiQuestExit").onclick=()=>aiSetMode("idle");
+ aiHud.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{aiLane=THREE.MathUtils.clamp(aiLane+Number(b.dataset.move),0,2)});
+ window.addEventListener("keydown",e=>{if(aiMode!=="play"||dialog.open)return;if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();aiLane=Math.max(0,aiLane-1)}if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();aiLane=Math.min(2,aiLane+1)}if(e.key==="Escape")aiSetMode("idle")});
+ dialog.addEventListener("close",()=>{if(aiMode==="tour")aiStart=performance.now()-aiProgress*26000});
+}
+function updateAiQuest(now){
+ if(aiMode==="idle"||!window.__aiQuestWorld)return false;
+ if(dialog.open){aiStart+=Math.min(now-(aiLast||now),60);aiLast=now;return true;}
+ const world=window.__aiQuestWorld,elapsed=(now-aiStart)/1000;
+ if(aiMode==="tour"){
+  // Smoothly follow all four exhibit windows, keeping each label visible.
+  aiProgress=Math.min(elapsed/26,1);
+  const p=aiReduced?aiProgress:aiProgress*aiProgress*(3-2*aiProgress);
+  const x=-8.7+p*17.4;
+  const dest=new THREE.Vector3(x,3.3,3.6);
+  camera.position.lerp(dest,aiReduced?1:.055);
+  camera.lookAt(x*.94,3.1,-5.9);
+  if(aiProgress>=1)aiSetMode("idle");
+ }else{
+  const dt=Math.min((now-(aiLast||now))/1000,.06);aiLast=now;
+  aiProgress=Math.min(aiProgress+dt/26,1);
+  const lanes=[-5.7,0,5.7],targetX=lanes[aiLane];
+  world.rider.position.x+=(targetX-world.rider.position.x)*.14;
+  world.rider.position.z=5.6-aiProgress*12.4;
+  camera.position.lerp(new THREE.Vector3(world.rider.position.x,4.1,world.rider.position.z+6.2),.11);
+  camera.lookAt(world.rider.position.x,2.2,world.rider.position.z-5.5);
+  // Four encounter checkpoints: lane choices select a collectible.
+  const milestones=[.2,.4,.6,.8],keys=aiKeys,required=[0,2,1,2];
+  for(let i=0;i<4;i++){
+   if(aiProgress>=milestones[i]&&!world["checkpoint"+i]){
+    world["checkpoint"+i]=true;
+    if(aiLane===required[i]){aiQuestDiscover(keys[i]);aiHud.querySelector("#aiQuestHint").textContent="✨ "+keys[i].toUpperCase()+" COLLECTED!";openDetail(keys[i]);}
+    else aiHud.querySelector("#aiQuestHint").textContent="Missed a collectible · Try another lane or tap its shortcut.";
+   }
+  }
+  if(aiProgress>=1){aiSetMode("idle");aiHud.querySelector("#aiQuestHint").textContent="Run complete! Replay or explore the collectibles below.";}
+ }
+ return true;
+}
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
-function update(){if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
+function update(){if(updateAiQuest(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
 function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
-let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(journeyActive)setJourney(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
+let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
 renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
-renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
-document.getElementById("districtReset").onclick=()=>{if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
+renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
+document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
 function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();renderer.render(scene,camera)}animate();
