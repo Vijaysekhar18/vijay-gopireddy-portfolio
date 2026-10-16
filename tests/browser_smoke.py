@@ -113,7 +113,7 @@ with sync_playwright() as p:
         assert page.locator('#contactQuickActions [data-contact="email"]').get_attribute("href").startswith("mailto:vijay.sekhar18@gmail.com")
         assert page.locator('#contactQuickActions [data-contact="linkedin"]').get_attribute("href")=="https://www.linkedin.com/in/vijaygopireddy/"
         assert page.locator('#contactQuickActions [data-contact="copy"]').count()==1
-        page.locator('#contactQuickActions [data-contact="email"]').evaluate("(el) => el.getBoundingClientRect().height >= 44")
+        assert page.locator('#contactQuickActions [data-contact="email"]').evaluate("(el) => el.getBoundingClientRect().height >= 44")
         page.locator('#contactQuickActions [data-contact="location"]').click()
         assert "New York, NY" in page.locator("#districtDetailBody").inner_text()
         page.locator("#districtClose").click()
