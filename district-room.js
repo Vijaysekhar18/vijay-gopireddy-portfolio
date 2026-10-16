@@ -106,52 +106,66 @@ function libertySculpture(x,z){
 }
 
 if(safe==="about"){
- // NYC Story Station: a tiled subway concourse, transit board, route tokens and turnstiles.
- const navy=mat("#203e50"),tile=mat("#e7e0d1"),brass=mat("#d8aa57"),rail=mat("#77848b"),terracotta=mat("#b86b53");
- // Ceramic subway tile rhythm and brass grout along the rear wall.
- for(let y=.65;y<7.6;y+=.68)for(let x=-11.6;x<11.8;x+=1.28){
-  box(1.23,.62,.045,(Math.round(x*3+y*2)%7===0)?mat("#d5d8d0"):tile,x,y,-9.73);
+ // Times Square Story Station: richly tiled subway platform with an actual four-window train.
+ const ivory=mat("#eee6d6"),mosaicBlue=mat("#193d63"),mosaicGold=mat("#c8a26b"),darkRail=mat("#293b49"),trainSilver=mat("#9aaebb"),trainNavy=mat("#294e70"),warm=mat("#e9b46d");
+ // Tiled station wall: subtle ceramic staggered bricks.
+ for(let row=0;row<11;row++)for(let col=0;col<24;col++){
+  const x=-11.5+col*.99+(row%2)*.48,y=.42+row*.62;
+  if(x>11.5)continue;
+  box(.94,.57,.05,row<2?mat("#b7a696"):ivory,x,y,-9.73);
  }
- // Dark enamel NYC station fascia with classic route medallions.
- box(22.6,1.1,.18,navy,0,7.15,-9.65);
- textSign("VSR EXPRESS","THE STORY STATION  ·  HYDERABAD  ↔  NEW YORK",0,7.15,-9.52,15.5,.85,{bg:"#203e50",fg:"#fff4d6",edge:"#d5ab59"});
- // Four station stops arranged as a coherent route on a large destination board.
- box(21.8,3.85,.28,navy,0,4.48,-9.36);
+ // Traditional Times Square mosaic panel, with high contrast and generous type.
+ box(16.9,2.08,.13,mosaicGold,0,6.68,-9.58);
+ box(16.45,1.71,.15,mosaicBlue,0,6.68,-9.48);
+ textSign("TIMES SQUARE","42ND STREET  ·  VSR EXPRESS",0,6.68,-9.34,15.7,1.4,{bg:"#193d63",fg:"#fff7e9",edge:"#d8b67b"});
+ // Decorative patterned border above and below the mosaic.
+ for(let i=-10;i<=10;i++){box(.65,.14,.09,i%2?mosaicGold:trainNavy,i*.76,7.76,-9.44);box(.65,.12,.09,i%2?trainNavy:mosaicGold,i*.76,5.59,-9.44)}
+ // Elevated station ceiling beams and pendant lights.
+ for(const z of [-7.5,-3.2,1.2,5.6]){
+  box(23.3,.22,.35,darkRail,0,8.04,z);
+  for(const x of [-8,0,8]){const lampGlow=new THREE.PointLight("#ffe4b3",3.5,8);lampGlow.position.set(x,7.7,z);scene.add(lampGlow)}
+ }
+ // Platform safety edge and track bed in front of the subway car.
+ box(22,.13,.2,warm,0,.12,4.8);
+ for(let x=-10.5;x<=10.5;x+=1.1)box(.6,.07,1.1,darkRail,x,.08,6.6);
+ for(const z of [6.12,7.18])box(22,.11,.1,mat("#8d939a"),0,.18,z);
+ // One continuous silver-blue subway car, not separate wall-mounted cards.
+ const carZ=-4.25;
+ box(21.8,3.85,1.45,trainSilver,0,2.52,carZ);
+ box(21.95,.38,1.55,trainNavy,0,4.65,carZ);
+ box(21.9,.55,1.55,trainNavy,0,.43,carZ);
+ box(21.7,.13,1.55,warm,0,1.06,carZ);
+ box(21.7,.1,1.55,warm,0,4.3,carZ);
+ // Four oversized train windows, each a clear interactive personal-story stop.
  const stops=[
-  {x:-8.1,code:"H",name:"ROOTS",sub:"HYDERABAD",key:"story",color:"#e3ad48"},
-  {x:-2.7,code:"N",name:"JOURNEY",sub:"NEW YORK",key:"journey",color:"#70a8be"},
-  {x:2.7,code:"A",name:"MILESTONES",sub:"AWARDS & LEARNING",key:"credentials",color:"#a7c18e"},
-  {x:8.1,code:"X",name:"BEYOND WORK",sub:"LIFE & CURIOSITY",key:"personal",color:"#d18b78"}
+  {x:-8.05,code:"H",name:"MY STORY",sub:"HYDERABAD ROOTS",key:"story",color:"#e6b251"},
+  {x:-2.7,code:"N",name:"MY JOURNEY",sub:"HYD → NYC",key:"journey",color:"#78bdd0"},
+  {x:2.7,code:"A",name:"MILESTONES",sub:"AWARDS & LEARNING",key:"credentials",color:"#a5d09a"},
+  {x:8.05,code:"X",name:"BEYOND WORK",sub:"TRAVEL · CURIOSITY",key:"personal",color:"#df9e8b"}
  ];
- box(17,.075,.09,brass,0,4.78,-9.09);
  for(const stop of stops){
-  const disc=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.13,48),mat(stop.color));
-  disc.rotation.x=Math.PI/2;disc.position.set(stop.x,4.78,-8.94);scene.add(disc);clickableProp(disc,stop.key);
-  textSign(stop.code,"",stop.x,4.78,-8.85,.75,.75,{bg:stop.color,fg:"#1c2f39",edge:"#f4e2b7"},stop.key);
-  textSign(stop.name,stop.sub,stop.x,3.55,-9.08,4.8,1.28,{bg:"#243e4d",fg:"#f9edcf",edge:stop.color},stop.key);
+  box(4.82,2.42,.13,darkRail,stop.x,2.94,carZ+ .83);
+  box(4.56,2.18,.14,mat("#d7e6e9"),stop.x,2.94,carZ+.92);
+  // Window sign sits forward of the glass so it is clearly readable.
+  textSign(stop.name,stop.sub,stop.x,2.96,carZ+1.035,4.35,1.83,{bg:"#1d3c50",fg:"#fff9e7",edge:stop.color},stop.key);
+  textSign(stop.code,"",stop.x,4.03,carZ+1.055,.67,.67,{bg:stop.color,fg:"#1c3241",edge:"#fff0cb"},stop.key);
+  box(.09,2.5,.16,mosaicGold,stop.x-2.47,2.94,carZ+.95);
  }
- // Four floor-level subway navigation markers create the game-like discovery path.
- for(const [i,stop] of stops.entries()){
-  const token=new THREE.Mesh(new THREE.TorusGeometry(.55,.13,10,40),mat(stop.color));token.rotation.x=Math.PI/2;token.position.set(stop.x,.08,1.8+(i%2)*1.5);scene.add(token);
+ // Wheels and undercarriage make the subway train immediately recognizable.
+ for(const x of [-9,-6,-3,0,3,6,9]){
+  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.37,.37,.25,24),darkRail);
+  wheel.rotation.x=Math.PI/2;wheel.position.set(x,.36,carZ+ .88);scene.add(wheel);
  }
- // Vintage station clock and a compact ticket kiosk, with the floor mostly open.
- const clockFace=new THREE.Mesh(new THREE.CircleGeometry(.76,40),new THREE.MeshBasicMaterial({color:"#fff1d8"}));
- clockFace.position.set(0,5.95,-9.03);scene.add(clockFace);
- const clockRim=new THREE.Mesh(new THREE.TorusGeometry(.77,.08,8,40),brass);clockRim.position.set(0,5.95,-8.99);scene.add(clockRim);
- for(let i=0;i<12;i++){const angle=i*Math.PI/6;const mark=box(.045,.15,.02,navy,Math.sin(angle)*.62,5.95+Math.cos(angle)*.62,-8.96);mark.rotation.z=-angle}
- const hour=box(.055,.43,.025,navy,-.1,6.12,-8.94);hour.rotation.z=.48;
- const minute=box(.04,.58,.025,navy,.18,6.17,-8.93);minute.rotation.z=-.8;
- box(3.1,1.75,1.3,navy,-9.6,.88,5.8);textSign("VSR","STORY TICKETS",-9.6,1.43,6.5,2.7,.8,{bg:"#e9c17a",fg:"#243c4a",edge:"#fff0cc"},"story");
- // Three brass subway turnstiles on the right, visually quiet and non-obstructive.
- for(const z of [3.7,5.1,6.5]){box(.2,1.05,.22,rail,9.4,.55,z);box(1.7,.08,.09,brass,9.0,1.08,z);box(.08,.68,.08,brass,8.3,.75,z)}
- // Framed stylized city prints evoke the two cities, not personal photo galleries.
- for(const [x,rot,title,sub] of [[-11.73,Math.PI/2,"HYDERABAD","WHERE MY STORY BEGAN"],[11.73,-Math.PI/2,"NEW YORK","THE CITY OF IDEAS"]]){
-  const group=new THREE.Group();group.position.set(x,4.05,-1.6);group.rotation.y=rot;scene.add(group);
-  box(4.4,3.2,.14,navy,0,0,0,group);
-  const p=textSign(title,sub,0,0,0,4,2.85,{bg:"#e9d5b2",fg:"#294759",edge:"#cba15c"});
-  scene.remove(p);group.add(p);p.position.set(0,0,.09);
+ // Route indicator / destination board on the platform side.
+ textSign("VSR EXPRESS","FOUR STOPS · ONE STORY",0,5.07,-9.22,9.1,.78,{bg:"#1d3e55",fg:"#fff0ca",edge:"#d9b46b"});
+ // Wall posters and vintage subway detail on side walls.
+ for(const [x,rot,title,sub] of [[-11.72,Math.PI/2,"HYDERABAD","THE BEGINNING"],[11.72,-Math.PI/2,"NEW YORK","THE NEXT CHAPTER"]]){
+  const g=new THREE.Group();g.position.set(x,4.1,-.8);g.rotation.y=rot;scene.add(g);
+  box(4.3,3.2,.15,darkRail,0,0,0,g);
+  const p=textSign(title,sub,0,0,.1,4,2.9,{bg:"#e3d4b7",fg:"#24435a",edge:"#b78e57"});
+  scene.remove(p);g.add(p);p.position.set(0,0,.12);
  }
- planter(-10,7.8);planter(10,7.8);
+ planter(-10,6.5);planter(10,6.5);
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
