@@ -77,6 +77,8 @@ with sync_playwright() as p:
 
         page.locator('[data-collectible="openai"]').click()
         assert "OpenAI Technical Practitioner" in page.locator("#districtDetailBody").inner_text()
+        assert "MILESTONE UNLOCKED" in page.locator("#aiQuestCelebration").inner_text()
+        assert "1 / 4 DISCOVERED" in page.locator("#aiQuestProgress").inner_text()
         page.locator("#districtClose").click()
         page.locator('[data-collectible="hackathon"]').click()
         assert "Cognizant" in page.locator("#districtDetailTitle").inner_text()
