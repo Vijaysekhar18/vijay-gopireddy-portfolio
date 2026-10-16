@@ -70,9 +70,16 @@ function displayMaterial(name,featured){
  const c=document.createElement("canvas");c.width=1024;c.height=640;const g=c.getContext("2d");
  g.fillStyle=featured?"#174a35":"#243c45";g.fillRect(0,0,1024,640);
  g.fillStyle=featured?"#7ddaa2":"#d2b994";g.fillRect(65,65,85,7);
- g.fillStyle="#fff8eb";g.textAlign="center";g.font="bold 86px Arial";g.fillText(name,512,280,925);
- g.fillStyle=featured?"#a0e8b9":"#d5dfdf";g.font="bold 32px Arial";g.fillText(featured?"CURRENT CHAPTER":"EXPLORE MY WORK",512,390,930);
- g.font="27px Arial";g.fillText("CLICK TO EXPLORE ↗",512,535);
+ g.fillStyle="#fff8eb";g.textAlign="center";
+ // Large editorial typography: bold geometric system sans, responsive to longer company names.
+ const fontStack='"Avenir Next","Montserrat","Century Gothic","Trebuchet MS",sans-serif';
+ const maxTitleWidth=930;
+ let fontSize=featured?118:112;
+ g.font='800 '+fontSize+'px '+fontStack;
+ while(g.measureText(name).width>maxTitleWidth&&fontSize>68){fontSize-=3;g.font='800 '+fontSize+'px '+fontStack}
+ g.shadowColor="#00000055";g.shadowBlur=12;g.fillText(name,512,282);g.shadowBlur=0;
+ g.fillStyle=featured?"#a0e8b9":"#d5dfdf";g.font='700 37px '+fontStack;g.fillText(featured?"CURRENT CHAPTER":"EXPLORE MY WORK",512,390,930);
+ g.font='600 29px '+fontStack;g.fillText("CLICK TO EXPLORE ↗",512,535);
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide});
 }
 const chairFabric=["#b55e69","#d9a15e","#388d76","#6796a5","#a47ba2"];
