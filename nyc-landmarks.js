@@ -82,5 +82,21 @@ export function addNYCLandmarks(city, interact){
   const tablet=b(p,1.54,2.65,.36,patina,-1.73,12.08,1.01);tablet.rotation.z=-.14;
   for(let k=0;k<3;k++)b(p,.85,.065,.03,fold,-1.72,12.66-k*.38,1.23);
  }, "contact");
+ // Real photographic cutout on a camera-facing plane. If the image fails to load,
+ // the hand-built 3D statue above remains visible and fully functional.
+ // Image: Elcobbola / Edward-Woodrow, CC BY-SA 3.0, Wikimedia Commons:
+ // https://commons.wikimedia.org/wiki/File:Statue_of_liberty_(transparent).png
+ const liberty=features.find(f=>f.key==="liberty");
+ if(liberty){
+  const photoUrl="https://upload.wikimedia.org/wikipedia/commons/8/81/Statue_of_liberty_%28transparent%29.png";
+  new THREE.TextureLoader().load(photoUrl,texture=>{
+   texture.colorSpace=THREE.SRGBColorSpace;
+   const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.04});
+   const photo=new THREE.Sprite(material);photo.position.set(0,12.5,0);photo.scale.set(17.4,24,1);
+   // Hide only the procedural statue once the real image is ready.
+   liberty.group.children.forEach(child=>child.visible=false);
+   liberty.group.add(photo);photo.userData.project="contact";interact.push(photo);
+  },undefined,()=>{ /* Preserve the procedural statue when offline. */ });
+ }
  return features;
 }
