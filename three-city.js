@@ -43,6 +43,22 @@ function streetlamp(x,z){cylinder(.065,.08,3.1,M.dark,x,1.55,z,7);box(.65,.15,.2
 for(let i=0;i<135;i++){const gx=Math.floor(i/9),gz=i%9,x=-36+gx*5.2,z=-36+gz*8.7;if(roadCenters.some(r=>Math.abs(x-r)<3.2)||[-23,-8,7,22].some(r=>Math.abs(z-r)<3.2))continue;if(Math.abs(x)<18&&Math.abs(z)<19)continue;const h=2.5+random(i+14)*7.5;building(x,z,2.5+random(i+55)*1.5,3.2+random(i+23)*1.2,h,random(i+17)>.5?M.white:M.stone,i);if(i%4===0)tree(x+2.1,z+1.8,.75)}
 // Signature Manhattan landmarks: distinct yellow districts.
 building(-13,3,5,5,8.7,M.gold,201,"about");for(let k=0;k<4;k++){const ring=cylinder(2.9-k*.24,2.9-k*.24,.23,M.goldSide,-13,2+k*1.9,3,28);ring.userData.project="about";interact.push(ring)}cylinder(3.15,3.15,.35,M.gold,-13,9.2,3,24);
+// A small stationary rooftop helicopter; only the rotors turn, preserving the calm city composition.
+const helicopter=new THREE.Group();helicopter.position.set(-13,10.1,3);city.add(helicopter);
+const heliNavy=mat("#1d3651",{metalness:.22,roughness:.43}),heliGlass=mat("#79a8b8",{metalness:.2,roughness:.32}),heliGold=mat("#edc451");
+function heliPart(w,h,d,material,x,y,z,parent=helicopter){return box(w,h,d,material,x,y,z,parent,false)}
+heliPart(2.0,.85,1.12,heliNavy,0,.8,0);
+heliPart(.85,.58,1.14,heliGlass,.76,.93,0);
+heliPart(2.25,.17,.22,heliNavy,-2.02,1.02,0);
+heliPart(.14,.66,.68,heliGold,-3.05,1.25,0);
+for(const z of [-.46,.46]){heliPart(.11,.10,2.7,heliNavy,0,.20,z);heliPart(.10,.34,.10,heliNavy,-.6,.38,z);heliPart(.10,.34,.10,heliNavy,.72,.38,z)}
+heliPart(.16,.46,.16,heliNavy,0,1.5,0);
+const mainRotor=new THREE.Group();mainRotor.position.set(0,1.78,0);helicopter.add(mainRotor);
+heliPart(4.4,.055,.20,heliNavy,0,0,0,mainRotor);
+heliPart(.20,.055,4.4,heliNavy,0,0,0,mainRotor);
+const tailRotor=new THREE.Group();tailRotor.position.set(-3.1,1.25,.43);helicopter.add(tailRotor);
+heliPart(.09,.84,.08,heliGold,0,0,0,tailRotor);heliPart(.09,.08,.84,heliGold,0,0,0,tailRotor);
+
 building(-1,2,5.4,5.3,14.2,M.gold,202,"cloud");box(4.1,1.5,4,M.goldSide,-1,15.1,2); // Extra roof accent below corrected separately
 building(11,-3,5.3,5.4,12.6,M.gold,203,"automation");box(4.5,.4,4.5,M.goldSide,11,13.3,-3);
 building(1,-13,6,5.3,10.6,M.gold,204,"ai");box(4,.4,3,M.goldSide,1,11.1,-13);
@@ -79,4 +95,4 @@ document.getElementById("reset").onclick=()=>{desiredTheta=Math.PI/4;desiredPhi=
 document.getElementById("tour").onclick=()=>{autotour=!autotour;walkingProgress=0;cityLife.resetTour();document.getElementById("tour").textContent=autotour?"EXIT WALKING TOUR ↩":"START CITY TOUR ↗"};
 document.getElementById("help").onclick=()=>{const toast=document.getElementById("toast");toast.textContent="Drag to orbit · Pinch or scroll to zoom · Tap gold buildings to explore";setTimeout(()=>toast.textContent="",5500)};
 document.getElementById("sound").onclick=()=>{const toast=document.getElementById("toast");toast.textContent="Sound is off by design";setTimeout(()=>toast.textContent="",2500)};
-const worldPos=new THREE.Vector3(),clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);frame++;if(autotour&&!dialog.open){walkingProgress+=dt/cityLife.tourStepDuration(walkingProgress);if(walkingProgress>=cityLife.routeLength){walkingProgress=0;cityLife.resetTour()}}cameraUpdate(dt);updateLighting(dt);const tourCamera=cityLife.update(clock.elapsedTime,autotour,walkingProgress,dt);const activeCamera=tourCamera||camera;for(const label of labels){const p=points[label.dataset.project];worldPos.copy(p).project(activeCamera);label.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";label.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";label.style.display=worldPos.z>1?"none":"block"}for(const {el,f} of landmarkButtons){worldPos.copy(f.position).project(activeCamera);el.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";el.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";el.style.display=(autotour||worldPos.z>1||worldPos.x < -1||worldPos.x>1||worldPos.y < -1||worldPos.y>1)?"none":"block"}renderer.render(scene,activeCamera)}animate();document.getElementById("loading").remove();
+const worldPos=new THREE.Vector3(),clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);frame++;if(autotour&&!dialog.open){walkingProgress+=dt/cityLife.tourStepDuration(walkingProgress);if(walkingProgress>=cityLife.routeLength){walkingProgress=0;cityLife.resetTour()}}mainRotor.rotation.y+=dt*11;tailRotor.rotation.x+=dt*17;cameraUpdate(dt);updateLighting(dt);const tourCamera=cityLife.update(clock.elapsedTime,autotour,walkingProgress,dt);const activeCamera=tourCamera||camera;for(const label of labels){const p=points[label.dataset.project];worldPos.copy(p).project(activeCamera);label.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";label.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";label.style.display=worldPos.z>1?"none":"block"}for(const {el,f} of landmarkButtons){worldPos.copy(f.position).project(activeCamera);el.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";el.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";el.style.display=(autotour||worldPos.z>1||worldPos.x < -1||worldPos.x>1||worldPos.y < -1||worldPos.y>1)?"none":"block"}renderer.render(scene,activeCamera)}animate();document.getElementById("loading").remove();
