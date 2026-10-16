@@ -23,7 +23,7 @@ with sync_playwright() as p:
         page.screenshot(path=f"test-screenshots/city-{width}.png",full_page=True)
         page.locator("#arrivalEnter").click()
         page.wait_for_url("**/district.html?room=contact",timeout=10000)
-        assert page.locator("#districtTitle").inner_text()=="THE COFFEE LOUNGE"
+        assert page.locator("#districtTitle").inner_text()=="COFFEE & CONNECTIONS"
         page.screenshot(path=f"test-screenshots/cafe-{width}.png",full_page=True)
         assert not errors, f"Browser JS errors: {errors}"
         page.close()
@@ -37,6 +37,28 @@ with sync_playwright() as p:
         assert page.locator("canvas").count()>0,room
         page.screenshot(path=f"test-screenshots/{room}.png",full_page=True)
         assert not errors, f"{room}: {errors}"
+        page.close()
+    # Contact café links and coffee menu must be functional on desktop and mobile.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height})
+        page.goto(URL+"district.html?room=contact",wait_until="domcontentloaded")
+        page.locator("#districtTitle").wait_for(state="visible")
+        assert page.locator("#districtTitle").inner_text()=="COFFEE & CONNECTIONS"
+        page.evaluate("openDetail('phone')")
+        assert page.locator('#districtDetailBody a[href="tel:+17744860732"]').count()==1
+        page.locator("#districtClose").click()
+        page.evaluate("openDetail('email')")
+        assert page.locator('#districtDetailBody a[href^="mailto:vijay.shekar18@gmail.com"]').count()==1
+        page.locator("#districtClose").click()
+        page.evaluate("openDetail('linkedin')")
+        assert page.locator('#districtDetailBody a[target="_blank"]').count()==1
+        page.locator("#districtClose").click()
+        page.evaluate("openDetail('location')")
+        assert "New York, NY" in page.locator("#districtDetailBody").inner_text()
+        page.locator("#districtClose").click()
+        page.evaluate("openDetail('menu')")
+        assert page.locator(".coffee-menu a").count()==3
+        page.screenshot(path=f"test-screenshots/cafe-interactions-{width}.png",full_page=True)
         page.close()
     # Verify the decorative train moves while the map is open, and stops after closing.
     page=browser.new_page(viewport={"width":1440,"height":900},reduced_motion="no-preference")
