@@ -3,7 +3,7 @@ const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
  about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
- services:{title:"THE ENGINEERING STUDIO",kicker:"03 / SERVICES",subtitle:"Four stations · Real engineering capabilities · Select an exhibit or start the guided tour",wall:"#d8e2e8",floor:"#788a9b",accent:"#dfb86b"},
+ services:{title:"VSR INNOVATION CENTER",kicker:"03 / SERVICES",subtitle:"The Engineering Studio · Four interactive worlds of engineering",wall:"#d8e2e8",floor:"#788a9b",accent:"#dfb86b"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
 };
@@ -186,61 +186,120 @@ if(safe==="about"){
  stationMosaic(-11.72,Math.PI/2,"TIMES SQUARE","42ND STREET");
  stationMosaic(11.72,-Math.PI/2,"6TH AVENUE","NEW YORK CITY");
 }else if(safe==="services"){
- // Four original engineering exhibits in a cutaway NYC innovation showroom.
- const navy=mat("#162a42"),steel=mat("#aebfc9"),cream=mat("#f4ebd7"),brass=mat("#d9ad68");
- const stationColors=["#65d2ec","#f4b66f","#85d9b2","#bb9cf6"];
+ // VSR Innovation Center: four differentiated engineering environments in one NYC gallery.
+ const navy=mat("#142a42"),steel=mat("#a9bac5"),cream=mat("#f5e9d0"),brass=mat("#d8af69"),stone=mat("#34485b");
  const stations=[
-  {key:"automation",x:-8.1,name:"AUTOMATION",sub:"ARCHITECTURE",color:stationColors[0]},
-  {key:"quality",x:-2.7,name:"QUALITY",sub:"ENGINEERING",color:stationColors[1]},
-  {key:"cloud",x:2.7,name:"CLOUD + DATA",sub:"RELIABILITY",color:stationColors[2]},
-  {key:"aiEngineering",x:8.1,name:"AI-POWERED",sub:"ENGINEERING",color:stationColors[3]}
+  {key:"automation",x:-8.1,name:"AUTOMATION",sub:"TEST FACTORY",color:"#65d2ec",story:"Design → Execute → Validate"},
+  {key:"quality",x:-2.7,name:"QUALITY",sub:"MISSION CONTROL",color:"#f4b66f",story:"Strategy → Readiness → Release"},
+  {key:"cloud",x:2.7,name:"CLOUD + DATA",sub:"PIPELINE CITY",color:"#85d9b2",story:"Ingest → Transform → Reconcile"},
+  {key:"aiEngineering",x:8.1,name:"AI ENGINEERING",sub:"INNOVATION WORKBENCH",color:"#bb9cf6",story:"Compare → Discover → Improve"}
  ];
- box(23.2,.12,17.2,mat("#26394e"),0,.02,-.1);
- for(let x=-11;x<=11;x+=1.2)box(.025,.025,16,mat("#3b5165"),x,.1,-.2);
- for(let z=-8;z<=8;z+=1.2)box(22,.025,.025,mat("#3b5165"),0,.11,z);
- // Gallery entrance aisle and a calm illuminated exhibition wall.
- box(21.6,.08,2.05,mat("#b6b3a5"),0,.18,6.7);
- box(22.5,1.35,.18,navy,0,6.9,-9.54);
- textSign("ENGINEERING STUDIO","STRATEGY  ·  AUTOMATION  ·  CLOUD  ·  AI",0,6.85,-9.33,18.2,1.06,{bg:"#102b44",fg:"#fff6df",edge:"#dfb86b"});
- for(const [i,st] of stations.entries()){
-  const c=new THREE.Color(st.color);
-  const glow=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.48,metalness:.36,roughness:.34});
-  // Each exhibit is a distinct 3D workstation with a clickable illuminated screen.
-  box(4.7,.16,8.7,navy,st.x,.23,-2.35);
-  box(4.55,.12,8.5,glow,st.x,.34,-2.35);
-  box(4.28,.12,8.2,mat("#223950"),st.x,.42,-2.35);
-  box(4.45,.14,2.1,steel,st.x,1.25,-4.2);
-  for(const dx of [-1.9,1.9])box(.18,.85,.18,brass,st.x+dx,.79,-4.2);
-  box(4.2,2.35,.18,navy,st.x,3.2,-5.35);
-  box(3.94,2.08,.2,glow,st.x,3.2,-5.21);
-  textSign(st.name,st.sub,st.x,3.22,-5.07,3.72,1.72,{bg:"#12283d",fg:"#fffaf0",edge:st.color},st.key);
-  textSign("0"+(i+1),"SELECT EXHIBIT",st.x,5.1,-8.94,3.65,.91,{bg:"#1c344b",fg:"#fff6e3",edge:st.color},st.key);
-  box(3.8,.14,1.1,navy,st.x,.62,1.15);
-  const pedestal=box(3.35,.72,.85,glow,st.x,1.04,1.15);clickableProp(pedestal,st.key);
-  textSign("EXPLORE","TAP TO LEARN",st.x,1.55,1.66,3.05,.75,{bg:"#112a41",fg:"#ffffff",edge:st.color},st.key);
-  // A dedicated 3D technical metaphor for each discipline.
-  if(i===0){
-   for(let j=0;j<3;j++){box(.65,.55,.4,cream,st.x-1.18+j*1.18,2.04,-3.9);box(.9,.07,.08,glow,st.x-.6+j*.7,2.04,-3.4)}
-  }else if(i===1){
-   for(let j=0;j<4;j++)box(.43,.32+j*.23,.4,glow,st.x-1.35+j*.86,1.82+j*.115,-3.8);
-   box(3.4,.07,.12,cream,st.x,2.9,-3.9);
-  }else if(i===2){
-   for(let j=0;j<3;j++){const disk=cyl(.58,.58,.2,steel,st.x-1.1+j*1.1,2.08,-3.9);clickableProp(disk,st.key)}
-   for(let j=0;j<3;j++)box(.07,.3,.08,glow,st.x-1.1+j*1.1,2.35,-3.9);
-  }else{
-   const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.7,1),glow);orb.position.set(st.x,2.35,-3.85);scene.add(orb);clickableProp(orb,st.key);
-   const ring=new THREE.Mesh(new THREE.TorusGeometry(.98,.075,12,48),cream);ring.position.copy(orb.position);scene.add(ring);
-   window.__servicesOrb=orb;
-  }
-  const lamp=new THREE.PointLight(st.color,3.2,5);lamp.position.set(st.x,5.4,-3.8);scene.add(lamp);
-  box(4.55,.14,.32,brass,st.x,5.9,-5.7);
+ const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const animated=[];
+ const glow=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,metalness:.26,roughness:.4});
+ // Architectural shell: illuminated floor inlays, exhibition portals and Manhattan-window backdrop.
+ box(23.4,.13,18,stone,0,.02,-.25);
+ for(let z=-8;z<=7;z+=1.2)box(22.2,.018,.024,mat("#5e7888"),0,.1,z);
+ for(let x=-11;x<=11;x+=1.1)box(.024,.018,16,mat("#5e7888"),x,.11,-.2);
+ box(22.5,1.45,.18,navy,0,6.92,-9.52);
+ textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.91,-9.31,17.7,1.08,{bg:"#10263d",fg:"#fff5df",edge:"#e7be75"});
+ for(const x of [-10.95,10.95]){
+  box(.38,7.65,.42,steel,x,3.83,-5.8);
+  box(.32,7.65,.38,navy,x,3.83,3.7);
  }
- // Premium architectural detail, without crowding the accessible controls.
- for(const x of [-10.9,10.9]){box(.32,7.5,.34,navy,x,3.75,-6);box(.34,7.5,.36,steel,x,3.75,3.5)}
- for(const x of [-8.1,-2.7,2.7,8.1]){box(3.8,.12,.28,brass,x,7.65,-3);const light=new THREE.PointLight("#ffe6bd",2.5,5);light.position.set(x,7.3,-3);scene.add(light)}
+ for(let x=-10.6;x<=10.6;x+=2.1){
+  box(1.72,3.6,.11,navy,x,3.42,-9.4);
+  box(1.53,3.28,.12,mat("#4b718b"),x,3.42,-9.3);
+  for(let j=0;j<3;j++)box(.15,.35,.14,cream,x+Math.sin(x*3+j)*.45,2.5+j*.72,-9.18);
+ }
+ // Central VSR core: elevated so it remains visible without obstructing the aisle.
+ const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),glow("#f4ce82"));
+ core.position.set(0,5.75,-7.85);scene.add(core);
+ const coreRing=new THREE.Mesh(new THREE.TorusGeometry(.96,.075,12,48),brass);
+ coreRing.position.copy(core.position);scene.add(coreRing);
+ const coreLight=new THREE.PointLight("#ffd6a2",2.4,6);coreLight.position.copy(core.position);scene.add(coreLight);
+ // Each gallery bay has its own equipment, not the same screen recolored four times.
+ for(const [i,st] of stations.entries()){
+  const light=glow(st.color);
+  box(4.65,.13,8.5,navy,st.x,.23,-2.15);
+  box(4.52,.08,8.38,light,st.x,.32,-2.15);
+  box(4.34,.12,8.2,stone,st.x,.4,-2.15);
+  for(const dx of [-2.17,2.17])box(.13,5.5,.14,steel,st.x+dx,3.2,-5.9);
+  box(4.4,.18,.28,brass,st.x,5.95,-5.9);
+  textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,5.13,-5.63,4.05,.9,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
+  const platform=box(3.85,.3,1.15,navy,st.x,.69,1.15);clickableProp(platform,st.key);
+  textSign("EXPLORE",st.sub,st.x,1.35,1.78,3.4,.73,{bg:"#142c43",fg:"#fff8e9",edge:st.color},st.key);
+  const lamp=new THREE.PointLight(st.color,3.1,5.8);lamp.position.set(st.x,5.6,-3.8);scene.add(lamp);
+  if(i===0){
+   // Test factory: conveyor, three build modules, articulated robotic arm and moving test package.
+   box(3.95,.28,1.3,steel,st.x,1.43,-3.9);
+   box(3.85,.08,1.12,navy,st.x,1.61,-3.9);
+   for(let j=0;j<3;j++){
+    const bx=st.x-1.28+j*1.28;
+    box(.94,.74,.62,light,bx,2.14,-4.22);
+    textSign(["BUILD","TEST","PASS"][j],"",bx,2.14,-3.89,.87,.4,{bg:"#153047",fg:"#fff8e8",edge:st.color},st.key);
+   }
+   const arm=new THREE.Group();arm.position.set(st.x+1.55,2.13,-3.55);scene.add(arm);
+   box(.22,1.05,.24,brass,0,.45,0,arm);
+   const forearm=box(.18,.85,.22,light,-.34,.97,0,arm);forearm.rotation.z=-.8;
+   const packet=box(.45,.34,.45,cream,st.x-1.55,1.89,-3.53);clickableProp(packet,st.key);
+   animated.push({type:"factory",packet,arm,x:st.x});
+  }else if(i===1){
+   // Mission control: command console, release-status monitors and confidence bars.
+   box(4.05,1.65,.25,navy,st.x,2.6,-5.13);
+   for(let j=0;j<3;j++){
+    const x=st.x-1.26+j*1.26;
+    box(1.14,1.12,.12,light,x,2.8,-4.97);
+    textSign(["PLAN","VERIFY","RELEASE"][j],["STRATEGY","COVERAGE","READINESS"][j],x,2.8,-4.87,1.08,.95,{bg:"#152d43",fg:"#fff7df",edge:st.color},st.key);
+   }
+   box(3.85,.22,1.25,steel,st.x,1.43,-3.2);
+   for(let j=0;j<5;j++){
+    const bar=box(.42,.3+j*.16,.34,j===4?light:cream,st.x-1.45+j*.72,1.82+j*.08,-3.2);
+    clickableProp(bar,st.key);
+   }
+   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.3,12,8),light);beacon.position.set(st.x,4.4,-4.92);scene.add(beacon);
+   animated.push({type:"beacon",beacon});
+  }else if(i===2){
+   // Pipeline city: three data towers, connectors and flowing event particles.
+   const towers=[];
+   for(let j=0;j<3;j++){
+    const x=st.x-1.35+j*1.35;
+    box(.96,1.1+j*.38,.86,steel,x,1.98+j*.19,-4.25);
+    for(let k=0;k<3;k++)box(.72,.07,.9,light,x,1.63+k*.31+j*.2,-4.25);
+    textSign(["INGEST","GLUE","VALIDATE"][j],"",x,3.25,-3.74,1.19,.48,{bg:"#183b43",fg:"#fff",edge:st.color},st.key);
+    towers.push(x);
+   }
+   for(let j=0;j<2;j++)box(.6,.09,.14,light,st.x-.65+j*1.35,2.4,-3.95);
+   const packets=[];
+   for(let j=0;j<4;j++){const dot=new THREE.Mesh(new THREE.SphereGeometry(.105,8,6),light);dot.position.set(st.x-1.4+j*.6,2.52,-3.7);scene.add(dot);packets.push(dot)}
+   animated.push({type:"pipeline",packets,x:st.x});
+  }else{
+   // AI workbench: floating geometry, dual tool terminals and a rotating knowledge ring.
+   box(4.05,.22,1.65,steel,st.x,1.48,-3.7);
+   for(const dx of [-1.15,1.15]){
+    box(1.52,1.15,.12,navy,st.x+dx,2.63,-4.62);
+    textSign(dx<0?"API DIFF":"XPATH","TOOL DEMO",st.x+dx,2.65,-4.52,1.42,.91,{bg:"#2d2850",fg:"#fff",edge:st.color},st.key);
+   }
+   const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.62,1),light);orb.position.set(st.x,3.75,-3.76);scene.add(orb);clickableProp(orb,st.key);
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(.87,.065,12,48),cream);ring.position.copy(orb.position);scene.add(ring);
+   animated.push({type:"ai",orb,ring});
+  }
+ }
+ // Illuminated entrance threshold makes the visitor's starting point legible.
+ box(21.5,.09,1.45,mat("#9faeae"),0,.16,6.8);
+ for(let x=-9.5;x<=9.5;x+=1.9)box(1.3,.04,.09,brass,x,.23,6.25);
  window.__servicesStations=stations;
- window.__servicesAnimate=()=>{if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(window.__servicesOrb){window.__servicesOrb.rotation.y=performance.now()*.00038;window.__servicesOrb.rotation.x=performance.now()*.00019}};
-
+ window.__servicesAnimate=()=>{
+  if(motion)return;
+  const t=performance.now()*.001;
+  core.rotation.y=t*.28;core.rotation.x=t*.12;coreRing.rotation.z=t*.13;
+  for(const item of animated){
+   if(item.type==="factory"){item.packet.position.x=item.x-1.55+(t*.5%3.1);item.arm.rotation.z=Math.sin(t*.8)*.17}
+   if(item.type==="beacon")item.beacon.material.emissiveIntensity=.3+Math.sin(t*2)*.22;
+   if(item.type==="pipeline")item.packets.forEach((dot,j)=>{dot.position.x=item.x-1.4+((t*.65+j*.75)%2.8);dot.position.y=2.52+Math.sin(t*2+j)*.09});
+   if(item.type==="ai"){item.orb.rotation.y=t*.4;item.ring.rotation.z=t*.19}
+  }
+ };
 }else if(safe==="ai"){
  // AI QUEST: original, neon subway-inspired interactive miniature world.
  const navy=mat("#0b1834"),cyan=mat("#39d6e9"),violet=mat("#8c65ff"),gold=mat("#f4bb55");
