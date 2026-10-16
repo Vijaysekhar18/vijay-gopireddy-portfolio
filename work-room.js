@@ -8,12 +8,22 @@ function cube(w,h,d,mat,x,y,z,parent=scene){const o=new THREE.Mesh(new THREE.Box
 function cyl(r1,r2,h,mat,x,y,z){const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,12),mat);o.position.set(x,y,z);o.castShadow=true;scene.add(o);return o}
 function textPlane(title,subtitle,bg="#fff8e6",fg="#272c2b"){const canvas=document.createElement("canvas");canvas.width=1024;canvas.height=512;const ctx=canvas.getContext("2d");ctx.fillStyle=bg;ctx.fillRect(0,0,1024,512);ctx.fillStyle="#e6b933";ctx.fillRect(0,0,1024,22);ctx.fillStyle="#273e43";ctx.fillRect(45,62,934,95);ctx.fillStyle="#f7f3e7";ctx.font="bold 56px Arial";ctx.fillText(title,78,128);ctx.fillStyle=fg;ctx.font="bold 32px Arial";ctx.fillText(subtitle,75,230);ctx.fillStyle="#e2bc4b";ctx.fillRect(75,280,870,5);for(let i=0;i<6;i++){ctx.fillStyle=["#2e6e7d","#d8a736","#73a397"][i%3];ctx.fillRect(85+i*142,320-(i%3)*22,95,90+(i%3)*22)}ctx.fillStyle="#454a44";ctx.font="bold 25px Arial";ctx.fillText("CLICK TO EXPLORE  →",75,472);const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide})}
 cube(20,.35,15,floor,0,-.2,0);cube(18,.035,1.2,trim,0,.025,-6.6);cube(20,9,.3,wall,0,4.3,-7.4);cube(.3,9,15,wall,-9.9,4.3,0);cube(.3,9,15,wall,9.9,4.3,0);
-// A single floating walnut workstation replaces the crowded furniture.
-const walnut=material("#674d3b"),bronze=material("#bb9b72",{metalness:.4,roughness:.4});
-cube(17,.2,2.15,walnut,0,1.3,-4.65);
-for(const x of [-7.7,7.7])cube(.18,1.3,1.8,bronze,x,.65,-4.65);
-function pot(x,z){cyl(.43,.35,.7,material("#b89c7b"),x,.35,z);for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.33,1.15,5),plant);leaf.position.set(x+Math.sin(i*1.26)*.2,1.25,z+Math.cos(i*1.26)*.2);scene.add(leaf)}}
-pot(-8.5,5);pot(8.5,5);
+// Creative Engineering Lounge: spacious sculptural architecture and seating.
+const walnut=material("#785b48",{roughness:.52}),bronze=material("#bd9e78",{metalness:.32,roughness:.43});
+function pot(x,z){cyl(.44,.37,.68,material("#b99b7c"),x,.35,z);for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.3,1.15,5),plant);leaf.position.set(x+Math.sin(i*1.26)*.18,1.27,z+Math.cos(i*1.26)*.18);scene.add(leaf)}}
+pot(-8.65,5.8);pot(8.65,5.8);
+// Layered sculptural wave panels, each curved in 3D with flowing silhouette.
+const waveColors=["#a73463","#c34660","#e66c43","#f49d42","#f2c455","#94b86b","#429ca3"];
+for(let i=0;i<waveColors.length;i++){
+ const shape=new THREE.Shape(),offset=i*.33;
+ shape.moveTo(-9.55,3.35+offset);
+ for(let j=0;j<=40;j++){const x=-9.55+j*19.1/40;shape.lineTo(x,3.35+offset+Math.sin(x*.52+i*.19)*.55+Math.sin(x*.19+i*.32)*.25)}
+ for(let j=40;j>=0;j--){const x=-9.55+j*19.1/40;shape.lineTo(x,3.9+offset+Math.sin(x*.52+i*.19)*.55+Math.sin(x*.19+i*.32)*.25)}
+ shape.closePath();
+ const geom=new THREE.ExtrudeGeometry(shape,{depth:.13,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.045,bevelThickness:.045,curveSegments:6});
+ const panel=new THREE.Mesh(geom,material(waveColors[i],{roughness:.55,metalness:.03,side:THREE.DoubleSide}));panel.position.z=-7.11+i*.08;panel.castShadow=true;panel.receiveShadow=true;scene.add(panel);
+}
+const wash=new THREE.PointLight("#ffdbab",9,14);wash.position.set(0,7,-3.6);scene.add(wash);
 const companyData={
  td:{name:"TD BANK",eyebrow:"CURRENT CHAPTER",summary:"My current chapter in banking technology and quality engineering. This exhibit introduces the work and experience I bring to TD Bank; project-specific details will be added once confirmed.",focus:"Banking technology · Quality engineering · Engineering collaboration",color:"#2d9d5c"},
  lpl:{name:"LPL FINANCIAL",eyebrow:"FINANCIAL TECHNOLOGY",summary:"Led quality strategy and cross-functional QE coordination for Account View and the old-to-new AWS landing-zone migration, from analysis and testing through production readiness.",focus:"AWS Lambda · Step Functions · Glue · Kafka · Athena · API migration validation",color:"#5088b6"},
@@ -22,24 +32,36 @@ const companyData={
  cognizant:{name:"COGNIZANT",eyebrow:"ENGINEERING & DELIVERY",summary:"Engineering and quality leadership across complex client engagements, with a focus on test strategy, automation, cloud delivery and cross-functional collaboration.",focus:"Engineering delivery · Test strategy · Automation · Leadership",color:"#4075a8"}
 };
 
-const exhibitPositions=[[-6.5,-4.65,"wells"],[-3.25,-4.65,"dbs"],[0,-4.65,"td"],[3.25,-4.65,"lpl"],[6.5,-4.65,"cognizant"]];
+const exhibitPositions=[[-6.9,-3.4,"wells"],[-3.45,-4.3,"dbs"],[0,-4.65,"td"],[3.45,-4.3,"lpl"],[6.9,-3.4,"cognizant"]];
 function displayMaterial(name,featured){
  const c=document.createElement("canvas");c.width=1024;c.height=640;const g=c.getContext("2d");
- g.fillStyle=featured?"#124b32":"#1c303a";g.fillRect(0,0,1024,640);
- g.fillStyle=featured?"#83e2a7":"#d4b989";g.fillRect(70,72,95,8);
- g.textAlign="center";g.fillStyle="#fff8e9";g.font="bold 88px Arial";g.fillText(name,512,283,940);
- g.font="bold 34px Arial";g.fillStyle=featured?"#91efb8":"#b5cbd0";g.fillText(featured?"CURRENT CHAPTER":"EXPLORE MY WORK",512,375,920);
- g.font="27px Arial";g.fillText("CLICK TO EXPLORE  ↗",512,525);
- const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide});
+ g.fillStyle=featured?"#174a35":"#243c45";g.fillRect(0,0,1024,640);
+ g.fillStyle=featured?"#7ddaa2":"#d2b994";g.fillRect(65,65,85,7);
+ g.fillStyle="#fff8eb";g.textAlign="center";g.font="bold 86px Arial";g.fillText(name,512,280,925);
+ g.fillStyle=featured?"#a0e8b9":"#d5dfdf";g.font="bold 32px Arial";g.fillText(featured?"CURRENT CHAPTER":"EXPLORE MY WORK",512,390,930);
+ g.font="27px Arial";g.fillText("CLICK TO EXPLORE ↗",512,535);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide});
 }
-for(const [x,z,key] of exhibitPositions){
- const featured=key==="td",w=featured?2.95:2.7,h=featured?1.85:1.7;
- const frame=cube(w+.13,h+.12,.13,material(featured?"#286e49":"#28383d",{metalness:.32,roughness:.38}),x,2.65,z);
- const panel=new THREE.Mesh(new THREE.PlaneGeometry(w,h),displayMaterial(companyData[key].name,featured));
- panel.position.set(x,2.65,z+.075);scene.add(panel);
- const stand=cube(.12,.47,.12,bronze,x,1.52,z),base=cube(.85,.05,.44,bronze,x,1.3,z+.12);
- for(const obj of [frame,panel,stand,base]){obj.userData.kind="company:"+key;clickable.push(obj)}
- if(featured){const glow=new THREE.PointLight("#7bdba1",3,4);glow.position.set(x,2.6,z+1.2);scene.add(glow)}
+const chairFabric=["#b55e69","#d9a15e","#388d76","#6796a5","#a47ba2"];
+for(let i=0;i<exhibitPositions.length;i++){
+ const [x,z,key]=exhibitPositions[i],featured=key==="td";
+ // Each diagonal lounge seat has upholstered cushions, embracing back and brass legs.
+ const group=new THREE.Group();group.position.set(x,0,z+2.1);group.rotation.y=(i-2)*-.16;scene.add(group);
+ const upholstery=material(chairFabric[i],{roughness:.92});
+ function part(w,h,d,m,px,py,pz){return cube(w,h,d,m,px,py,pz,group)}
+ part(1.95,.45,1.52,upholstery,0,1.03,0);
+ part(1.9,1.55,.32,upholstery,0,1.82,-.62);
+ part(.34,.62,1.3,upholstery,-.95,1.38,-.03);part(.34,.62,1.3,upholstery,.95,1.38,-.03);
+ for(const px of [-.72,.72])for(const pz of [-.5,.5])part(.1,.68,.1,bronze,px,.35,pz);
+ part(1.55,.15,1.18,material("#e6c5a4",{roughness:.93}),0,1.3,.1);
+ // Compact elevated screen behind each chair, rather than a large podium.
+ const w=featured?2.65:2.48,h=featured?1.47:1.35;
+ const displayZ=z-.55,displayY=3.35;
+ const frame=cube(w+.12,h+.12,.14,material(featured?"#296d4a":"#31454b",{metalness:.28,roughness:.4}),x,displayY,displayZ);
+ const display=new THREE.Mesh(new THREE.PlaneGeometry(w,h),displayMaterial(companyData[key].name,featured));display.position.set(x,displayY,displayZ+.08);scene.add(display);
+ const mount=cube(.10,.68,.1,bronze,x,2.29,displayZ);
+ for(const obj of [frame,display,mount]){obj.userData.kind="company:"+key;clickable.push(obj)}
+ if(featured){const glow=new THREE.PointLight("#76d4a0",2.2,4);glow.position.set(x,3.4,displayZ+1);scene.add(glow)}
 }
 function wallArtwork(city){
  const c=document.createElement("canvas");c.width=800;c.height=960;const g=c.getContext("2d");
