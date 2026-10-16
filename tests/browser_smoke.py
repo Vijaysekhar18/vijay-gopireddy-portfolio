@@ -61,6 +61,15 @@ with sync_playwright() as p:
         page.goto(URL+"district.html?room=ai",wait_until="domcontentloaded")
         page.locator("#aiQuickActions button").first.wait_for()
         assert page.locator("#aiQuickActions button").count()==4
+        page.locator("#aiQuestTour").click()
+        assert page.locator("#aiQuestExit").is_visible()
+        page.locator("#aiQuestExit").click()
+        page.locator("#aiQuestPlay").click()
+        assert page.locator(".ai-quest-move").is_visible()
+        page.locator('[data-move="1"]').click()
+        page.locator("#aiQuestExit").click()
+        assert page.locator("#aiQuestTour").is_visible()
+
         page.locator('[data-collectible="openai"]').click()
         assert "OpenAI Technical Practitioner" in page.locator("#districtDetailBody").inner_text()
         page.locator("#districtClose").click()
