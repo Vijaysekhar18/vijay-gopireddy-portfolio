@@ -358,6 +358,7 @@ if(aiHud){
 }
 function updateAiQuest(now){
  if(aiMode==="idle"||!window.__aiQuestWorld)return false;
+ if(dialog.open){aiStart+=Math.min(now-(aiLast||now),60);aiLast=now;return true;}
  const world=window.__aiQuestWorld,elapsed=(now-aiStart)/1000;
  if(aiMode==="tour"){
   // Smoothly follow all four exhibit windows, keeping each label visible.
