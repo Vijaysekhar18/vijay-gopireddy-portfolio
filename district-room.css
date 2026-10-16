@@ -93,3 +93,29 @@
  .district-body:has(.cafe-quick-actions) .district-bottom button{margin-left:auto;padding:7px 10px;font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){.cafe-quick-actions a,.cafe-quick-actions button{transition:none}.cafe-quick-actions a:hover,.cafe-quick-actions button:hover{transform:none}}
+
+/* SERVICES · Engineering Studio: readable accessible exhibit controls. */
+.services-hud{position:fixed;z-index:8;right:18px;top:104px;width:min(325px,calc(100vw - 36px));padding:17px;background:#10283deF;color:#fff7e8;border:1px solid #dcb676;border-radius:17px;box-shadow:0 16px 42px #10233480;font-family:system-ui,sans-serif;backdrop-filter:blur(12px)}
+.services-hud-title{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;letter-spacing:.055em}
+.services-hud-title span{font-size:10px;color:#eac78e;white-space:nowrap}
+.services-hud p{font-size:11px;line-height:1.5;color:#d3e5f2;min-height:31px}
+.services-hud-controls{display:flex;gap:7px;margin-bottom:10px}
+.services-hud button{min-height:44px;border:1px solid #92b6c8;border-radius:9px;background:#23435b;color:#f9fcff;padding:9px;font-size:11px;font-weight:800;cursor:pointer}
+.services-hud-controls button{flex:1}
+.services-hud #servicesTour{background:#e0b76e;color:#1c2c3b;border-color:#ffe0a5}
+.services-hud button:hover{filter:brightness(1.2)}
+.services-hud button:focus-visible{outline:3px solid #ffe2a1;outline-offset:2px}
+.services-hud-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.services-hud-grid button:nth-child(1){border-color:#65d2ec}.services-hud-grid button:nth-child(2){border-color:#f4b66f}.services-hud-grid button:nth-child(3){border-color:#85d9b2}.services-hud-grid button:nth-child(4){border-color:#bb9cf6}
+.district-body:has(.services-hud) .district-heading{max-width:min(330px,40vw)}
+@media(max-width:760px){
+ .services-hud{top:auto;bottom:64px;left:50%;right:auto;transform:translateX(-50%);width:min(440px,calc(100vw - 22px));box-sizing:border-box;padding:10px 12px}
+ .services-hud-title{font-size:11px}.services-hud p{min-height:0;margin:5px 0;font-size:10px}
+ .services-hud button{font-size:10px;min-height:44px;padding:7px}
+ .services-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+ .district-body:has(.services-hud) .district-heading{max-width:min(300px,80vw)}
+ .district-body:has(.services-hud) .district-bottom{bottom:8px}
+ .district-body:has(.services-hud) .district-bottom span{display:none}
+ .district-body:has(.services-hud) .district-bottom button{margin-left:auto;font-size:9px;padding:8px}
+}
+@media(prefers-reduced-motion:reduce){.services-hud button{transition:none}}

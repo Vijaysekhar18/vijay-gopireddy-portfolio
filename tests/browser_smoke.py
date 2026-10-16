@@ -174,3 +174,25 @@ with sync_playwright() as p:
     page.close()
     browser.close()
 print("PASS: desktop/mobile subway arrival and entry, 4 interiors, JS error checks, screenshots")
+
+    # Engineering Studio: four accessible exhibits and optional guided camera tour.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height},reduced_motion="reduce")
+        errors=[]
+        page.on("pageerror",lambda err: errors.append(str(err)))
+        page.goto(URL+"district.html?room=services",wait_until="domcontentloaded")
+        assert page.locator("#districtTitle").inner_text()=="THE ENGINEERING STUDIO"
+        assert page.locator("#servicesHud [data-service]").count()==4
+        assert page.locator("#servicesTour").is_visible()
+        page.locator("#servicesTour").click()
+        assert page.locator("#servicesTour").get_attribute("aria-pressed")=="true"
+        page.locator("#servicesTour").click()
+        assert page.locator("#servicesTour").get_attribute("aria-pressed")=="false"
+        for key in ["automation","quality","cloud","aiEngineering"]:
+            page.locator(f'#servicesHud [data-service="{key}"]').click()
+            assert page.locator("#districtDialog").is_visible()
+            assert len(page.locator("#districtDetailBody").inner_text())>100
+            page.locator("#districtClose").click()
+        page.screenshot(path=f"test-screenshots/services-studio-{width}.png",full_page=True)
+        assert not errors,f"SERVICES JS errors: {errors}"
+        page.close()

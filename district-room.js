@@ -3,7 +3,7 @@ const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
  about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
- services:{title:"SPACE RESERVED",kicker:"03 / SERVICES",subtitle:"A new district is being designed. Explore the room for now.",wall:"#e3ddd0",floor:"#aaa89d",accent:"#d8ad59"},
+ services:{title:"THE ENGINEERING STUDIO",kicker:"03 / SERVICES",subtitle:"Four stations · Real engineering capabilities · Select an exhibit or start the guided tour",wall:"#d8e2e8",floor:"#788a9b",accent:"#dfb86b"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
 };
@@ -44,6 +44,11 @@ const content={
  menu:{k:"THE CONNECTION MENU",t:"What Can I Brew for You?",html:'<div class="coffee-menu"><a href="mailto:vijay.sekhar18@gmail.com?subject=Quick%20Hello%20from%20your%20NYC%20Portfolio"><strong>☕ ESPRESSO</strong><span>Quick hello ↗</span></a><a href="mailto:vijay.sekhar18@gmail.com?subject=Let%27s%20Collaborate"><strong>☕ CAPPUCCINO</strong><span>Discuss a project ↗</span></a><a href="https://www.linkedin.com/in/vijaygopireddy/" target="_blank" rel="noopener noreferrer"><strong>☕ COLD BREW</strong><span>Connect on LinkedIn ↗</span></a></div>'},
  linkedin:{k:"CONTACT / CONNECT",t:"Find Me on LinkedIn",html:'<p><a href="https://www.linkedin.com/in/vijaygopireddy/" target="_blank" rel="noopener">Visit LinkedIn ↗</a></p>'},
  coffee:{k:"CONTACT / NYC",t:"Coffee & Conversation",html:"<p>This is a virtual coffee lounge for conversations, ideas and collaborations. Thanks for visiting the city!</p>"}
+,
+ automation:{k:"SERVICES / 01 · AUTOMATION ARCHITECTURE",t:"Build Reliable Automation at Scale",html:'<p>Design maintainable test automation ecosystems for complex enterprise applications, not just individual scripts.</p><p><strong>Engineering capabilities:</strong> Playwright with TypeScript, Selenium with Java, TestNG, Cucumber, REST Assured, reusable components, API and UI coverage, CI/CD integration and flakiness reduction.</p><p><strong>Approach:</strong> risk-based coverage, test-data strategy, parallel execution, reporting, and reliable release gates.</p><p><a href="work.html">Explore engineering experience ↗</a></p>'},
+ quality:{k:"SERVICES / 02 · QUALITY ENGINEERING",t:"Quality Strategy & Engineering Leadership",html:'<p>Lead quality across planning, delivery and production readiness, aligning engineering teams around measurable release confidence.</p><p><strong>Capabilities:</strong> enterprise test strategy, QA governance, cross-team coordination, performance testing with JMeter and LoadRunner, regression planning, defect triage and risk communication.</p><p><strong>Experience:</strong> end-to-end migration quality strategy across functional, API, data, performance and automation workstreams.</p><p><a href="work.html">See the WORK Studio ↗</a></p>'},
+ cloud:{k:"SERVICES / 03 · CLOUD & DATA",t:"Cloud, API & Data Reliability",html:'<p>Validate modern event-driven, cloud-native and data-intensive systems across integration boundaries.</p><p><strong>Technology:</strong> AWS Lambda, Step Functions, Glue, EventBridge, S3, CloudWatch, Athena, Kafka/MSK, SQL, API validation and ETL reconciliation.</p><p><strong>Focus:</strong> data consistency, integration contracts, migration comparisons, pipeline observability and resilience testing.</p><p><a href="work.html">View cloud engineering experience ↗</a></p>'},
+ aiEngineering:{k:"SERVICES / 04 · AI-POWERED ENGINEERING",t:"Practical AI Engineering & Innovation",html:'<p>Build targeted tools that remove repetitive engineering effort while retaining human review and quality ownership.</p><p><strong>Examples:</strong> API Migration Testing Tool for comparing old and new API responses across many combinations; AI-assisted XPath Extractor for element discovery; experimentation with Claude, MCP and Playwright-assisted workflows.</p><p>Project examples use synthetic data and do not expose client systems.</p><p><a href="district.html?room=ai">Explore the AI Lab ↗</a></p>'}
 };
 // Reusable low-poly furniture, built from shared materials and simple geometry.
 function chair(x,z,rotation=0,upholstery=accent){
@@ -181,7 +186,61 @@ if(safe==="about"){
  stationMosaic(-11.72,Math.PI/2,"TIMES SQUARE","42ND STREET");
  stationMosaic(11.72,-Math.PI/2,"6TH AVENUE","NEW YORK CITY");
 }else if(safe==="services"){
- plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
+ // Four original engineering exhibits in a cutaway NYC innovation showroom.
+ const navy=mat("#162a42"),steel=mat("#aebfc9"),cream=mat("#f4ebd7"),brass=mat("#d9ad68");
+ const stationColors=["#65d2ec","#f4b66f","#85d9b2","#bb9cf6"];
+ const stations=[
+  {key:"automation",x:-8.1,name:"AUTOMATION",sub:"ARCHITECTURE",color:stationColors[0]},
+  {key:"quality",x:-2.7,name:"QUALITY",sub:"ENGINEERING",color:stationColors[1]},
+  {key:"cloud",x:2.7,name:"CLOUD + DATA",sub:"RELIABILITY",color:stationColors[2]},
+  {key:"aiEngineering",x:8.1,name:"AI-POWERED",sub:"ENGINEERING",color:stationColors[3]}
+ ];
+ box(23.2,.12,17.2,mat("#26394e"),0,.02,-.1);
+ for(let x=-11;x<=11;x+=1.2)box(.025,.025,16,mat("#3b5165"),x,.1,-.2);
+ for(let z=-8;z<=8;z+=1.2)box(22,.025,.025,mat("#3b5165"),0,.11,z);
+ // Gallery entrance aisle and a calm illuminated exhibition wall.
+ box(21.6,.08,2.05,mat("#b6b3a5"),0,.18,6.7);
+ box(22.5,1.35,.18,navy,0,6.9,-9.54);
+ textSign("ENGINEERING STUDIO","STRATEGY  ·  AUTOMATION  ·  CLOUD  ·  AI",0,6.85,-9.33,18.2,1.06,{bg:"#102b44",fg:"#fff6df",edge:"#dfb86b"});
+ for(const [i,st] of stations.entries()){
+  const c=new THREE.Color(st.color);
+  const glow=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.48,metalness:.36,roughness:.34});
+  // Each exhibit is a distinct 3D workstation with a clickable illuminated screen.
+  box(4.7,.16,8.7,navy,st.x,.23,-2.35);
+  box(4.55,.12,8.5,glow,st.x,.34,-2.35);
+  box(4.28,.12,8.2,mat("#223950"),st.x,.42,-2.35);
+  box(4.45,.14,2.1,steel,st.x,1.25,-4.2);
+  for(const dx of [-1.9,1.9])box(.18,.85,.18,brass,st.x+dx,.79,-4.2);
+  box(4.2,2.35,.18,navy,st.x,3.2,-5.35);
+  box(3.94,2.08,.2,glow,st.x,3.2,-5.21);
+  textSign(st.name,st.sub,st.x,3.22,-5.07,3.72,1.72,{bg:"#12283d",fg:"#fffaf0",edge:st.color},st.key);
+  textSign("0"+(i+1),"SELECT EXHIBIT",st.x,5.1,-8.94,3.65,.91,{bg:"#1c344b",fg:"#fff6e3",edge:st.color},st.key);
+  box(3.8,.14,1.1,navy,st.x,.62,1.15);
+  const pedestal=box(3.35,.72,.85,glow,st.x,1.04,1.15);clickableProp(pedestal,st.key);
+  textSign("EXPLORE","TAP TO LEARN",st.x,1.55,1.66,3.05,.75,{bg:"#112a41",fg:"#ffffff",edge:st.color},st.key);
+  // A dedicated 3D technical metaphor for each discipline.
+  if(i===0){
+   for(let j=0;j<3;j++){box(.65,.55,.4,cream,st.x-1.18+j*1.18,2.04,-3.9);box(.9,.07,.08,glow,st.x-.6+j*.7,2.04,-3.4)}
+  }else if(i===1){
+   for(let j=0;j<4;j++)box(.43,.32+j*.23,.4,glow,st.x-1.35+j*.86,1.82+j*.115,-3.8);
+   box(3.4,.07,.12,cream,st.x,2.9,-3.9);
+  }else if(i===2){
+   for(let j=0;j<3;j++){const disk=cyl(.58,.58,.2,steel,st.x-1.1+j*1.1,2.08,-3.9);clickableProp(disk,st.key)}
+   for(let j=0;j<3;j++)box(.07,.3,.08,glow,st.x-1.1+j*1.1,2.35,-3.9);
+  }else{
+   const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.7,1),glow);orb.position.set(st.x,2.35,-3.85);scene.add(orb);clickableProp(orb,st.key);
+   const ring=new THREE.Mesh(new THREE.TorusGeometry(.98,.075,12,48),cream);ring.position.copy(orb.position);scene.add(ring);
+   window.__servicesOrb=orb;
+  }
+  const lamp=new THREE.PointLight(st.color,3.2,5);lamp.position.set(st.x,5.4,-3.8);scene.add(lamp);
+  box(4.55,.14,.32,brass,st.x,5.9,-5.7);
+ }
+ // Premium architectural detail, without crowding the accessible controls.
+ for(const x of [-10.9,10.9]){box(.32,7.5,.34,navy,x,3.75,-6);box(.34,7.5,.36,steel,x,3.75,3.5)}
+ for(const x of [-8.1,-2.7,2.7,8.1]){box(3.8,.12,.28,brass,x,7.65,-3);const light=new THREE.PointLight("#ffe6bd",2.5,5);light.position.set(x,7.3,-3);scene.add(light)}
+ window.__servicesStations=stations;
+ window.__servicesAnimate=()=>{if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(window.__servicesOrb){window.__servicesOrb.rotation.y=performance.now()*.00038;window.__servicesOrb.rotation.x=performance.now()*.00019}};
+
 }else if(safe==="ai"){
  // AI QUEST: original, neon subway-inspired interactive miniature world.
  const navy=mat("#0b1834"),cyan=mat("#39d6e9"),violet=mat("#8c65ff"),gold=mat("#f4bb55");
@@ -384,6 +443,53 @@ if(safe==="contact"){
  quick.append(status);document.body.append(quick);
 }
 
+// SERVICES-only optional guided walkthrough, with direct-access exhibit controls.
+let servicesTour=false,servicesTourStart=0,servicesTourPaused=false;
+const servicesReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let servicesTourButton=null;
+function setServicesTour(active){
+ if(safe!=="services")return;
+ servicesTour=active;servicesTourStart=performance.now();servicesTourPaused=false;
+ servicesTourButton.textContent=active?"■ EXIT TOUR":"▶ GUIDED TOUR";
+ servicesTourButton.setAttribute("aria-pressed",String(active));
+ document.getElementById("servicesTourStatus").textContent=active?"Guided tour running · Select any exhibit to pause":"Select a station or start the guided tour.";
+ if(!active){desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20}
+}
+function updateServicesTour(now){
+ if(!servicesTour)return false;
+ if(dialog.open){servicesTourStart+=Math.min(50,now-(window.__servicesLastTourTime||now));window.__servicesLastTourTime=now;return true}
+ window.__servicesLastTourTime=now;
+ const stops=window.__servicesStations||[];
+ if(!stops.length)return false;
+ const duration=servicesReducedMotion?16000:28000;
+ const p=Math.min((now-servicesTourStart)/duration,1);
+ const segment=Math.min(3,Math.floor(p*4)),local=Math.min(1,p*4-segment);
+ const from=stops[segment],to=stops[Math.min(segment+1,3)];
+ const smooth=local*local*(3-2*local);
+ const x=THREE.MathUtils.lerp(from.x,to.x,smooth);
+ const dest=new THREE.Vector3(x,servicesReducedMotion?4.4:4.6,servicesReducedMotion?6.7:6.0);
+ camera.position.lerp(dest,servicesReducedMotion?1:.055);
+ camera.lookAt(x,2.7,-4.4);
+ const status=document.getElementById("servicesTourStatus");
+ if(status)status.textContent="EXHIBIT 0"+(segment+1)+" / 04 · "+stops[segment].name+" · Select to explore";
+ if(p>=1)setServicesTour(false);
+ return true;
+}
+if(safe==="services"){
+ const hud=document.createElement("section");hud.id="servicesHud";hud.className="services-hud";hud.setAttribute("aria-label","Engineering Studio navigation");
+ hud.innerHTML='<div class="services-hud-title"><strong>✦ ENGINEERING STUDIO</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
+ document.body.append(hud);
+ servicesTourButton=hud.querySelector("#servicesTour");
+ servicesTourButton.onclick=()=>setServicesTour(!servicesTour);
+ hud.querySelector("#servicesTourExit").onclick=()=>setServicesTour(false);
+ const labels=[["automation","01 · Automation"],["quality","02 · Quality"],["cloud","03 · Cloud & Data"],["aiEngineering","04 · AI Engineering"]];
+ for(const [key,label] of labels){
+  const b=document.createElement("button");b.type="button";b.dataset.service=key;b.textContent=label;
+  b.onclick=()=>{if(servicesTour)setServicesTour(false);openDetail(key)};
+  hud.querySelector(".services-hud-grid").append(b);
+ }
+ dialog.addEventListener("close",()=>{if(servicesTour)window.__servicesLastTourTime=performance.now()});
+}
 // ABOUT-only cinematic camera tour. The train stays parked; camera glides past its windows.
 let journeyActive=false,journeyStart=0,journeyPausedAt=0,journeyButton=null;
 const journeyDuration=30000;
@@ -572,13 +678,13 @@ function updateAiQuest(now){
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
-function update(){if(updateAiQuest(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
+function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
 function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
-let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
+let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
 renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
-renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
-document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
-function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();window.__cafeAnimate?.();renderer.render(scene,camera)}animate();
+renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
+document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
+function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();window.__cafeAnimate?.();window.__servicesAnimate?.();renderer.render(scene,camera)}animate();
