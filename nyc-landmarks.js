@@ -91,8 +91,41 @@ export function addNYCLandmarks(city, interact){
   const photoUrl="https://upload.wikimedia.org/wikipedia/commons/8/81/Statue_of_liberty_%28transparent%29.png";
   new THREE.TextureLoader().load(photoUrl,texture=>{
    texture.colorSpace=THREE.SRGBColorSpace;
-   const material=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,alphaTest:.04});
-   const photo=new THREE.Sprite(material);photo.position.set(0,12.0,0);photo.scale.set(17.4,24,1);
+   // Trim transparent margins from the *actual* image pixels. The PNG has
+   // transparent space below its photographed pedestal; aligning the full
+   // rectangle to the ground still makes the visible stone appear to float.
+   let displayTexture=texture,aspect=17.4/24;
+   try{
+    const source=texture.image,probe=document.createElement("canvas");
+    probe.width=source.width;probe.height=source.height;
+    const context=probe.getContext("2d",{willReadFrequently:true});
+    context.drawImage(source,0,0);
+    const pixels=context.getImageData(0,0,source.width,source.height).data;
+    let left=source.width,right=-1,top=source.height,bottom=-1;
+    for(let y=0;y<source.height;y+=2)for(let x=0;x<source.width;x+=2){
+     if(pixels[(y*source.width+x)*4+3]>24){
+      left=Math.min(left,x);right=Math.max(right,x);
+      top=Math.min(top,y);bottom=Math.max(bottom,y);
+     }
+    }
+    if(right>left&&bottom>top){
+     const x=Math.max(0,left-1),y=Math.max(0,top-1);
+     const w=Math.min(source.width-x,right-x+3),h=Math.min(source.height-y,bottom-y+3);
+     const crop=document.createElement("canvas");crop.width=w;crop.height=h;
+     crop.getContext("2d").drawImage(source,x,y,w,h,0,0,w,h);
+     displayTexture=new THREE.CanvasTexture(crop);
+     displayTexture.colorSpace=THREE.SRGBColorSpace;
+     aspect=w/h;
+    }
+   }catch(error){
+    // If cross-origin pixels are unavailable, sink the untrimmed photograph
+    // into the ground slightly rather than leaving its transparent bottom afloat.
+   }
+   const material=new THREE.SpriteMaterial({map:displayTexture,transparent:true,depthWrite:false,alphaTest:.04});
+   const height=24,groundY=-.35;
+   const photo=new THREE.Sprite(material);
+   photo.scale.set(height*aspect,height,1);
+   photo.position.set(0,groundY+height/2-(displayTexture===texture?1.6:0),0);
    // The photograph already contains its real stone pedestal. Do not stack
    // the procedural pedestal underneath it: that caused the visible mismatch.
    // Sprite bottom is at local y=0, aligned with the landmark ground plane.
