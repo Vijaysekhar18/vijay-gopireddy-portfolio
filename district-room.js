@@ -33,8 +33,9 @@ if(safe==="services"){
  roundRim.rotation.x=Math.PI/2;roundRim.position.y=.045;scene.add(roundRim);
  const curvedWall=new THREE.Mesh(new THREE.CylinderGeometry(12.6,12.6,7.9,96,1,true,Math.PI/2,Math.PI),shellMat);
  curvedWall.position.y=4;curvedWall.receiveShadow=true;scene.add(curvedWall);
- const topRail=new THREE.Mesh(new THREE.TorusGeometry(12.58,.12,10,96,Math.PI),mat("#d5ad6b"));
- topRail.rotation.x=Math.PI/2;topRail.rotation.z=0;topRail.position.y=7.94;scene.add(topRail);
+ // Thin gold coping follows the rear semicircle, rather than spanning the open front.
+ const topCurve=new THREE.Mesh(new THREE.TorusGeometry(12.58,.12,10,96,Math.PI),mat("#d5ad6b"));
+ topCurve.rotation.x=Math.PI/2;topCurve.rotation.z=Math.PI;topCurve.position.y=7.94;scene.add(topCurve);
  // No front wall or roof: the four exhibits remain visible in the cutaway.
 }else{
  box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
