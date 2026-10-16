@@ -3,7 +3,7 @@ const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
  about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
- services:{title:"VSR INNOVATION CENTER",kicker:"03 / SERVICES",subtitle:"The Engineering Studio · Four interactive worlds of engineering",wall:"#d8e2e8",floor:"#788a9b",accent:"#dfb86b"},
+ services:{title:"VSR INNOVATION CENTER",kicker:"03 / SERVICES",subtitle:"The Engineering Studio · Explore four engineering disciplines",wall:"#e8f1f5",floor:"#c59c72",accent:"#dfb86b"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
 };
@@ -25,24 +25,42 @@ function plaque(title,sub,x,y,z,action){
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.7,1.74),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));mesh.position.set(x,y,z);scene.add(mesh);mesh.userData.action=action;clickable.push(mesh);return mesh
 }
 if(safe==="services"){
- // Single continuous rear semicircle and circular floor, no enclosing square.
- const shellMat=new THREE.MeshStandardMaterial({color:"#d8e3e9",roughness:.87,side:THREE.DoubleSide});
- const roundFloor=new THREE.Mesh(new THREE.CylinderGeometry(12.65,12.65,.48,96),floor);
- roundFloor.position.y=-.26;roundFloor.receiveShadow=true;scene.add(roundFloor);
- const roundRim=new THREE.Mesh(new THREE.TorusGeometry(12.57,.11,12,96),mat("#cda66c"));
- roundRim.rotation.x=Math.PI/2;roundRim.position.y=.015;scene.add(roundRim);
- // Cylinder rear half (negative z): angles PI/2 through 3PI/2.
- const curvedWall=new THREE.Mesh(new THREE.CylinderGeometry(12.55,12.55,7.85,96,1,true,Math.PI/2,Math.PI),shellMat);
- curvedWall.position.y=3.92;scene.add(curvedWall);
- // Rounded upper cornice built as a planar arc, not a rectangular beam.
- const cornicePts=[];
- for(let i=0;i<=64;i++){const t=Math.PI/2+i*Math.PI/64;cornicePts.push(new THREE.Vector3(12.55*Math.cos(t),7.84,-12.55*Math.sin(t)))}
- const cornice=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(cornicePts),64,.085,6,false),mat("#d8af69"));scene.add(cornice);
+ // Video-reference architecture: ONE cylindrical cutaway volume, not a disk inside a square.
+ // 270-degree wrap leaves a generous front opening for the isometric camera.
+ const start=Math.PI/4, sweep=Math.PI*1.5, radius=12.55;
+ const lowerWall=new THREE.MeshStandardMaterial({color:"#e7e1d6",roughness:.95,side:THREE.DoubleSide});
+ const upperWall=new THREE.MeshStandardMaterial({color:"#d9c6a7",roughness:.96,side:THREE.DoubleSide});
+ const wood=new THREE.MeshStandardMaterial({color:"#c59c72",roughness:.87});
+ const roundFloor=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,.45,96),wood);
+ roundFloor.position.y=-.24;roundFloor.receiveShadow=true;scene.add(roundFloor);
+ // The same radius and angular origin for all shell pieces makes the silhouette continuous.
+ for(const [height,center,material] of [[4.2,2.1,lowerWall],[3.65,6.025,upperWall]]){
+  const shell=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,height,96,1,true,start,sweep),material);
+  shell.position.y=center;scene.add(shell);
+ }
+ // A thin horizontal brass belt follows the curvature, never a straight rectangular beam.
+ const arc=(r,y,thickness,material)=>{
+  const pts=[];for(let i=0;i<=90;i++){const t=start+sweep*i/90;pts.push(new THREE.Vector3(r*Math.sin(t),y,r*Math.cos(t)))}
+  const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),90,thickness,5,false),material);scene.add(mesh);return mesh;
+ };
+ arc(radius-.025,4.2,.035,mat("#d4b98a"));arc(radius-.025,7.84,.055,mat("#c9a56d"));
+ // Circular wood floor planks, clipped naturally to the floor disk by their radial layout.
+ const grain=mat("#af845f");
+ for(let r=2.3;r<12;r+=2.1)arc(r,.004,.013,grain);
+ // Side cut edges are slim vertical trims; the front remains completely open.
+ for(const t of [start,start+sweep]){
+  const x=radius*Math.sin(t),z=radius*Math.cos(t);
+  const post=box(.12,7.85,.12,mat("#c3a87f"),x,3.925,z);
+ }
 }else{
  box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
  box(24,.18,.28,trim,0,.2,-9.7);
 }
-for(let x=-8;x<=8;x+=8){const l=new THREE.PointLight("#ffe7b8",18,11);l.position.set(x,7.4,0);scene.add(l);cyl(.65,.65,.12,accent,x,7.8,0)}
+if(safe==="services"){
+ for(const x of [-7,0,7]){const l=new THREE.PointLight("#fff1d9",5,12);l.position.set(x,7.2,-3);scene.add(l)}
+}else{
+ for(let x=-8;x<=8;x+=8){const l=new THREE.PointLight("#ffe7b8",18,11);l.position.set(x,7.4,0);scene.add(l);cyl(.65,.65,.12,accent,x,7.8,0)}
+}
 const content={
  story:{k:"ABOUT / THE PERSON",t:"Engineer. Explorer. Builder.",html:"<p>I'm Vijay Sekhar Reddy, a software engineer and quality engineering leader with a master's degree in computer science and experience across banking, financial services and healthcare.</p><p>I love turning complicated engineering challenges into practical tools, reliable systems and memorable experiences. This miniature NYC is one of those experiments.</p><p>My curiosity doesn't stop at work: I enjoy travel, experimenting with vegetarian recipes and exploring new technologies.</p>"},
  journey:{k:"ABOUT / THE JOURNEY",t:"From Hyderabad to New York",html:"<p><strong>HYDERABAD → NEW YORK</strong></p><p>My story connects Hyderabad, where my roots are, with the New York area, where I've built a new chapter in my engineering career.</p><p>My professional experience includes TD Bank (current chapter), LPL Financial, DBS, Wells Fargo and Cognizant, across quality strategy, cloud technology, test automation and engineering delivery.</p><p>Explore the WORK Studio for company-specific details.</p><p><a href='work.html'>Visit the WORK Studio ↗</a></p>"},
@@ -214,22 +232,10 @@ if(safe==="about"){
  const motion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const animated=[];
  const glow=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,metalness:.26,roughness:.4});
- // Architectural shell: illuminated floor inlays, exhibition portals and Manhattan-window backdrop.
- const insetFloor=new THREE.Mesh(new THREE.CylinderGeometry(11.9,11.9,.12,96),stone);
- insetFloor.position.y=.07;insetFloor.receiveShadow=true;scene.add(insetFloor);
- for(const r of [6.5,10.9]){
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.035,8,96),mat("#607b8c"));
-  ring.rotation.x=Math.PI/2;ring.position.y=.15;scene.add(ring);
- }
- // Four curved architectural bays: the rear wall remains visible between exhibits.
- const archMat=mat("#d6b477");
- for(const angle of [-2.18,-1.77,-1.37,-.96]){
-  const px=Math.cos(angle)*11.8,pz=Math.sin(angle)*11.8;
-  const post=box(.16,5.25,.18,archMat,px,3.0,pz);
-  post.rotation.y=-angle-Math.PI/2;
- }
- // Freestanding center sign replaces the long rectangular rear wall.
- textSign("VSR INNOVATION CENTER","FOUR ENGINEERING DISCIPLINES",0,6.9,-10.6,9.4,1.03,{bg:"#10263d",fg:"#fff5df",edge:"#e7be75"});
+ // The architectural shell is already complete: no inset disk, grid, square floor or wall panels.
+ // A modest wall plaque, rather than a banner stretching across the cylinder.
+ textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.35,-12.0,6.8,.95,{bg:"#223b4d",fg:"#fff3dd",edge:"#d4af75"});
+ // Four stations remain visually separate but share one continuous wood floor.
  // Central VSR core: elevated so it remains visible without obstructing the aisle.
  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),glow("#f4ce82"));
  core.position.set(0,5.75,-7.85);scene.add(core);
@@ -239,13 +245,14 @@ if(safe==="about"){
  // Each gallery bay has its own equipment, not the same screen recolored four times.
  for(const [i,st] of stations.entries()){
   const light=glow(st.color);
-  const island=new THREE.Mesh(new THREE.CylinderGeometry(2.34,2.43,.22,40),navy);
-  island.position.set(st.x,.32,-2.15);scene.add(island);
-  const halo=new THREE.Mesh(new THREE.TorusGeometry(2.28,.075,8,48),light);
-  halo.rotation.x=Math.PI/2;halo.position.set(st.x,.47,-2.15);scene.add(halo);
+  // Low furniture-like work surface instead of a second circular floor.
+  const stand=new THREE.Mesh(new THREE.CylinderGeometry(1.93,2.02,.19,40),mat("#e7d5b8"));
+  stand.position.set(st.x,.28,-2.15);scene.add(stand);
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(1.93,.045,8,48),light);
+  halo.rotation.x=Math.PI/2;halo.position.set(st.x,.39,-2.15);scene.add(halo);
   
-  textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,4.65,-5.15,3.9,.9,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
-  const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.67,1.8,.26,32),navy);platform.position.set(st.x,.7,1.15);scene.add(platform);clickableProp(platform,st.key);
+  textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,4.65,-5.15,3.75,.85,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
+  const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.28,1.4,.18,32),mat("#d9bb8d"));platform.position.set(st.x,.5,1.15);scene.add(platform);clickableProp(platform,st.key);
   textSign("EXPLORE",st.sub,st.x,1.35,1.78,3.4,.73,{bg:"#142c43",fg:"#fff8e9",edge:st.color},st.key);
   const lamp=new THREE.PointLight(st.color,3.1,5.8);lamp.position.set(st.x,5.6,-3.8);scene.add(lamp);
   if(i===0){
@@ -308,9 +315,7 @@ if(safe==="about"){
    animated.push({type:"ai",orb,ring});
   }
  }
- // Illuminated entrance threshold makes the visitor's starting point legible.
- const entranceLine=new THREE.Mesh(new THREE.TorusGeometry(10.7,.065,8,64,Math.PI),brass);
- entranceLine.rotation.x=Math.PI/2;entranceLine.position.y=.18;scene.add(entranceLine);
+ // Keep the front cutaway empty, matching the reference video.
  window.__servicesStations=stations;
  window.__servicesAnimate=()=>{
   if(motion)return;
