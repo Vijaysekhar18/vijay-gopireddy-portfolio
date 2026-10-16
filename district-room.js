@@ -38,10 +38,10 @@ const content={
  experiments:{k:"AI / EXPERIMENTS",t:"Engineering Experiments",html:"<p>Exploring AI-assisted quality engineering, Playwright automation, element discovery and practical engineering tools.</p>"},
  writing:{k:"AI / WRITING",t:"AI Field Notes",html:'<p>Notes on AI tools, engineering and learning.</p><p><a href="https://aiinsights80.wordpress.com/" target="_blank" rel="noopener">Explore AI Field Notes ↗</a></p>'},
  learning:{k:"AI / LEARNING",t:"Continuous Learning",html:"<p>Experimenting with modern AI tools and workflows, from automation assistants to model context protocols.</p>"},
- email:{k:"CONTACT / EMAIL",t:"Leave Me a Note",html:'<p>Ideas, collaborations or just saying hello — my inbox is open.</p><p><a href="mailto:vijay.shekar18@gmail.com?subject=Hello%20from%20your%20NYC%20Portfolio">✉ vijay.shekar18@gmail.com ↗</a></p>'},
- phone:{k:"CONTACT / PHONE",t:"Give Me a Ring",html:'<p>Prefer a direct conversation?</p><p><a href="tel:+17744860732">☎ 774-486-0732</a></p>'},
+ email:{k:"CONTACT / EMAIL",t:"Leave Me a Note",html:'<p>Ideas, collaborations or just saying hello — my inbox is open.</p><p><a href="mailto:vijay.sekhar18@gmail.com?subject=Hello%20from%20your%20NYC%20Portfolio">✉ vijay.sekhar18@gmail.com ↗</a></p>'},
+ phone:{k:"CONTACT / PHONE",t:"Give Me a Ring",html:'<p>Phone: <strong>774-486-****</strong></p><p>For privacy, the final four digits are hidden. Please connect by email or LinkedIn instead.</p>'},
  location:{k:"CONTACT / LOCATION",t:"Working in New York",html:'<p>📍 New York, NY · Work location</p><p>Inspired by the energy, architecture and creative spirit of the city.</p><p>Exact office address is intentionally private.</p>'},
- menu:{k:"THE CONNECTION MENU",t:"What Can I Brew for You?",html:'<div class="coffee-menu"><a href="mailto:vijay.shekar18@gmail.com?subject=Quick%20Hello%20from%20your%20NYC%20Portfolio"><strong>☕ ESPRESSO</strong><span>Quick hello ↗</span></a><a href="mailto:vijay.shekar18@gmail.com?subject=Let%27s%20Collaborate"><strong>☕ CAPPUCCINO</strong><span>Discuss a project ↗</span></a><a href="https://www.linkedin.com/in/vijaygopireddy/" target="_blank" rel="noopener noreferrer"><strong>☕ COLD BREW</strong><span>Connect on LinkedIn ↗</span></a></div>'},
+ menu:{k:"THE CONNECTION MENU",t:"What Can I Brew for You?",html:'<div class="coffee-menu"><a href="mailto:vijay.sekhar18@gmail.com?subject=Quick%20Hello%20from%20your%20NYC%20Portfolio"><strong>☕ ESPRESSO</strong><span>Quick hello ↗</span></a><a href="mailto:vijay.sekhar18@gmail.com?subject=Let%27s%20Collaborate"><strong>☕ CAPPUCCINO</strong><span>Discuss a project ↗</span></a><a href="https://www.linkedin.com/in/vijaygopireddy/" target="_blank" rel="noopener noreferrer"><strong>☕ COLD BREW</strong><span>Connect on LinkedIn ↗</span></a></div>'},
  linkedin:{k:"CONTACT / CONNECT",t:"Find Me on LinkedIn",html:'<p><a href="https://www.linkedin.com/in/vijaygopireddy/" target="_blank" rel="noopener">Visit LinkedIn ↗</a></p>'},
  coffee:{k:"CONTACT / NYC",t:"Coffee & Conversation",html:"<p>This is a virtual coffee lounge for conversations, ideas and collaborations. Thanks for visiting the city!</p>"}
 };
@@ -306,6 +306,18 @@ if(safe==="about"){
  for(let x=-4.6;x<=4.6;x+=.75)box(.035,.95,.07,brass,x,.68,-6.54);
  box(2.3,1.65,1.3,dark,3.2,2.26,-8.18);box(1.55,.68,.08,glass,3.2,2.46,-7.47);
  for(let x of [-2.6,-1.8,-1])mug(x,1.72,-7.1);
+ // Low-cost animated steam above the counter mugs; reduced-motion users see a static scene.
+ const steamWisps=[];
+ for(const x of [-2.6,-1.8,-1]){
+  for(let i=0;i<3;i++){
+   const puff=new THREE.Mesh(new THREE.SphereGeometry(.055+i*.02,8,6),new THREE.MeshBasicMaterial({color:"#fff4db",transparent:true,opacity:.26,depthWrite:false}));
+   puff.position.set(x,2.05+i*.25,-7.1);scene.add(puff);steamWisps.push({puff,x,offset:i*.31});
+  }
+ }
+ const cozyWindowGlow=new THREE.PointLight("#ffd49b",1.2,8);cozyWindowGlow.position.set(8,4,-6.7);scene.add(cozyWindowGlow);
+ const reduceCafeMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ window.__cafeAnimate=()=>{if(reduceCafeMotion)return;const t=performance.now()*.00035;for(const {puff,x,offset} of steamWisps){const phase=(t+offset)%1;puff.position.y=2.05+phase*.85;puff.position.x=x+Math.sin(phase*6+offset)*.09;puff.material.opacity=.2*(1-phase)}};
+
  libertySculpture(-4.1,-8.1);
  const order=box(1.8,.14,1.15,brass,0,1.55,-7.1);clickableProp(order,"menu");
  textSign("ORDER HERE","PICK YOUR COFFEE",0,2.5,-7.25,3.15,.8,{bg:"#f3e1bf",fg:"#543c2a",edge:"#bb8d56"},"menu");
@@ -342,12 +354,36 @@ if(safe==="ai"){
  document.body.append(vault);
 }
 if(safe==="contact"){
- const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
- for(const [key,label] of [["linkedin","in LinkedIn"],["email","✉ Email"],["phone","☎ Phone"],["location","⌖ New York"],["menu","☕ Coffee Menu"]]){
-  const b=document.createElement("button");b.type="button";b.dataset.contact=key;b.textContent=label;b.addEventListener("click",()=>openDetail(key));quick.append(b);
+ const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Quick contact actions");
+ const actions=[
+  {key:"email",label:"✉ EMAIL ME",href:"mailto:vijay.sekhar18@gmail.com?subject=Hello%20from%20your%20NYC%20Portfolio"},
+  {key:"linkedin",label:"in LINKEDIN",href:"https://www.linkedin.com/in/vijaygopireddy/"},
+  {key:"copy",label:"⧉ COPY EMAIL"},
+  {key:"menu",label:"☕ COFFEE MENU"},
+  {key:"phone",label:"☎ 774-486-****"},
+  {key:"location",label:"⌖ NEW YORK"}
+ ];
+ const status=document.createElement("span");status.id="cafeCopyStatus";status.className="cafe-copy-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+ async function copyEmail(){
+  try{
+   if(!navigator.clipboard?.writeText)throw Error("Clipboard unavailable");
+   await navigator.clipboard.writeText("vijay.sekhar18@gmail.com");
+   status.textContent="✓ Email copied";
+  }catch(_err){
+   status.textContent="Copy unavailable — select the address in Email details.";
+   openDetail("email");
+  }
  }
- document.body.append(quick);
+ for(const action of actions){
+  const el=action.href?document.createElement("a"):document.createElement("button");
+  el.dataset.contact=action.key;el.textContent=action.label;
+  if(action.href){el.href=action.href;if(action.key==="linkedin"){el.target="_blank";el.rel="noopener noreferrer"}}
+  else{el.type="button";el.addEventListener("click",()=>action.key==="copy"?copyEmail():openDetail(action.key))}
+  quick.append(el);
+ }
+ quick.append(status);document.body.append(quick);
 }
+
 // ABOUT-only cinematic camera tour. The train stays parked; camera glides past its windows.
 let journeyActive=false,journeyStart=0,journeyPausedAt=0,journeyButton=null;
 const journeyDuration=30000;
@@ -545,4 +581,4 @@ renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
 renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
 document.getElementById("districtReset").onclick=()=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
-function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();renderer.render(scene,camera)}animate();
+function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();window.__cafeAnimate?.();renderer.render(scene,camera)}animate();
