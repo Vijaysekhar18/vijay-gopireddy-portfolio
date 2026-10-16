@@ -215,6 +215,33 @@ if(safe==="about"){
  box(22,.08,16,stone,0,.06,-.1);
  box(22.5,1.2,.18,navy,0,6.95,-9.53);
  textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.92,-9.3,16.5,1.02,{bg:"#10263d",fg:"#fff5df",edge:"#d8af69"});
+ // Signature floating holographic engineering cube and restrained glass exhibition architecture.
+ const cubeGroup=new THREE.Group();cubeGroup.position.set(0,5.25,-3.0);scene.add(cubeGroup);
+ const cubeGlass=new THREE.Mesh(new THREE.BoxGeometry(2.25,2.25,2.25),new THREE.MeshPhysicalMaterial({color:"#74cdec",transparent:true,opacity:.12,roughness:.12,metalness:.15,depthWrite:false,side:THREE.DoubleSide}));
+ cubeGroup.add(cubeGlass);
+ const cubeEdges=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2.28,2.28,2.28)),new THREE.LineBasicMaterial({color:"#7deaff",transparent:true,opacity:.96}));
+ cubeGroup.add(cubeEdges);
+ const cubeGlyph=new THREE.Mesh(new THREE.IcosahedronGeometry(.52,1),glow("#ffe3a2"));cubeGroup.add(cubeGlyph);
+ const cubeAura=new THREE.PointLight("#73d9ff",2.5,7);cubeAura.position.set(0,5.25,-3);scene.add(cubeAura);
+ // Suspended gallery exhibit with a believable ceiling mount, not an extra room shell.
+ for(const dx of [-.93,.93])for(const dz of [-.93,.93])box(.025,1.25,.025,steel,dx,7.0,-3+dz);
+ const coreBase=box(3.5,.15,3.5,navy,0,.24,-3);coreBase.material=mat("#22394d");
+ const coreBorder=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.53,.18,3.53)),new THREE.LineBasicMaterial({color:"#5bdcf4"}));coreBorder.position.copy(coreBase.position);scene.add(coreBorder);
+ // Four directional circuit paths terminate before the individual station workbenches.
+ for(const st of stations){
+  const dx=st.x<0?-1:1;
+  const from=dx*1.9,to=st.x-dx*1.35;
+  const path=box(Math.abs(to-from),.035,.045,glow(st.color),(from+to)/2,.17,-3);
+  path.userData.servicePath=st.key;
+ }
+ const exhibitLighting=[];
+ const glassMat=new THREE.MeshPhysicalMaterial({color:"#a8dcf0",transparent:true,opacity:.12,roughness:.16,metalness:.12,depthWrite:false,side:THREE.DoubleSide});
+ // Glass bays sit behind the equipment, leaving the existing square room and aisle intact.
+ for(const st of stations){
+  box(4.28,3.35,.07,glassMat,st.x,3.1,-6.0);
+  for(const dx of [-2.13,2.13])box(.055,3.45,.09,steel,st.x+dx,3.1,-5.95);
+  box(4.3,.075,.1,brass,st.x,4.84,-5.95);
+ }
  // Central VSR core: elevated so it remains visible without obstructing the aisle.
  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.66,1),glow("#f4ce82"));
  core.position.set(0,5.75,-7.85);scene.add(core);
@@ -233,7 +260,7 @@ if(safe==="about"){
   textSign("0"+(i+1)+"  "+st.name,st.sub,st.x,4.65,-5.15,3.75,.85,{bg:"#112c44",fg:"#fff7e7",edge:st.color},st.key);
   const platform=new THREE.Mesh(new THREE.CylinderGeometry(1.28,1.4,.18,32),mat("#d9bb8d"));platform.position.set(st.x,.5,1.15);scene.add(platform);clickableProp(platform,st.key);
   textSign("EXPLORE",st.sub,st.x,1.35,1.78,3.4,.73,{bg:"#142c43",fg:"#fff8e9",edge:st.color},st.key);
-  const lamp=new THREE.PointLight(st.color,3.1,5.8);lamp.position.set(st.x,5.6,-3.8);scene.add(lamp);
+  const lamp=new THREE.PointLight(st.color,2.1,6.2);lamp.position.set(st.x,5.6,-3.8);scene.add(lamp);exhibitLighting.push({key:st.key,lamp,light,halo});
   if(i===0){
    // Test factory: conveyor, three build modules, articulated robotic arm and moving test package.
    box(3.95,.28,1.3,steel,st.x,1.43,-3.9);
@@ -294,12 +321,38 @@ if(safe==="about"){
    animated.push({type:"ai",orb,ring});
   }
  }
+ // Engineering workflows are represented by purposeful lightweight micro-animations.
+ const processDots=[];
+ for(const [i,st] of stations.entries()){
+  const dots=[];
+  for(let j=0;j<3;j++){
+   const dot=new THREE.Mesh(new THREE.SphereGeometry(.095,8,6),glow(st.color));
+   dot.position.set(st.x-1.2+j*.85,1.7,-2.95);scene.add(dot);dots.push(dot);
+  }
+  processDots.push({key:st.key,x:st.x,dots,index:i});
+ }
+ let selectedService=null;
+ window.__servicesFocus=(key)=>{
+  selectedService=stations.some(st=>st.key===key)?key:null;
+  for(const e of exhibitLighting){
+   const active=!selectedService||e.key===selectedService;
+   e.lamp.intensity=active?(selectedService?5.3:2.1):.6;
+   e.light.emissiveIntensity=active?.52:.13;
+   e.halo.material=e.light;
+  }
+  const label=document.getElementById("servicesFocusStatus");
+  if(label)label.textContent=selectedService?"SPOTLIGHT · "+stations.find(st=>st.key===selectedService).name:"ALL EXHIBITS";
+ };
+ window.__servicesFocus(null);
  // Keep the front cutaway empty, matching the reference video.
  window.__servicesStations=stations;
  window.__servicesAnimate=()=>{
   if(motion)return;
   const t=performance.now()*.001;
   core.rotation.y=t*.28;core.rotation.x=t*.12;coreRing.rotation.z=t*.13;
+  cubeGroup.rotation.y=Math.sin(t*.22)*.16;cubeGlyph.rotation.y=t*.34;cubeGlyph.rotation.x=t*.16;
+  cubeAura.intensity=2.2+Math.sin(t*1.4)*.45;
+  for(const p of processDots){p.dots.forEach((dot,j)=>{dot.position.x=p.x-1.2+((t*.5+j*.8)%2.4);dot.position.y=1.7+Math.sin(t*2+j)*.05})}
   for(const item of animated){
    if(item.type==="factory"){item.packet.position.x=item.x-1.55+(t*.5%3.1);item.arm.rotation.z=Math.sin(t*.8)*.17}
    if(item.type==="beacon")item.beacon.material.emissiveIntensity=.3+Math.sin(t*2)*.22;
@@ -456,7 +509,7 @@ if(safe==="about"){
 
 }
 const dialog=document.getElementById("districtDialog");
-function openDetail(key){const d=content[key];if(!d)return;if(safe==="ai")aiQuestDiscover(key);document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
+function openDetail(key){const d=content[key];if(!d)return;if(safe==="ai")aiQuestDiscover(key);if(safe==="services"){window.__servicesFocus?.(key);if(servicesTour)setServicesTour(false);servicesFocusTarget=key;}document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
 document.getElementById("districtClose").onclick=()=>dialog.close();
 if(safe==="about"){
  const quick=document.createElement("nav");quick.id="aboutQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","About gallery exhibits");
@@ -510,7 +563,7 @@ if(safe==="contact"){
 }
 
 // SERVICES-only optional guided walkthrough, with direct-access exhibit controls.
-let servicesTour=false,servicesTourStart=0,servicesTourPaused=false;
+let servicesTour=false,servicesTourStart=0,servicesTourPaused=false,servicesFocusTarget=null;
 const servicesReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let servicesTourButton=null;
 function setServicesTour(active){
@@ -531,6 +584,7 @@ function updateServicesTour(now){
  const p=Math.min((now-servicesTourStart)/duration,1);
  const segment=Math.min(3,Math.floor(p*4)),local=Math.min(1,p*4-segment);
  const from=stops[segment],to=stops[Math.min(segment+1,3)];
+ window.__servicesFocus?.(from.key);
  // Dwell at each exhibit before transitioning to the next bay.
  const travel=THREE.MathUtils.clamp((local-.4)/.6,0,1);
  const smooth=travel*travel*(3-2*travel);
@@ -540,16 +594,16 @@ function updateServicesTour(now){
  camera.lookAt(x,2.7,-4.4);
  const status=document.getElementById("servicesTourStatus");
  if(status)status.textContent="EXHIBIT 0"+(segment+1)+" / 04 · "+stops[segment].story+" · Select to explore";
- if(p>=1)setServicesTour(false);
+ if(p>=1){setServicesTour(false);window.__servicesFocus?.(null)}
  return true;
 }
 if(safe==="services"){
  const hud=document.createElement("section");hud.id="servicesHud";hud.className="services-hud";hud.setAttribute("aria-label","Engineering Studio navigation");
- hud.innerHTML='<div class="services-hud-title"><strong>✦ VSR INNOVATION CENTER</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
+ hud.innerHTML='<div class="services-hud-title"><strong>✦ VSR INNOVATION CENTER</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><p id="servicesFocusStatus" class="services-focus-status" role="status">ALL EXHIBITS</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
  document.body.append(hud);
  servicesTourButton=hud.querySelector("#servicesTour");
  servicesTourButton.onclick=()=>setServicesTour(!servicesTour);
- hud.querySelector("#servicesTourExit").onclick=()=>setServicesTour(false);
+ hud.querySelector("#servicesTourExit").onclick=()=>{setServicesTour(false);servicesFocusTarget=null;window.__servicesFocus?.(null)};
  const labels=[["automation","01 · Automation"],["quality","02 · Quality"],["cloud","03 · Cloud & Data"],["aiEngineering","04 · AI Engineering"]];
  for(const [key,label] of labels){
   const b=document.createElement("button");b.type="button";b.dataset.service=key;b.textContent=label;
@@ -746,9 +800,9 @@ function updateAiQuest(now){
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
-function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
+function update(){if(updateAiQuest(performance.now()))return;if(updateServicesTour(performance.now()))return;if(updateJourney(performance.now()))return;if(safe==="services"&&servicesFocusTarget&&!dialog.open){const st=window.__servicesStations?.find(x=>x.key===servicesFocusTarget);if(st){const desired=new THREE.Vector3(st.x,4.5,7.5);camera.position.lerp(desired,.055);camera.lookAt(st.x,2.55,-3.7);if(camera.position.distanceTo(desired)<.12)servicesFocusTarget=null;return}}theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
 function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
-let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
+let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(aiMode!=="idle")aiSetMode("idle");if(journeyActive)setJourney(false);if(servicesTour)setServicesTour(false);if(safe==="services"){servicesFocusTarget=null;window.__servicesFocus?.(null)}drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
 renderer.domElement.addEventListener("pointercancel",()=>drag=null);
