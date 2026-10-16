@@ -119,3 +119,15 @@
  .district-body:has(.services-hud) .district-bottom button{margin-left:auto;font-size:9px;padding:8px}
 }
 @media(prefers-reduced-motion:reduce){.services-hud button{transition:none}}
+
+/* SERVICES miniature cutaway: keep the architectural silhouette unobstructed. */
+.district-body:has(.services-hud) .services-hud{top:110px;right:12px;width:min(275px,calc(100vw - 24px));padding:12px;background:#fffaf1f0;color:#263c4a;border-color:#d4bb95;box-shadow:0 7px 24px #24394929}
+.district-body:has(.services-hud) .services-hud-title span{color:#85613b}
+.district-body:has(.services-hud) .services-hud p{color:#48606b}
+.district-body:has(.services-hud) .services-hud button{background:#f5ead9;color:#29465a;border-color:#c9b18d}
+.district-body:has(.services-hud) .services-hud #servicesTour{background:#284c5d;color:#fff8e7;border-color:#284c5d}
+@media(max-width:760px){
+ .district-body:has(.services-hud) .services-hud{top:auto;bottom:62px;right:auto;width:min(440px,calc(100vw - 20px));padding:9px 11px}
+ .district-body:has(.services-hud) .services-hud-title{font-size:11px}
+ .district-body:has(.services-hud) .services-hud p{margin:4px 0}
+}
