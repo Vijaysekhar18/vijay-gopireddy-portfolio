@@ -386,7 +386,7 @@ function updateJourney(now){
 }
 // Guided cinematic tour and optional keyboard/touch challenge.
 const aiKeys=["openai","claude","hackathon","innovation"];
-let aiMode="idle",aiStart=0,aiLane=0,aiProgress=0,aiCollected=new Set(),aiLast=0,aiReturnAt=0,aiStage=0,aiStageHold=0,aiVaultOpen=false;
+let aiMode="idle",aiStart=0,aiLane=0,aiProgress=0,aiCollected=new Set(),aiLast=0,aiStage=0,aiStageHold=0,aiVaultOpen=false;
 let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
 const aiPassport=aiHud?.querySelector("#aiQuestPassport");
@@ -440,7 +440,7 @@ function aiQuestDiscover(key){
  if(isNew)aiCelebrate(key);
  aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";aiRenderPassport();
  if(isNew)aiSound("collect");
- if(aiCollected.size===4)aiUnlockVault();
+ if(aiCollected.size===4&&aiMode!=="play")aiUnlockVault();
 }
 // Sound is opt-in; no autoplay or downloaded audio assets.
 function aiSound(kind){
@@ -465,7 +465,7 @@ function aiSound(kind){
 }
 function aiSetMode(mode){
  if(!aiHud)return;
- aiMode=mode;window.__aiQuestPlaying=mode==="play";aiReturnAt=0;aiStageHold=0;aiStage=0;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=0;aiProgress=0;if(mode==="play"&&window.__aiQuestWorld){for(let i=0;i<4;i++)delete window.__aiQuestWorld["checkpoint"+i]}
+ aiMode=mode;window.__aiQuestPlaying=mode==="play";aiStageHold=0;aiStage=0;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=0;aiProgress=0;
  aiHud.querySelector("#aiQuestTour").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestPlay").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestExit").hidden=mode==="idle";
@@ -489,17 +489,19 @@ if(aiHud){
 }
 function updateAiQuest(now){
  if(aiMode==="idle"||!window.__aiQuestWorld)return false;
- if(aiMode==="play"&&aiReturnAt){if(now>=aiReturnAt){aiSetMode("idle");aiHud.querySelector("#aiQuestHint").textContent="Milestone reached! Start another run to discover more.";}return true;}
  if(dialog.open){aiStart+=Math.min(now-(aiLast||now),60);aiLast=now;return true;}
  const world=window.__aiQuestWorld,elapsed=(now-aiStart)/1000;
  if(aiMode==="tour"){
   // Smoothly follow all four exhibit windows, keeping each label visible.
   aiProgress=Math.min(elapsed/26,1);
   const p=aiReduced?aiProgress:aiProgress*aiProgress*(3-2*aiProgress);
-  const x=-8.7+p*17.4;
-  const dest=new THREE.Vector3(x,4.1,7.2);
+  const route=window.__aiQuestWorld.tokens;
+  const segment=Math.min(2,Math.floor(p*3));const blend=Math.min(1,p*3-segment);
+  const from=route[segment],to=route[segment+1];
+  const x=THREE.MathUtils.lerp(from.x,to.x,blend),z=THREE.MathUtils.lerp(from.z,to.z,blend);
+  const dest=new THREE.Vector3(x,4.6,z+7.1);
   camera.position.lerp(dest,aiReduced?1:.055);
-  camera.lookAt(x*.94,3.1,-3.6);
+  camera.lookAt(x,3.1,z);
   if(aiProgress>=1)aiSetMode("idle");
  }else{
   const dt=Math.min((now-(aiLast||now))/1000,.06);aiLast=now;
