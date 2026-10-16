@@ -137,6 +137,13 @@ if(safe==="about"){
 const dialog=document.getElementById("districtDialog");
 function openDetail(key){const d=content[key];if(!d)return;document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
 document.getElementById("districtClose").onclick=()=>dialog.close();
+if(safe==="contact"){
+ const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
+ for(const [key,label] of [["linkedin","in LinkedIn"],["email","✉ Email"],["phone","☎ Phone"],["location","⌖ New York"],["menu","☕ Coffee Menu"]]){
+  const b=document.createElement("button");b.type="button";b.dataset.contact=key;b.textContent=label;b.addEventListener("click",()=>openDetail(key));quick.append(b);
+ }
+ document.body.append(quick);
+}
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
