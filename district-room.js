@@ -259,16 +259,53 @@ if(safe==="contact"){
  }
  document.body.append(quick);
 }
+// ABOUT-only cinematic camera tour. The train stays parked; camera glides past its windows.
+let journeyActive=false,journeyStart=0,journeyPausedAt=0,journeyButton=null;
+const journeyDuration=30000;
+const journeyReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(safe==="about"){
+ journeyButton=document.createElement("button");
+ journeyButton.id="districtJourney";journeyButton.type="button";journeyButton.className="district-pill journey-button";
+ journeyButton.textContent="▶ JOURNEY VIEW";journeyButton.setAttribute("aria-pressed","false");
+ journeyButton.setAttribute("aria-label","Start guided camera journey along the story train");
+ document.querySelector(".district-header nav").prepend(journeyButton);
+ journeyButton.addEventListener("click",()=>setJourney(!journeyActive));
+}
+function setJourney(active){
+ if(safe!=="about")return;
+ journeyActive=active;
+ if(active){journeyStart=performance.now();journeyPausedAt=0;document.getElementById("districtSubtitle").textContent="A cinematic ride through four chapters · Click a train window to explore";}
+ else{desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20;document.getElementById("districtSubtitle").textContent=cfg.subtitle}
+ journeyButton.textContent=active?"■ EXIT JOURNEY":"▶ JOURNEY VIEW";
+ journeyButton.setAttribute("aria-pressed",String(active));
+}
+function updateJourney(now){
+ if(!journeyActive)return false;
+ if(!journeyStart)journeyStart=now;
+ const elapsed=now-journeyStart;
+ // Ease into the first window, glide left-to-right, then hold the complete train in view.
+ const t=Math.min(elapsed/journeyDuration,1);
+ const ease=t*t*(3-2*t);
+ const x=-8.8+ease*17.2;
+ const bob=journeyReducedMotion?0:Math.sin(elapsed*.0028)*.045;
+ const desiredPosition=new THREE.Vector3(x,3.05+bob,journeyReducedMotion?5.5:4.3);
+ const lookAt=new THREE.Vector3(x*.85,3.05,-3.4);
+ camera.position.lerp(desiredPosition,journeyReducedMotion?1:.055);
+ const aim=new THREE.Vector3();camera.getWorldDirection(aim);const currentTarget=camera.position.clone().add(aim.multiplyScalar(8));
+ currentTarget.lerp(lookAt,journeyReducedMotion?1:.065);camera.lookAt(currentTarget);
+ if(t>=1){setJourney(false)}
+ return true;
+}
 const map=document.getElementById("districtNav"),mapButton=document.getElementById("districtMap");mapButton.onclick=()=>{map.hidden=!map.hidden;mapButton.setAttribute("aria-expanded",String(!map.hidden))};
 let theta=.12,phi=1.38,radius=20,desiredTheta=theta,desiredPhi=phi,desiredRadius=radius;
 const target=new THREE.Vector3(0,2.6,-3.4);
-function update(){theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
+function update(){if(updateJourney(performance.now()))return;theta+=(desiredTheta-theta)*.12;phi+=(desiredPhi-phi)*.12;radius+=(desiredRadius-radius)*.12;camera.position.set(target.x+radius*Math.sin(phi)*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*Math.sin(phi)*Math.cos(theta));camera.lookAt(target)}
 function resize(){const mobile=root.clientWidth<600;camera.aspect=root.clientWidth/root.clientHeight;camera.fov=mobile?62:48;if(mobile&&desiredRadius<28){desiredRadius=30;radius=30}else if(!mobile&&desiredRadius>35){desiredRadius=22;radius=22}camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight,false)}window.addEventListener("resize",resize);resize();
-let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
+let drag=null,moved=false;renderer.domElement.addEventListener("pointerdown",e=>{if(journeyActive)setJourney(false);drag={x:e.clientX,y:e.clientY};moved=false;renderer.domElement.setPointerCapture(e.pointerId)});
 renderer.domElement.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;desiredTheta-=dx*.006;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.005,.4,1.65);drag={x:e.clientX,y:e.clientY}});
 renderer.domElement.addEventListener("pointerup",e=>{if(!moved){const p=new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(p,camera);const hit=ray.intersectObjects(clickable)[0];if(hit?.object.userData.action)openDetail(hit.object.userData.action)}drag=null});
 renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
-renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
-document.getElementById("districtReset").onclick=()=>{desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
+renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();if(journeyActive)setJourney(false);desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
+document.getElementById("districtReset").onclick=()=>{if(journeyActive)setJourney(false);desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
 function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();renderer.render(scene,camera)}animate();

@@ -45,6 +45,10 @@ with sync_playwright() as p:
         page.locator("#aboutQuickActions button").first.wait_for()
         assert page.locator("#districtTitle").inner_text()=="THE STORY STATION"
         assert page.locator("#aboutQuickActions button").count()==4
+        page.locator("#districtJourney").click()
+        assert page.locator("#districtJourney").get_attribute("aria-pressed")=="true"
+        page.locator("#districtJourney").click()
+        assert page.locator("#districtJourney").get_attribute("aria-pressed")=="false"
         page.locator('[data-about="journey"]').click()
         assert "TD Bank" in page.locator("#districtDetailBody").inner_text()
         page.locator("#districtClose").click()

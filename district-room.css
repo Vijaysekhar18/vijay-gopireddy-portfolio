@@ -23,3 +23,9 @@
 .about-quick-actions button{border:1px solid #b99b69;border-radius:99px;padding:10px 17px;background:#fff8e9f2;color:#3e423e;font-size:12px;font-weight:800;box-shadow:0 5px 16px #29201929;cursor:pointer;transition:background .2s,transform .2s}
 .about-quick-actions button:hover,.about-quick-actions button:focus-visible{background:#f4dfb5;transform:translateY(-2px);outline:2px solid #856b46}
 @media(max-width:600px){.about-quick-actions{bottom:67px;gap:5px}.about-quick-actions button{font-size:10px;padding:8px 10px}}
+
+/* Guided ABOUT camera tour — visible, accessible, compact. */
+.journey-button{background:#143e58!important;color:#fff5dc!important;border:1px solid #e4bb73!important;font-weight:800;letter-spacing:.055em;white-space:nowrap}
+.journey-button[aria-pressed="true"]{background:#c37a36!important;color:#182e3e!important}
+.journey-button:focus-visible{outline:3px solid #ffda8a;outline-offset:3px}
+@media(max-width:600px){.journey-button{font-size:10px!important;padding:9px!important;letter-spacing:0}}
