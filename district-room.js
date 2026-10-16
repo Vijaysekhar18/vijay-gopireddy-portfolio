@@ -106,66 +106,79 @@ function libertySculpture(x,z){
 }
 
 if(safe==="about"){
- // Times Square Story Station: richly tiled subway platform with an actual four-window train.
- const ivory=mat("#eee6d6"),mosaicBlue=mat("#193d63"),mosaicGold=mat("#c8a26b"),darkRail=mat("#293b49"),trainSilver=mat("#9aaebb"),trainNavy=mat("#294e70"),warm=mat("#e9b46d");
- // Tiled station wall: subtle ceramic staggered bricks.
- for(let row=0;row<11;row++)for(let col=0;col<24;col++){
-  const x=-11.5+col*.99+(row%2)*.48,y=.42+row*.62;
-  if(x>11.5)continue;
-  box(.94,.57,.05,row<2?mat("#b7a696"):ivory,x,y,-9.73);
+ // Red-and-silver express train, inspired by the reference's sleek profile.
+ // This is an original interactive Three.js model, not a pasted background image.
+ const ivory=mat("#e9dfca"),blue=mat("#123c68"),gold=mat("#d4a35e"),steel=mat("#b9c4c9");
+ const charcoal=mat("#20303b"),red=new THREE.MeshStandardMaterial({color:"#dd2735",metalness:.3,roughness:.32});
+ const chrome=new THREE.MeshStandardMaterial({color:"#d8e1e5",metalness:.73,roughness:.21});
+ const windowGlass=new THREE.MeshStandardMaterial({color:"#31576d",metalness:.34,roughness:.25,transparent:true,opacity:.9});
+ // Platform tilework and blue mosaic band.
+ for(let y=.42;y<7.85;y+=.68)for(let x=-11.45;x<11.5;x+=1.2){
+  box(1.15,.63,.045,ivory,x+((Math.round(y*10)%2)*.35),y,-9.72);
  }
- // Traditional Times Square mosaic panel, with high contrast and generous type.
- box(16.9,2.08,.13,mosaicGold,0,6.68,-9.58);
- box(16.45,1.71,.15,mosaicBlue,0,6.68,-9.48);
- textSign("TIMES SQUARE","42ND STREET  ·  VSR EXPRESS",0,6.68,-9.34,15.7,1.4,{bg:"#193d63",fg:"#fff7e9",edge:"#d8b67b"});
- // Decorative patterned border above and below the mosaic.
- for(let i=-10;i<=10;i++){box(.65,.14,.09,i%2?mosaicGold:trainNavy,i*.76,7.76,-9.44);box(.65,.12,.09,i%2?trainNavy:mosaicGold,i*.76,5.59,-9.44)}
- // Elevated station ceiling beams and pendant lights.
- for(const z of [-7.5,-3.2,1.2,5.6]){
-  box(23.3,.22,.35,darkRail,0,8.04,z);
-  for(const x of [-8,0,8]){const lampGlow=new THREE.PointLight("#ffe4b3",3.5,8);lampGlow.position.set(x,7.7,z);scene.add(lampGlow)}
+ for(let x=-11.2;x<=11.2;x+=.38){box(.33,.29,.06,Math.round(x*7)%3?blue:gold,x,6.02,-9.65)}
+ // Clear destination header ABOVE the train; never obscured by the vehicle.
+ box(15.5,1.48,.16,gold,0,7.08,-9.55);
+ box(15.17,1.2,.18,blue,0,7.08,-9.42);
+ textSign("VSR EXPRESS","THE NYC STORY STATION",0,7.08,-9.27,14.65,1.05,{bg:"#123c68",fg:"#fff9e9",edge:"#d4a35e"});
+ // Black steel girders, station lighting and a readable suspended wayfinding board.
+ for(const x of [-10.9,10.9]){box(.37,7.85,.38,charcoal,x,4.05,1.8);for(let y=1;y<7.6;y+=.62)box(.4,.055,.42,gold,x,y,1.8)}
+ for(const z of [-7.4,-3.3,1.2,5.2]){
+  box(23,.19,.33,charcoal,0,7.97,z);
+  for(const x of [-8,0,8]){const light=new THREE.PointLight("#ffe0a5",4.5,10);light.position.set(x,7.6,z);scene.add(light)}
  }
- // Platform safety edge and track bed in front of the subway car.
- box(22,.13,.2,warm,0,.12,4.8);
- for(let x=-10.5;x<=10.5;x+=1.1)box(.6,.07,1.1,darkRail,x,.08,6.6);
- for(const z of [6.12,7.18])box(22,.11,.1,mat("#8d939a"),0,.18,z);
- // One continuous silver-blue subway car, not separate wall-mounted cards.
- const carZ=-4.25;
- box(21.8,3.85,1.45,trainSilver,0,2.52,carZ);
- box(21.95,.38,1.55,trainNavy,0,4.65,carZ);
- box(21.9,.55,1.55,trainNavy,0,.43,carZ);
- box(21.7,.13,1.55,warm,0,1.06,carZ);
- box(21.7,.1,1.55,warm,0,4.3,carZ);
- // Four oversized train windows, each a clear interactive personal-story stop.
+ // Four-window passenger train: brushed silver top, red beltline, dark panoramic glazing.
+ const carZ=-4.5,faceZ=carZ+1.05;
+ box(21.7,3.72,1.84,chrome,-.25,2.57,carZ);
+ box(21.8,.29,1.93,charcoal,-.25,4.56,carZ);
+ box(21.8,.18,1.94,steel,-.25,4.38,carZ);
+ box(21.8,1.17,1.95,red,-.25,1.29,carZ);
+ box(21.8,.27,1.95,charcoal,-.25,.54,carZ);
+ box(21.7,.08,1.95,gold,-.25,2.04,carZ);
+ // Continuous panoramic dark window band.
+ box(21.65,1.8,.07,charcoal,-.25,3.25,faceZ+.02);
+ // Four windows, each with its own tappable, high-contrast story display.
  const stops=[
-  {x:-8.05,code:"H",name:"MY STORY",sub:"HYDERABAD ROOTS",key:"story",color:"#e6b251"},
-  {x:-2.7,code:"N",name:"MY JOURNEY",sub:"HYD → NYC",key:"journey",color:"#78bdd0"},
-  {x:2.7,code:"A",name:"MILESTONES",sub:"AWARDS & LEARNING",key:"credentials",color:"#a5d09a"},
-  {x:8.05,code:"X",name:"BEYOND WORK",sub:"TRAVEL · CURIOSITY",key:"personal",color:"#df9e8b"}
+  {x:-8.1,code:"H",name:"MY STORY",sub:"ROOTS & WHAT DRIVES ME",key:"story",color:"#e4af55"},
+  {x:-2.8,code:"N",name:"MY JOURNEY",sub:"HYDERABAD → NEW YORK",key:"journey",color:"#7ebcd1"},
+  {x:2.5,code:"A",name:"MILESTONES",sub:"AWARDS & GROWTH",key:"credentials",color:"#acd2a0"},
+  {x:7.8,code:"X",name:"BEYOND WORK",sub:"TRAVEL · FOOD · CURIOSITY",key:"personal",color:"#e2a08d"}
  ];
  for(const stop of stops){
-  box(4.82,2.42,.13,darkRail,stop.x,2.94,carZ+ .83);
-  box(4.56,2.18,.14,mat("#d7e6e9"),stop.x,2.94,carZ+.92);
-  // Window sign sits forward of the glass so it is clearly readable.
-  textSign(stop.name,stop.sub,stop.x,2.96,carZ+1.035,4.35,1.83,{bg:"#1d3c50",fg:"#fff9e7",edge:stop.color},stop.key);
-  textSign(stop.code,"",stop.x,4.03,carZ+1.055,.67,.67,{bg:stop.color,fg:"#1c3241",edge:"#fff0cb"},stop.key);
-  box(.09,2.5,.16,mosaicGold,stop.x-2.47,2.94,carZ+.95);
+  box(4.72,1.82,.13,chrome,stop.x,3.27,faceZ+.12);
+  box(4.53,1.65,.13,windowGlass,stop.x,3.27,faceZ+.2);
+  textSign(stop.name,stop.sub,stop.x,3.25,faceZ+.3,4.32,1.44,{bg:"#17374b",fg:"#fff8e9",edge:stop.color},stop.key);
+  // Small route marker above the window.
+  textSign(stop.code,"",stop.x,4.31,faceZ+.31,.54,.54,{bg:stop.color,fg:"#203443",edge:"#fff0cf"},stop.key);
  }
- // Wheels and undercarriage make the subway train immediately recognizable.
+ // A streamlined cab nose projects beyond the final window, like the red/white reference.
+ const nose=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),chrome);
+ nose.scale.set(1.05,1.88,1.03);nose.position.set(11.05,2.57,carZ);scene.add(nose);
+ const windshield=new THREE.Mesh(new THREE.SphereGeometry(1,20,12,0,Math.PI),windowGlass);
+ windshield.scale.set(.84,1.04,1.05);windshield.rotation.z=-.22;windshield.position.set(11.28,3.38,carZ+.09);scene.add(windshield);
+ const redNose=new THREE.Mesh(new THREE.SphereGeometry(1,24,12),red);redNose.scale.set(1.06,.7,1.05);redNose.position.set(11.12,1.33,carZ);scene.add(redNose);
  for(const x of [-9,-6,-3,0,3,6,9]){
-  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.37,.37,.25,24),darkRail);
-  wheel.rotation.x=Math.PI/2;wheel.position.set(x,.36,carZ+ .88);scene.add(wheel);
+  const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.22,24),charcoal);wheel.rotation.x=Math.PI/2;wheel.position.set(x,.33,faceZ);scene.add(wheel)
  }
- // Route indicator / destination board on the platform side.
- textSign("VSR EXPRESS","FOUR STOPS · ONE STORY",0,5.07,-9.22,9.1,.78,{bg:"#1d3e55",fg:"#fff0ca",edge:"#d9b46b"});
- // Wall posters and vintage subway detail on side walls.
- for(const [x,rot,title,sub] of [[-11.72,Math.PI/2,"HYDERABAD","THE BEGINNING"],[11.72,-Math.PI/2,"NEW YORK","THE NEXT CHAPTER"]]){
-  const g=new THREE.Group();g.position.set(x,4.1,-.8);g.rotation.y=rot;scene.add(g);
-  box(4.3,3.2,.15,darkRail,0,0,0,g);
-  const p=textSign(title,sub,0,0,.1,4,2.9,{bg:"#e3d4b7",fg:"#24435a",edge:"#b78e57"});
-  scene.remove(p);g.add(p);p.position.set(0,0,.12);
+ // Yellow platform safety strip, tracks and a compact bench.
+ box(22.4,.08,.22,gold,0,.1,4.75);
+ for(let x=-10.5;x<11;x+=.95)box(.58,.08,1.5,charcoal,x,.04,6.7);
+ for(const z of [6.1,7.3])box(22,.08,.11,steel,0,.15,z);
+ box(4.1,.23,1.1,mat("#735741"),0,.76,3.35);
+ for(const x of [-1.65,1.65])box(.14,.7,.7,charcoal,x,.36,3.35);
+ // True NYC-style mosaic station-name signs on opposite side walls.
+ function stationMosaic(x,rot,name,detail){
+  const group=new THREE.Group();group.position.set(x,4.4,-.65);group.rotation.y=rot;scene.add(group);
+  box(6.6,3.05,.14,gold,0,0,0,group);
+  box(6.25,2.68,.15,ivory,0,0,.1,group);
+  box(5.82,1.72,.16,blue,0,0,.2,group);
+  const label=textSign(name,detail,0,0,.35,5.55,1.48,{bg:"#123c68",fg:"#fff5df",edge:"#e3c489"});
+  scene.remove(label);group.add(label);label.position.set(0,0,.33);
+  for(let i=-8;i<=8;i++)for(const y of [-1.2,1.2])box(.27,.17,.03,i%2?blue:gold,i*.34,y,.21,group);
+  const light=new THREE.PointLight("#ffdfb0",3.5,5);light.position.set(x-Math.sign(x)*1,6,-.65);scene.add(light);
  }
- planter(-10,6.5);planter(10,6.5);
+ stationMosaic(-11.72,Math.PI/2,"TIMES SQUARE","42ND STREET");
+ stationMosaic(11.72,-Math.PI/2,"6TH AVENUE","NEW YORK CITY");
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
