@@ -75,3 +75,9 @@ body.room-body .vsr-quick-toggle{
 /* The instruction line previously occupied the same bottom-left location.
    Instructions remain visible in the room heading. */
 body.district-body .district-bottom > span{display:none}
+
+/* On narrow WORK screens the centered three-button navigation would reach
+   into the left corner. Raise that rail, leaving Quick View its own row. */
+@media(max-width:650px){
+ body.room-body .room-nav{bottom:70px}
+}
