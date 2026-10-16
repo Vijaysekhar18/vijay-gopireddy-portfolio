@@ -216,18 +216,40 @@ if(safe==="about"){
  for(const token of tokens){
   const material=neon(token.color);
   const group=new THREE.Group();group.position.set(token.x,3.45,-3.6);scene.add(group);
-  // Visible geometry remains in place while external SVG loads or fails.
-  // Face the camera directly, and never hide the fallback disc.
-  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.28,48),material);
+  // Synchronous canvas artwork: always visible, no network image load or SVG parsing.
+  // Keep the physical collectible disk behind the artwork in every case.
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.22,1.22,.24,64),material);
   coin.rotation.x=Math.PI/2;group.add(coin);clickableProp(coin,token.key);
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(.92,.09,12,48),mat("#fff3d2"));ring.position.z=.22;group.add(ring);
-  const art={openai:"assets/ai-chatgpt-badge.svg",claude:"assets/ai-claude-mark.svg",hackathon:"assets/ai-cognizant-mark.svg"}[token.key];
-  if(art){
-   const texture=new THREE.TextureLoader().load(art,()=>{coin.visible=false;ring.visible=false},undefined,()=>{coin.visible=true;ring.visible=true});
-   texture.colorSpace=THREE.SRGBColorSpace;
-   const face=new THREE.Mesh(new THREE.PlaneGeometry(2.5,2.5),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthTest:false,depthWrite:false}));
-   face.position.z=.52;face.renderOrder=10;group.add(face);clickableProp(face,token.key);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.13,.085,12,64),mat("#fff4d7"));ring.position.z=.19;group.add(ring);
+  const canvas=document.createElement("canvas");canvas.width=512;canvas.height=512;
+  const ctx=canvas.getContext("2d");ctx.clearRect(0,0,512,512);
+  ctx.save();ctx.translate(256,256);
+  ctx.shadowColor=token.color;ctx.shadowBlur=24;
+  ctx.beginPath();for(let i=0;i<6;i++){const ang=-Math.PI/2+i*Math.PI/3;const px=Math.cos(ang)*220,py=Math.sin(ang)*220;i?ctx.lineTo(px,py):ctx.moveTo(px,py)}ctx.closePath();
+  const gradient=ctx.createLinearGradient(-180,-190,180,190);
+  gradient.addColorStop(0,"#fff9d8");gradient.addColorStop(.5,token.color);gradient.addColorStop(1,"#18345c");
+  ctx.fillStyle=gradient;ctx.fill();ctx.lineWidth=15;ctx.strokeStyle="#fff4d2";ctx.stroke();
+  ctx.shadowBlur=0;ctx.fillStyle="#101d38";ctx.textAlign="center";ctx.textBaseline="middle";
+  if(token.key==="openai"){
+   ctx.font="bold 80px Arial";ctx.fillText("AI",0,-55);
+   ctx.font="bold 39px Arial";ctx.fillText("CHATGPT",0,35);
+   ctx.font="bold 36px Arial";ctx.fillText("EXPERT",0,80);
+   ctx.font="bold 23px Arial";ctx.fillText("CORE",0,128);
+  }else if(token.key==="claude"){
+   ctx.font="bold 114px Arial";ctx.fillText("✳",0,-55);
+   ctx.font="bold 57px Arial";ctx.fillText("CLAUDE",0,72);
+  }else if(token.key==="hackathon"){
+   ctx.beginPath();ctx.moveTo(-85,-95);ctx.lineTo(80,-95);ctx.lineTo(155,0);ctx.lineTo(80,95);ctx.lineTo(-85,95);ctx.lineTo(-155,0);ctx.closePath();ctx.fillStyle="#1e70b2";ctx.fill();
+   ctx.beginPath();ctx.moveTo(-85,-95);ctx.lineTo(55,-10);ctx.lineTo(-10,95);ctx.lineTo(-155,0);ctx.closePath();ctx.fillStyle="#72c8e4";ctx.fill();
+   ctx.font="bold 36px Arial";ctx.fillStyle="#fff";ctx.fillText("COGNIZANT",0,144);
+  }else{
+   ctx.font="bold 125px Arial";ctx.fillText("⚙",0,-45);
+   ctx.font="bold 40px Arial";ctx.fillText("BUILD",0,95);
   }
+  ctx.restore();
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  const face=new THREE.Mesh(new THREE.PlaneGeometry(2.38,2.38),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthTest:false,depthWrite:false}));
+  face.position.z=.36;face.renderOrder=20;group.add(face);clickableProp(face,token.key);
   const symbol=textSign(token.name,token.sub,token.x,1.85,-2.9,2.55,.75,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
   clickableProp(coin,token.key);
   box(3.55,.18,2.1,neon(token.color),token.x,.42,-3.95);
@@ -361,12 +383,24 @@ const aiKeys=["openai","claude","hackathon","innovation"];
 let aiMode="idle",aiStart=0,aiLane=1,aiProgress=0,aiCollected=new Set(),aiLast=0;
 let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
+let aiCelebrationTimer=null;
 const aiReduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function aiCelebrate(key){
+ if(!aiHud)return;
+ let banner=document.getElementById("aiQuestCelebration");
+ if(!banner){banner=document.createElement("div");banner.id="aiQuestCelebration";banner.className="ai-quest-celebration";banner.setAttribute("role","status");document.body.append(banner)}
+ const names={openai:"OPENAI",claude:"CLAUDE",hackathon:"COGNIZANT",innovation:"INNOVATION"};
+ banner.replaceChildren();const headline=document.createElement("strong");headline.textContent="✦ MILESTONE UNLOCKED ✦";const label=document.createElement("span");label.textContent=names[key]+" COLLECTED!";banner.append(headline,label);
+ for(let i=0;i<18;i++){const spark=document.createElement("i");spark.className="ai-quest-spark";spark.style.setProperty("--angle",(i*20)+"deg");spark.style.setProperty("--hue",String(i*21));banner.append(spark)}
+ banner.classList.remove("celebrate");void banner.offsetWidth;banner.classList.add("celebrate");
+ clearTimeout(aiCelebrationTimer);aiCelebrationTimer=setTimeout(()=>banner.classList.remove("celebrate"),2200);
+}
 function aiQuestDiscover(key){
  if(!aiHud||!aiKeys.includes(key))return;
- aiCollected.add(key);
+ const isNew=!aiCollected.has(key);aiCollected.add(key);
+ if(isNew)aiCelebrate(key);
  aiHud.querySelector("#aiQuestProgress").textContent=aiCollected.size+" / 4 DISCOVERED";
- aiSound("collect");
+ if(isNew)aiSound("collect");
  if(aiCollected.size===4){aiSound("unlock");aiHud.querySelector("#aiQuestHint").textContent="✨ VAULT UNLOCKED · Explore the Innovation Vault!";aiHud.classList.add("ai-vault-unlocked")}
 }
 // Sound is opt-in; no autoplay or downloaded audio assets.
@@ -435,7 +469,7 @@ function updateAiQuest(now){
   for(let i=0;i<4;i++){
    if(aiProgress>=milestones[i]&&!world["checkpoint"+i]){
     world["checkpoint"+i]=true;
-    if(aiLane===required[i]){aiQuestDiscover(keys[i]);aiHud.querySelector("#aiQuestHint").textContent="✨ "+keys[i].toUpperCase()+" COLLECTED!";openDetail(keys[i]);}
+    if(aiLane===required[i]){openDetail(keys[i]);aiHud.querySelector("#aiQuestHint").textContent="✨ "+keys[i].toUpperCase()+" COLLECTED!";}
     else aiHud.querySelector("#aiQuestHint").textContent="Missed a collectible · Try another lane or tap its shortcut.";
    }
   }
