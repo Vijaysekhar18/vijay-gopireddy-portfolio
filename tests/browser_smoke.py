@@ -199,6 +199,7 @@ with sync_playwright() as p:
                 overlaps=(bounds_a["x"] < bounds_b["x"]+bounds_b["width"] and bounds_a["x"]+bounds_a["width"] > bounds_b["x"] and bounds_a["y"] < bounds_b["y"]+bounds_b["height"] and bounds_a["y"]+bounds_a["height"] > bounds_b["y"])
                 assert not overlaps, f"Quick View overlaps Reset View on {path} at {width}px"
             toggle.click()
+            assert page.evaluate("document.activeElement.id")==="vsrQuickClose", f"Quick View focus did not enter panel on {path}"
             assert toggle.get_attribute("aria-expanded")=="true"
             assert page.locator("#vsrQuickPanel").is_visible()
             assert page.locator("#vsrQuickStops a").count()==5
@@ -206,7 +207,23 @@ with sync_playwright() as p:
             page.keyboard.press("Escape")
             assert not page.locator("#vsrQuickPanel").is_visible()
             assert toggle.get_attribute("aria-expanded")=="false"
+            assert page.evaluate("document.activeElement.id")==="vsrQuickToggle", f"Quick View focus was not restored on {path}"
             assert not errors, f"Quick View JS errors on {path}: {errors}"
+            page.close()
+
+    # Phase 1/2: verify shared stylesheet and keyboard focus across every page.
+    for path in ["", "work.html", "district.html?room=about", "district.html?room=services", "district.html?room=ai", "district.html?room=contact"]:
+        for width,height in [(320,720),(768,1024),(1440,900)]:
+            page=browser.new_page(viewport={"width":width,"height":height},reduced_motion="reduce")
+            page.goto(URL+path,wait_until="domcontentloaded")
+            page.locator("#vsrQuickToggle").wait_for(state="visible")
+            assert page.locator('link[href="interface-system.css"]').count()==1, path
+            assert page.locator("#vsrQuickToggle").evaluate("(el)=>getComputedStyle(el).minHeight")=="44px"
+            page.locator("#vsrQuickToggle").click()
+            page.keyboard.press("Tab")
+            assert page.evaluate("document.activeElement.closest('#vsrQuickPanel')!==null"), f"Focus escaped Quick View: {path}"
+            page.keyboard.press("Escape")
+            assert not page.locator("#vsrQuickPanel").is_visible()
             page.close()
 
     # Engineering Studio: four accessible exhibits and optional guided camera tour.
