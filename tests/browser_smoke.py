@@ -44,19 +44,19 @@ with sync_playwright() as p:
         page.goto(URL+"district.html?room=contact",wait_until="domcontentloaded")
         page.locator("#districtTitle").wait_for(state="visible")
         assert page.locator("#districtTitle").inner_text()=="COFFEE & CONNECTIONS"
-        page.evaluate("openDetail('phone')")
+        page.locator('#contactQuickActions [data-contact="phone"]').click()
         assert page.locator('#districtDetailBody a[href="tel:+17744860732"]').count()==1
         page.locator("#districtClose").click()
-        page.evaluate("openDetail('email')")
+        page.locator('#contactQuickActions [data-contact="email"]').click()
         assert page.locator('#districtDetailBody a[href^="mailto:vijay.shekar18@gmail.com"]').count()==1
         page.locator("#districtClose").click()
-        page.evaluate("openDetail('linkedin')")
+        page.locator('#contactQuickActions [data-contact="linkedin"]').click()
         assert page.locator('#districtDetailBody a[target="_blank"]').count()==1
         page.locator("#districtClose").click()
-        page.evaluate("openDetail('location')")
+        page.locator('#contactQuickActions [data-contact="location"]').click()
         assert "New York, NY" in page.locator("#districtDetailBody").inner_text()
         page.locator("#districtClose").click()
-        page.evaluate("openDetail('menu')")
+        page.locator('#contactQuickActions [data-contact="menu"]').click()
         assert page.locator(".coffee-menu a").count()==3
         page.screenshot(path=f"test-screenshots/cafe-interactions-{width}.png",full_page=True)
         page.close()
