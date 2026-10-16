@@ -173,6 +173,23 @@ with sync_playwright() as p:
     page.wait_for_url("**/work.html",timeout=10000)
     page.close()
 
+    # Shared accessible Quick View must work on every page and both viewports.
+    for path in ["", "work.html", "district.html?room=about", "district.html?room=services", "district.html?room=ai", "district.html?room=contact"]:
+        for width,height in [(1440,900),(390,844)]:
+            page=browser.new_page(viewport={"width":width,"height":height},reduced_motion="reduce")
+            page.goto(URL+path,wait_until="domcontentloaded")
+            toggle=page.locator("#vsrQuickToggle")
+            toggle.wait_for(state="visible")
+            toggle.click()
+            assert toggle.get_attribute("aria-expanded")=="true"
+            assert page.locator("#vsrQuickPanel").is_visible()
+            assert page.locator("#vsrQuickStops a").count()==5
+            assert page.locator('#vsrQuickPanel a[href="mailto:vijay.sekhar18@gmail.com"]').count()==1
+            page.keyboard.press("Escape")
+            assert not page.locator("#vsrQuickPanel").is_visible()
+            assert toggle.get_attribute("aria-expanded")=="false"
+            page.close()
+
     # Engineering Studio: four accessible exhibits and optional guided camera tour.
     for width,height in [(1440,900),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height},reduced_motion="reduce")
