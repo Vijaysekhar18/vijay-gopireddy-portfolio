@@ -526,7 +526,7 @@ function updateAiQuest(now){
     aiStage++;
     aiStageHold=0;window.__aiQuestPlaying=true;
     if(aiStage===4){aiSetMode("idle");aiUnlockVault()}
-    else{if(!aiManualLane)aiLane=aiStage;aiManualLane=false;aiHud.querySelector("#aiQuestHint").textContent="AUTO-SWITCHING → "+tokens[aiStage].name+" · Use arrows to steer manually.";}
+    else{aiLane=aiStage;aiManualLane=false;aiHud.querySelector("#aiQuestHint").textContent="AUTO-SWITCHING → "+tokens[aiStage].name+" · Use arrows to steer manually.";}
    }
   }
 
