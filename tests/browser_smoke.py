@@ -75,6 +75,26 @@ with sync_playwright() as p:
     page.wait_for_timeout(450)
     assert train.get_attribute("transform")==stopped, "Train continues animating when map is closed"
     page.close()
+    # WORK Atelier: five company exhibits and verified TD current spotlight.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height})
+        errors=[]
+        page.on("pageerror",lambda err: errors.append(str(err)))
+        page.goto(URL+"work.html",wait_until="domcontentloaded")
+        page.locator("#companyExhibits button").first.wait_for()
+        assert page.locator("#companyExhibits button").count()==5
+        page.locator('[data-company="td"]').click()
+        assert "TD BANK" in page.locator("#projectContent").inner_text()
+        assert "CURRENT CHAPTER" in page.locator("#projectContent").inner_text()
+        page.screenshot(path=f"test-screenshots/work-atelier-td-{width}.png",full_page=True)
+        page.locator("#closeProject").click()
+        page.locator('[data-company="lpl"]').click()
+        assert "Account View" in page.locator("#projectContent").inner_text()
+        page.locator("#closeProject").click()
+        page.locator('[data-company="wells"]').click()
+        assert "WELLS FARGO" in page.locator("#projectContent").inner_text()
+        assert not errors, f"WORK studio errors: {errors}"
+        page.close()
     # Exercise the actual 2.6-second train animation (not reduced-motion shortcut).
     page=browser.new_page(viewport={"width":1440,"height":900},reduced_motion="no-preference")
     page.goto(URL,wait_until="domcontentloaded")
