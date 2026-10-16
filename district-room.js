@@ -217,6 +217,13 @@ if(safe==="about"){
  }
  document.body.append(quick);
 }
+if(safe==="ai"){
+ const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","AI collectibles");
+ for(const [key,label] of [["openai","OpenAI"],["claude","Claude"],["hackathon","Hackathon"],["innovation","Innovations"]]){
+  const button=document.createElement("button");button.type="button";button.dataset.collectible=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
+ }
+ document.body.append(quick);
+}
 if(safe==="contact"){
  const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
  for(const [key,label] of [["linkedin","in LinkedIn"],["email","✉ Email"],["phone","☎ Phone"],["location","⌖ New York"],["menu","☕ Coffee Menu"]]){
