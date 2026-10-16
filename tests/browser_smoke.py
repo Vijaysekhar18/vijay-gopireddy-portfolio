@@ -181,7 +181,7 @@ print("PASS: desktop/mobile subway arrival and entry, 4 interiors, JS error chec
         errors=[]
         page.on("pageerror",lambda err: errors.append(str(err)))
         page.goto(URL+"district.html?room=services",wait_until="domcontentloaded")
-        assert page.locator("#districtTitle").inner_text()=="THE ENGINEERING STUDIO"
+        assert page.locator("#districtTitle").inner_text()=="VSR INNOVATION CENTER"
         assert page.locator("#servicesHud [data-service]").count()==4
         assert page.locator("#servicesTour").is_visible()
         page.locator("#servicesTour").click()
