@@ -304,8 +304,8 @@ if(safe==="about"){
   }
  }
  // Illuminated entrance threshold makes the visitor's starting point legible.
- const entryArc=new THREE.Mesh(new THREE.TorusGeometry(10.7,.065,8,64,Math.PI),brass);
- entryArc.rotation.x=Math.PI/2;entryArc.rotation.z=Math.PI;entryArc.position.y=.18;scene.add(entryArc);
+ const entranceLine=new THREE.Mesh(new THREE.TorusGeometry(10.7,.065,8,64,Math.PI),brass);
+ entranceLine.rotation.x=Math.PI/2;entranceLine.position.y=.18;scene.add(entranceLine);
  window.__servicesStations=stations;
  window.__servicesAnimate=()=>{
   if(motion)return;
