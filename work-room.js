@@ -24,6 +24,39 @@ for(let i=0;i<waveColors.length;i++){
  const panel=new THREE.Mesh(geom,material(waveColors[i],{roughness:.55,metalness:.03,side:THREE.DoubleSide}));panel.position.z=-7.11+i*.08;panel.castShadow=true;panel.receiveShadow=true;scene.add(panel);
 }
 const wash=new THREE.PointLight("#ffdbab",9,14);wash.position.set(0,7,-3.6);scene.add(wash);
+
+/* Four accurate world clocks above the sculptural wall, with DST-aware IANA zones. */
+const studioClocks=[
+ {label:"INDIA",city:"Hyderabad",tz:"Asia/Kolkata"},
+ {label:"CANADA",city:"Toronto",tz:"America/Toronto"},
+ {label:"USA",city:"New York",tz:"America/New_York"},
+ {label:"SINGAPORE",city:"Singapore",tz:"Asia/Singapore"}
+];
+const clockCanvases=[];
+for(let i=0;i<studioClocks.length;i++){
+ const c=document.createElement("canvas");c.width=512;c.height=256;
+ const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
+ const face=new THREE.Mesh(new THREE.PlaneGeometry(3.85,1.94),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false}));
+ face.position.set(-7.2+i*4.8,7.56,-6.97);scene.add(face);
+ clockCanvases.push({c,texture,...studioClocks[i]});
+}
+function refreshStudioClocks(){
+ const now=new Date();
+ for(const clock of clockCanvases){
+  const g=clock.c.getContext("2d"),w=clock.c.width,h=clock.c.height;
+  g.clearRect(0,0,w,h);
+  g.fillStyle="#1b3039";g.beginPath();g.roundRect(9,9,w-18,h-18,28);g.fill();
+  g.strokeStyle="#c5a97b";g.lineWidth=5;g.stroke();
+  g.textAlign="center";g.fillStyle="#f2d5a5";g.font="bold 32px Arial";g.fillText(clock.label,256,62);
+  g.fillStyle="#ffffff";g.font="bold 75px Arial";
+  g.fillText(new Intl.DateTimeFormat("en-US",{timeZone:clock.tz,hour:"2-digit",minute:"2-digit",hour12:true}).format(now),256,148,470);
+  g.fillStyle="#b9ced0";g.font="26px Arial";g.fillText(clock.city.toUpperCase(),256,201);
+  clock.texture.needsUpdate=true;
+ }
+}
+refreshStudioClocks();
+setInterval(refreshStudioClocks,15000);
+
 const companyData={
  td:{name:"TD BANK",eyebrow:"CURRENT CHAPTER",summary:"My current chapter in banking technology and quality engineering. This exhibit introduces the work and experience I bring to TD Bank; project-specific details will be added once confirmed.",focus:"Banking technology · Quality engineering · Engineering collaboration",color:"#2d9d5c"},
  lpl:{name:"LPL FINANCIAL",eyebrow:"FINANCIAL TECHNOLOGY",summary:"Led quality strategy and cross-functional QE coordination for Account View and the old-to-new AWS landing-zone migration, from analysis and testing through production readiness.",focus:"AWS Lambda · Step Functions · Glue · Kafka · Athena · API migration validation",color:"#5088b6"},
@@ -32,7 +65,7 @@ const companyData={
  cognizant:{name:"COGNIZANT",eyebrow:"ENGINEERING & DELIVERY",summary:"Engineering and quality leadership across complex client engagements, with a focus on test strategy, automation, cloud delivery and cross-functional collaboration.",focus:"Engineering delivery · Test strategy · Automation · Leadership",color:"#4075a8"}
 };
 
-const exhibitPositions=[[-6.9,-3.4,"wells"],[-3.45,-4.3,"dbs"],[0,-4.65,"td"],[3.45,-4.3,"lpl"],[6.9,-3.4,"cognizant"]];
+const exhibitPositions=[[-6.9,-3.4,"dbs"],[-3.45,-4.3,"wells"],[0,-4.65,"td"],[3.45,-4.3,"lpl"],[6.9,-3.4,"cognizant"]];
 function displayMaterial(name,featured){
  const c=document.createElement("canvas");c.width=1024;c.height=640;const g=c.getContext("2d");
  g.fillStyle=featured?"#174a35":"#243c45";g.fillRect(0,0,1024,640);

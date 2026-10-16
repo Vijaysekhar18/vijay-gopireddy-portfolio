@@ -84,6 +84,8 @@ with sync_playwright() as p:
         page.locator(".company-drawer summary").click()
         page.locator("#companyExhibits button").first.wait_for()
         assert page.locator("#companyExhibits button").count()==5
+        assert page.locator("#companyExhibits button").first.get_attribute("data-company")=="dbs"
+        assert page.locator("#companyExhibits button").nth(1).get_attribute("data-company")=="wells"
         page.locator('[data-company="td"]').click()
         assert "TD BANK" in page.locator("#projectContent").inner_text()
         assert "CURRENT CHAPTER" in page.locator("#projectContent").inner_text()
