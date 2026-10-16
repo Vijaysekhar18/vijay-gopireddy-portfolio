@@ -8,24 +8,12 @@ function cube(w,h,d,mat,x,y,z,parent=scene){const o=new THREE.Mesh(new THREE.Box
 function cyl(r1,r2,h,mat,x,y,z){const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,12),mat);o.position.set(x,y,z);o.castShadow=true;scene.add(o);return o}
 function textPlane(title,subtitle,bg="#fff8e6",fg="#272c2b"){const canvas=document.createElement("canvas");canvas.width=1024;canvas.height=512;const ctx=canvas.getContext("2d");ctx.fillStyle=bg;ctx.fillRect(0,0,1024,512);ctx.fillStyle="#e6b933";ctx.fillRect(0,0,1024,22);ctx.fillStyle="#273e43";ctx.fillRect(45,62,934,95);ctx.fillStyle="#f7f3e7";ctx.font="bold 56px Arial";ctx.fillText(title,78,128);ctx.fillStyle=fg;ctx.font="bold 32px Arial";ctx.fillText(subtitle,75,230);ctx.fillStyle="#e2bc4b";ctx.fillRect(75,280,870,5);for(let i=0;i<6;i++){ctx.fillStyle=["#2e6e7d","#d8a736","#73a397"][i%3];ctx.fillRect(85+i*142,320-(i%3)*22,95,90+(i%3)*22)}ctx.fillStyle="#454a44";ctx.font="bold 25px Arial";ctx.fillText("CLICK TO EXPLORE  →",75,472);const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide})}
 cube(20,.35,15,floor,0,-.2,0);cube(18,.035,1.2,trim,0,.025,-6.6);cube(20,9,.3,wall,0,4.3,-7.4);cube(.3,9,15,wall,-9.9,4.3,0);cube(.3,9,15,wall,9.9,4.3,0);
-for(let x=-9;x<10;x+=2){cube(.035,.035,14,trim,x,.015,0)}for(let z=-7;z<8;z+=2)cube(19,.035,.035,trim,0,.015,z);
-function sign(x,y,z,w,h,title,subtitle,kind,rot=0){const frame=cube(w+.35,h+.35,.18,dark,x,y,z);frame.rotation.y=rot;const panel=new THREE.Mesh(new THREE.PlaneGeometry(w,h),textPlane(title,subtitle));panel.position.set(x,y,z+.105);panel.rotation.y=rot;scene.add(panel);frame.userData.kind=kind;panel.userData.kind=kind;clickable.push(frame,panel)}
-sign(-5.4,5,-7.13,6.5,3.25,"CLOUD PLATFORM","AWS · KAFKA · DATA QUALITY","cloud");
-sign(4.2,5,-7.13,6.5,3.25,"AUTOMATION","API MIGRATION · JAVA · QE","automation");
-sign(-9.64,4.6,-1.5,4.4,2.5,"AI & INNOVATION","PLAYWRIGHT · AI TOOLS","ai",Math.PI/2);
-sign(9.64,4.6,-1.5,4.4,2.5,"LEADERSHIP","TEST STRATEGY · DELIVERY","leadership",-Math.PI/2);
-function desk(x,z){cube(4,.18,1.65,white,x,1.65,z);for(const dx of [-1.65,1.65])for(const dz of [-.55,.55])cube(.12,1.55,.12,steel,x+dx,.85,z+dz);cube(1.45,1.1,.08,screen,x,2.32,z-.25);cube(.14,.5,.14,steel,x,1.82,z-.25);cube(1.1,.08,.36,dark,x,1.77,z+.43);cube(.6,.12,.5,dark,x+1.25,1.75,z+.43);cyl(.43,.43,.2,dark,x,1.05,z+1.9);cube(.2,1.15,.2,steel,x,.6,z+1.9)}
-desk(-5.1,1.8);desk(4.8,1.8);desk(0,-3.2);
-// Monitor screens, keyboards, desk lamps and additional workstation details.
-for(const x of [-5.1,4.8,0]){const z=x===0?-3.2:1.8;cube(1.1,.65,.045,material("#3a89ad",{emissive:"#155579",emissiveIntensity:.55}),x,2.35,z-.19);cube(.3,.18,.18,gold,x+1.7,1.85,z-.6);cyl(.11,.11,.45,steel,x+1.7,2.1,z-.6);const lamp=new THREE.Mesh(new THREE.ConeGeometry(.26,.33,10),gold);lamp.rotation.z=.6;lamp.position.set(x+1.5,2.35,z-.6);scene.add(lamp)}
-for(let i=0;i<5;i++){cube(.28,.4,.28,material(["#e5bb38","#7babb4","#d88c65"][i%3]),-8.4+i*.4,3.6,-7.03)}
-for(let i=0;i<7;i++){cube(.5,.6,.35,material(["#c9a66b","#7bb2a2","#e9b74a"][i%3]),-9.3,3+i*.6,-4.6)}
-function server(x,z){cube(1.35,4.6,1.3,dark,x,2.3,z);for(let i=0;i<10;i++){cube(.9,.13,.05,steel,x,.55+i*.38,z+.68);cube(.09,.09,.08,gold,x+.45,.55+i*.38,z+.73)}}
-server(7,-4.8);server(8.5,-4.8);
-function pot(x,z){cyl(.55,.38,.75,material("#bd845f"),x,.4,z);for(let i=0;i<6;i++){const a=i*Math.PI/3;const leaf=new THREE.Mesh(new THREE.ConeGeometry(.42,1.5,5),plant);leaf.position.set(x+Math.sin(a)*.25,1.5,z+Math.cos(a)*.25);leaf.rotation.z=Math.sin(a)*.32;scene.add(leaf)}}
-pot(-8,5.6);pot(8,5.6);
-
-/* The Engineering Atelier — company exhibition and original NYC skyline artwork. */
+// A single floating walnut workstation replaces the crowded furniture.
+const walnut=material("#674d3b"),bronze=material("#bb9b72",{metalness:.4,roughness:.4});
+cube(17,.2,2.15,walnut,0,1.3,-4.65);
+for(const x of [-7.7,7.7])cube(.18,1.3,1.8,bronze,x,.65,-4.65);
+function pot(x,z){cyl(.43,.35,.7,material("#b89c7b"),x,.35,z);for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.33,1.15,5),plant);leaf.position.set(x+Math.sin(i*1.26)*.2,1.25,z+Math.cos(i*1.26)*.2);scene.add(leaf)}}
+pot(-8.5,5);pot(8.5,5);
 const companyData={
  td:{name:"TD BANK",eyebrow:"CURRENT CHAPTER",summary:"My current chapter in banking technology and quality engineering. This exhibit introduces the work and experience I bring to TD Bank; project-specific details will be added once confirmed.",focus:"Banking technology · Quality engineering · Engineering collaboration",color:"#2d9d5c"},
  lpl:{name:"LPL FINANCIAL",eyebrow:"FINANCIAL TECHNOLOGY",summary:"Led quality strategy and cross-functional QE coordination for Account View and the old-to-new AWS landing-zone migration, from analysis and testing through production readiness.",focus:"AWS Lambda · Step Functions · Glue · Kafka · Athena · API migration validation",color:"#5088b6"},
@@ -33,49 +21,56 @@ const companyData={
  wells:{name:"WELLS FARGO",eyebrow:"BANKING EXPERIENCE",summary:"Experience supporting quality engineering in the banking domain. Project-specific responsibilities and outcomes will be expanded once verified.",focus:"Banking · Quality engineering · Testing",color:"#c54b43"},
  cognizant:{name:"COGNIZANT",eyebrow:"ENGINEERING & DELIVERY",summary:"Engineering and quality leadership across complex client engagements, with a focus on test strategy, automation, cloud delivery and cross-functional collaboration.",focus:"Engineering delivery · Test strategy · Automation · Leadership",color:"#4075a8"}
 };
-const exhibitPositions=[[-7.55,3.8,"wells"],[-3.75,3.8,"dbs"],[0,4.2,"td"],[3.75,3.8,"lpl"],[7.55,3.8,"cognizant"]];
-const brass=material("#c7a56d",{metalness:.55,roughness:.34}),walnut=material("#503b33"),jade=material("#258650",{emissive:"#14552d",emissiveIntensity:.25});
-function museumLabel(title,subtitle,bg,fg="#fff8e6"){
- const c=document.createElement("canvas");c.width=1024;c.height=512;const ctx=c.getContext("2d");
- ctx.fillStyle=bg;ctx.fillRect(0,0,1024,512);ctx.strokeStyle="#caa46b";ctx.lineWidth=18;ctx.strokeRect(12,12,1000,488);
- ctx.textAlign="center";ctx.fillStyle=fg;ctx.font="bold 94px Arial";ctx.fillText(title,512,216,930);
- ctx.font="bold 37px Arial";ctx.fillText(subtitle,512,312,930);ctx.fillStyle="#d9b876";ctx.fillRect(170,367,684,5);
- ctx.font="27px Arial";ctx.fillText("SELECT TO EXPLORE",512,436);
- const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
- return new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
+
+const exhibitPositions=[[-6.5,-4.65,"wells"],[-3.25,-4.65,"dbs"],[0,-4.65,"td"],[3.25,-4.65,"lpl"],[6.5,-4.65,"cognizant"]];
+function displayMaterial(name,featured){
+ const c=document.createElement("canvas");c.width=1024;c.height=640;const g=c.getContext("2d");
+ g.fillStyle=featured?"#124b32":"#1c303a";g.fillRect(0,0,1024,640);
+ g.fillStyle=featured?"#83e2a7":"#d4b989";g.fillRect(70,72,95,8);
+ g.textAlign="center";g.fillStyle="#fff8e9";g.font="bold 88px Arial";g.fillText(name,512,283,940);
+ g.font="bold 34px Arial";g.fillStyle=featured?"#91efb8":"#b5cbd0";g.fillText(featured?"CURRENT CHAPTER":"EXPLORE MY WORK",512,375,920);
+ g.font="27px Arial";g.fillText("CLICK TO EXPLORE  ↗",512,525);
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide});
 }
 for(const [x,z,key] of exhibitPositions){
- const d=companyData[key],featured=key==="td";
- const base=cube(featured?3.35:2.95,featured?.55:.35,2.25,featured?jade:walnut,x,featured?.275:.175,z);
- const plinth=cube(featured?2.8:2.45,featured?1.15:.83,1.65,featured?material("#1c4532",{metalness:.25,roughness:.3}):material("#394a50",{metalness:.24,roughness:.36}),x,featured?1.13:.77,z);
- const band=cube(featured?2.85:2.5,.09,1.73,brass,x,featured?1.72:1.22,z);
- const signMesh=new THREE.Mesh(new THREE.PlaneGeometry(featured?2.6:2.3,featured?1.35:1.12),museumLabel(d.name,featured?"CURRENT CHAPTER":d.eyebrow,featured?"#125c35":"#243942"));
- signMesh.position.set(x,featured?2.5:2.03,z+.91);scene.add(signMesh);
- const plaque=cube(featured?2.65:2.35,.22,.24,brass,x,featured?1.8:1.31,z+.87);
- for(const obj of [base,plinth,band,signMesh,plaque]){obj.userData.kind="company:"+key;clickable.push(obj)}
- if(featured){
-  const spotlight=new THREE.SpotLight("#83ffb3",36,11,Math.PI/5,.5);spotlight.position.set(x,7,z+1);spotlight.target=plinth;scene.add(spotlight);
-  const halo=new THREE.Mesh(new THREE.TorusGeometry(1.65,.055,8,48),material("#80e0a1",{emissive:"#2cbb72",emissiveIntensity:1.3}));halo.rotation.x=Math.PI/2;halo.position.set(x,.11,z);scene.add(halo);
+ const featured=key==="td",w=featured?2.95:2.7,h=featured?1.85:1.7;
+ const frame=cube(w+.13,h+.12,.13,material(featured?"#286e49":"#28383d",{metalness:.32,roughness:.38}),x,2.65,z);
+ const panel=new THREE.Mesh(new THREE.PlaneGeometry(w,h),displayMaterial(companyData[key].name,featured));
+ panel.position.set(x,2.65,z+.075);scene.add(panel);
+ const stand=cube(.12,.47,.12,bronze,x,1.52,z),base=cube(.85,.05,.44,bronze,x,1.3,z+.12);
+ for(const obj of [frame,panel,stand,base]){obj.userData.kind="company:"+key;clickable.push(obj)}
+ if(featured){const glow=new THREE.PointLight("#7bdba1",3,4);glow.position.set(x,2.6,z+1.2);scene.add(glow)}
+}
+function wallArtwork(city){
+ const c=document.createElement("canvas");c.width=800;c.height=960;const g=c.getContext("2d");
+ const sky=g.createLinearGradient(0,0,0,960);sky.addColorStop(0,city==="nyc"?"#24445e":"#63889c");sky.addColorStop(1,"#f2c797");g.fillStyle=sky;g.fillRect(0,0,800,960);
+ g.fillStyle="#f9dcaa";g.beginPath();g.arc(615,190,75,0,Math.PI*2);g.fill();
+ if(city==="nyc"){
+  for(let i=0;i<27;i++){const x=i*31,h=220+i*53%260;g.fillStyle=i%2?"#253f52":"#3b5968";g.fillRect(x,770-h,29,h);
+  g.fillStyle="#f4cb89";for(let y=785-h;y<750;y+=29)g.fillRect(x+9,y,5,10)}
+  g.fillStyle="#203a50";g.fillRect(360,205,72,565);g.fillRect(378,155,36,55);g.fillRect(392,90,6,75);
+  g.fillRect(580,280,58,490);g.fillRect(607,145,5,135);
+ }else{
+  g.fillStyle="#d5a276";g.fillRect(185,420,430,355);
+  for(const x of [174,626]){
+   g.fillStyle="#edc390";g.fillRect(x-32,245,64,530);
+   for(const y of [320,480,635]){g.fillStyle="#ad7753";g.fillRect(x-42,y,84,20)}
+   g.fillStyle="#e8c08e";g.beginPath();g.arc(x,240,43,Math.PI,0);g.fill();
+   g.fillStyle="#8e6148";g.fillRect(x-4,173,8,28);
+  }
+  g.fillStyle="#9b6c4e";for(const x of [305,495]){g.beginPath();g.arc(x,570,67,Math.PI,0);g.fill();g.fillRect(x-67,570,134,205)}
+  g.fillStyle="#f0cc9f";g.beginPath();g.arc(400,404,45,Math.PI,0);g.fill();
  }
+ g.fillStyle="#f9edd8";g.fillRect(0,790,800,170);g.fillStyle="#344953";g.textAlign="center";g.font="bold 51px Georgia";g.fillText(city==="nyc"?"NEW YORK":"HYDERABAD",400,866);
+ g.font="24px Arial";g.fillText(city==="nyc"?"THE CITY OF IDEAS":"CHARMINAR · HOME & HERITAGE",400,918);
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide});
 }
-// Framed original NYC-inspired skyline illustration, rendered locally without external assets.
-function skylineArt(){
- const c=document.createElement("canvas");c.width=1400;c.height=520;const g=c.getContext("2d");
- const sky=g.createLinearGradient(0,0,0,520);sky.addColorStop(0,"#1b3b55");sky.addColorStop(.6,"#bc7b64");sky.addColorStop(1,"#e4b57d");g.fillStyle=sky;g.fillRect(0,0,1400,520);
- g.fillStyle="#f4d3a1";g.beginPath();g.arc(1050,170,76,0,Math.PI*2);g.fill();
- for(let i=0;i<57;i++){const x=i*26,w=20+(i%3)*8,h=110+(i*47%200);g.fillStyle=i%2?"#243b4a":"#314c58";g.fillRect(x,440-h,w,h);for(let a=0;a<3;a++)for(let b=0;b<Math.floor(h/23);b++){g.fillStyle=(a+b+i)%3?"#e8bd78":"#6b8990";g.fillRect(x+4+a*8,445-h+b*23,3,7)}}
- // Empire State Building silhouette.
- g.fillStyle="#243b4a";g.fillRect(598,125,74,315);g.fillRect(614,88,42,40);g.fillRect(630,40,10,65);g.fillRect(634,17,3,32);
- // One World Trade Center silhouette.
- g.fillStyle="#294858";g.beginPath();g.moveTo(1100,440);g.lineTo(1110,122);g.lineTo(1140,70);g.lineTo(1170,122);g.lineTo(1180,440);g.closePath();g.fill();g.fillRect(1137,26,5,54);
- g.fillStyle="#102936";g.fillRect(0,441,1400,79);
- g.fillStyle="#f7e4bf";g.font="bold 35px Arial";g.fillText("NEW YORK  /  THE CITY OF IDEAS",42,493);
- const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide});
+function framedArt(x,rot,city){
+ const group=new THREE.Group();group.position.set(x,4.4,-.6);group.rotation.y=rot;scene.add(group);
+ cube(3.8,4.65,.15,bronze,0,0,0,group);
+ const art=new THREE.Mesh(new THREE.PlaneGeometry(3.52,4.37),wallArtwork(city));art.position.z=.09;group.add(art);
 }
-const artFrame=cube(9.6,1.75,.18,brass,0,7.9,-7.17);
-const art=new THREE.Mesh(new THREE.PlaneGeometry(9.35,1.52),skylineArt());art.position.set(0,7.9,-7.04);scene.add(art);
-const rail=cube(17,.06,.12,brass,0,.09,5.9);
-
+framedArt(-9.64,Math.PI/2,"nyc");framedArt(9.64,-Math.PI/2,"hyd");
 const projects={cloud:["Cloud Landing Zone Migration","Led end-to-end QE strategy for AWS landing-zone modernization, from analysis to production, across functional, data, performance and automation testing.","AWS · Lambda · Glue · Kafka · Athena · CloudWatch"],automation:["API Migration Comparison","Built a tool to compare legacy and new API behavior across hundreds of input combinations, accelerating regression analysis.","Java · API Testing · Automation · Regression"],ai:["AI-Assisted QE","Experimented with AI-driven element discovery and practical engineering productivity tools, alongside AI Field Notes.","AI · Playwright · Engineering Tools"],leadership:["Quality Engineering Leadership","Led test strategy, release readiness, stakeholder coordination and cross-functional QE teams in financial services.","Test Strategy · Quality Metrics · Release Readiness"]};
 const overlay=document.getElementById("projectOverlay"),content=document.getElementById("projectContent");
 function showProject(k){if(k.startsWith("company:")){const d=companyData[k.slice(8)];if(!d)return;content.replaceChildren();for(const [tag,value] of [["small",d.eyebrow],["h2",d.name],["p",d.summary],["small",d.focus]]){const e=document.createElement(tag);e.textContent=value;content.append(e)}overlay.hidden=false;if(fp)exitFP();return}if(!projects[k])return;const [title,description,tags]=projects[k];content.replaceChildren();for(const [tag,value] of [["h2",title],["p",description],["small",tags]]){const e=document.createElement(tag);e.textContent=value;content.append(e)}overlay.hidden=false;if(fp)exitFP()}
