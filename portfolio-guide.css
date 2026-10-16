@@ -81,3 +81,60 @@ body.district-body .district-bottom > span{display:none}
 @media(max-width:650px){
  body.room-body .room-nav{bottom:70px}
 }
+
+/* One consistent control contract for ALL interior sections:
+   Quick View = lower left; Reset View = lower right. */
+body.district-body .vsr-quick-toggle,
+body.room-body .vsr-quick-toggle{
+ position:fixed;
+ top:auto;
+ right:auto;
+ left:max(16px,env(safe-area-inset-left));
+ bottom:max(18px,env(safe-area-inset-bottom));
+}
+body.district-body .district-bottom{
+ left:auto;
+ right:max(16px,env(safe-area-inset-right));
+ bottom:max(18px,env(safe-area-inset-bottom));
+ width:auto;
+ z-index:5;
+}
+body.district-body .district-bottom #districtReset{
+ margin:0;
+ min-height:44px;
+}
+/* WORK originally embedded Reset View in a centered nav rail. Detach just
+   that button visually; retain the City and Explore controls in the rail. */
+body.room-body #roomReset{
+ position:fixed;
+ top:auto;
+ left:auto;
+ right:max(16px,env(safe-area-inset-right));
+ bottom:max(18px,env(safe-area-inset-bottom));
+ z-index:20;
+ min-height:44px;
+ padding:12px 18px;
+ background:#f5f3ec;
+ border:1px solid #d4ae67;
+ border-radius:999px;
+ box-shadow:0 8px 25px #0e243c33;
+}
+body.room-body .room-nav{bottom:82px}
+@media(max-width:760px){
+ body.district-body .vsr-quick-toggle,
+ body.room-body .vsr-quick-toggle{
+  left:max(10px,env(safe-area-inset-left));
+  bottom:max(10px,env(safe-area-inset-bottom));
+ }
+ body.district-body .district-bottom{
+  right:max(10px,env(safe-area-inset-right));
+  bottom:max(10px,env(safe-area-inset-bottom));
+ }
+ body.room-body #roomReset{
+  right:max(10px,env(safe-area-inset-right));
+  bottom:max(10px,env(safe-area-inset-bottom));
+  padding:10px 12px;
+  font-size:11px;
+ }
+ body.room-body .room-nav{bottom:78px}
+}

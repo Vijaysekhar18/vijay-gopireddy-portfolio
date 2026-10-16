@@ -185,6 +185,9 @@ with sync_playwright() as p:
                 bounds_a=toggle.bounding_box()
                 bounds_b=reset.bounding_box()
                 assert bounds_a and bounds_b, "Quick View or reset button is not visible"
+                assert bounds_b["x"] + bounds_b["width"] > width-50, f"Reset View not on right side: {path} at {width}px"
+                assert abs((bounds_a["y"]+bounds_a["height"])-(bounds_b["y"]+bounds_b["height"])) < 20, f"Quick View and Reset View not aligned: {path} at {width}px"
+
                 assert bounds_a["x"] < 45 and bounds_a["y"] > height-110, f"Quick View not bottom-left on {path} at {width}px"
                 if path=="work.html":
                     rail=page.locator(".room-nav").bounding_box()
