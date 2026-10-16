@@ -520,23 +520,25 @@ function updateServicesTour(now){
  window.__servicesLastTourTime=now;
  const stops=window.__servicesStations||[];
  if(!stops.length)return false;
- const duration=servicesReducedMotion?16000:28000;
+ const duration=servicesReducedMotion?16000:32000;
  const p=Math.min((now-servicesTourStart)/duration,1);
  const segment=Math.min(3,Math.floor(p*4)),local=Math.min(1,p*4-segment);
  const from=stops[segment],to=stops[Math.min(segment+1,3)];
- const smooth=local*local*(3-2*local);
+ // Dwell at each exhibit before transitioning to the next bay.
+ const travel=THREE.MathUtils.clamp((local-.4)/.6,0,1);
+ const smooth=travel*travel*(3-2*travel);
  const x=THREE.MathUtils.lerp(from.x,to.x,smooth);
  const dest=new THREE.Vector3(x,servicesReducedMotion?4.4:4.6,servicesReducedMotion?6.7:6.0);
  camera.position.lerp(dest,servicesReducedMotion?1:.055);
  camera.lookAt(x,2.7,-4.4);
  const status=document.getElementById("servicesTourStatus");
- if(status)status.textContent="EXHIBIT 0"+(segment+1)+" / 04 · "+stops[segment].name+" · Select to explore";
+ if(status)status.textContent="EXHIBIT 0"+(segment+1)+" / 04 · "+stops[segment].story+" · Select to explore";
  if(p>=1)setServicesTour(false);
  return true;
 }
 if(safe==="services"){
  const hud=document.createElement("section");hud.id="servicesHud";hud.className="services-hud";hud.setAttribute("aria-label","Engineering Studio navigation");
- hud.innerHTML='<div class="services-hud-title"><strong>✦ ENGINEERING STUDIO</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
+ hud.innerHTML='<div class="services-hud-title"><strong>✦ VSR INNOVATION CENTER</strong><span>04 EXHIBITS</span></div><p id="servicesTourStatus" role="status">Select a station or start the guided tour.</p><div class="services-hud-controls"><button id="servicesTour" type="button" aria-pressed="false">▶ GUIDED TOUR</button><button id="servicesTourExit" type="button">⌖ RESET VIEW</button></div><div class="services-hud-grid"></div>';
  document.body.append(hud);
  servicesTourButton=hud.querySelector("#servicesTour");
  servicesTourButton.onclick=()=>setServicesTour(!servicesTour);
