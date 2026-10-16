@@ -46,29 +46,41 @@ export function addNYCLandmarks(city, interact){
  cone(p,.36,.68,copper,cx,7.15,cz);
 }, "about");
  landmark("liberty","STATUE OF LIBERTY",-34,28,p=>{
-  // Larger, deliberately recognizable neoclassical silhouette: draped robe, face, crown, tablet and torch.
-  cyl(p,6.2,6.2,.35,water,0,.12,0,32);
-  b(p,6.1,1.5,6.1,stone,0,.95);
-  b(p,4.4,2.9,4.4,ivory,0,3.2);
-  b(p,3.7,.65,3.7,stone,0,4.85);
-  // Feet and broad flared robe.
-  cyl(p,1.45,2.55,8.1,green,0,9.2,0,12);
-  for(let i=0;i<10;i++){const a=i*Math.PI/5;line(p,[Math.sin(a)*1.1,12.7,Math.cos(a)*1.1],[Math.sin(a)*2.32,5.5,Math.cos(a)*2.32],green,.14)}
-  // Shoulders, neck, head, nose and distinctive seven-ray crown.
-  cyl(p,1.38,1.7,2.1,green,0,14.0,0,12);
-  cyl(p,.38,.43,.6,green,0,15.3,0);
-  const head=mesh(p,new THREE.SphereGeometry(.96,16,12),green,0,16.45,0);
-  b(p,.35,.25,.25,green,0,16.25,.95);
-  cyl(p,1.08,1.08,.27,green,0,17.22,0,16);
-  for(let i=0;i<7;i++){const a=i*2*Math.PI/7;line(p,[Math.sin(a)*.76,17.32,Math.cos(a)*.76],[Math.sin(a)*1.68,18.9,Math.cos(a)*1.68],green,.15)}
-  // Raised right arm and bright torch.
-  line(p,[1.1,14.15,0],[2.4,17.4,0],green,.49);
-  line(p,[2.4,17.4,0],[2.65,21.0,0],green,.38);
-  cyl(p,.58,.42,.72,gold,2.65,21.4,0,12);
-  cone(p,.64,1.7,gold,2.65,22.55,0,9);
-  // Tablet in the left hand, separate from the body.
-  line(p,[-1.2,14.1,.15],[-2.25,11.9,.65],green,.39);
-  const tablet=b(p,1.65,2.8,.35,stone,-2.15,11.5,.95);tablet.rotation.z=-.16;
-}, "contact");
+  // A recognizable, sculpted copper-patina Liberty: tiered pedestal, draped robe,
+  // seven-ray diadem, raised torch and tablet, kept lightweight for mobile.
+  const patina=m("#70a78c",{roughness:.86,metalness:.08}),fold=m("#538f78",{roughness:.92}),highlight=m("#94bea1",{roughness:.85});
+  const pedestal=m("#c9bda8"),plinth=m("#8e9b93");
+  cyl(p,6.2,6.2,.32,water,0,.10,0,32);
+  b(p,6.0,.55,6.0,plinth,0,.48);
+  b(p,5.35,1.1,5.35,pedestal,0,1.32);
+  b(p,4.45,2.5,4.45,pedestal,0,3.15);
+  b(p,4.9,.45,4.9,plinth,0,4.58);
+  b(p,3.7,.6,3.7,pedestal,0,5.10);
+  // Tapered robe with asymmetrical folds; torch is deliberately higher than crown.
+  cyl(p,1.32,2.15,8.0,patina,0,9.55,0,20);
+  cyl(p,1.14,1.36,2.1,patina,0,14.40,0,16);
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;line(p,[Math.sin(a)*.95,13.35,Math.cos(a)*.95],[Math.sin(a)*1.98,5.75,Math.cos(a)*1.98],i%3===0?highlight:fold,.075)}
+  // Diagonal folds across the front suggest the famous flowing garment.
+  for(let i=0;i<4;i++)line(p,[-.95+i*.19,13.8-i*.32,1.13], [.55+i*.20,10.5-i*.7,1.43],fold,.075);
+  cyl(p,.37,.42,.63,patina,0,15.78,0,12);
+  mesh(p,new THREE.SphereGeometry(.88,20,16),patina,0,16.62,0);
+  b(p,.26,.18,.22,patina,0,16.45,.87);
+  // Hair and diadem; seven outward rays in the frontal plane for a legible silhouette.
+  cyl(p,1.00,1.03,.28,fold,0,17.33,0,20);
+  for(let i=0;i<7;i++){const a=-Math.PI*.78+i*Math.PI*1.56/6;const dx=Math.cos(a),dy=Math.sin(a);line(p,[dx*.79,17.46+dy*.35,.05],[dx*1.62,17.55+dy*1.62,.05],patina,.14)}
+  // Right arm raised, elbow and wrist defined.
+  line(p,[1.04,14.25,.02],[2.05,17.3,.02],patina,.42);
+  line(p,[2.05,17.3,.02],[2.33,20.52,.02],patina,.31);
+  mesh(p,new THREE.SphereGeometry(.36,12,10),patina,2.33,20.66,0);
+  cyl(p,.38,.32,.72,fold,2.33,21.18,0,12);
+  cyl(p,.61,.48,.53,gold,2.33,21.75,0,12);
+  cone(p,.59,1.52,gold,2.33,22.76,0,12);
+  const flame=m("#ffe39a",{emissive:"#f2a629",emissiveIntensity:.65,roughness:.6});
+  cone(p,.32,.92,flame,2.33,23.63,0,10);
+  // Left arm holds a broad rectangular tablet with engraved line details.
+  line(p,[-1.05,14.12,.13],[-1.75,12.13,.78],patina,.35);
+  const tablet=b(p,1.54,2.65,.36,patina,-1.73,12.08,1.01);tablet.rotation.z=-.14;
+  for(let k=0;k<3;k++)b(p,.85,.065,.03,fold,-1.72,12.66-k*.38,1.23);
+ }, "contact");
  return features;
 }
