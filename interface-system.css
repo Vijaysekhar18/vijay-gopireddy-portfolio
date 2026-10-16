@@ -1,0 +1,42 @@
+/* VSR unified interaction tokens. Each room keeps its own visual identity. */
+:root{
+ --vsr-focus:#f0b429;
+ --vsr-control-radius:999px;
+ --vsr-control-height:44px;
+ --vsr-overlay-radius:18px;
+ --vsr-overlay-shadow:0 22px 65px #101b2c55;
+}
+:is(.district-body,.room-body) :is(button,a,summary):focus-visible,
+.vsr-quick-panel :is(button,a):focus-visible,
+body :is(#subwayToggle,#reset,#closePanel):focus-visible{
+ outline:3px solid var(--vsr-focus)!important;
+ outline-offset:3px;
+}
+:is(.district-body,.room-body) :is(.district-pill,.room-pill,#districtReset,#roomReset,.vsr-quick-toggle){
+ min-height:var(--vsr-control-height);
+ box-sizing:border-box;
+}
+:is(#districtDialog,#projectOverlay,#panel,.district-nav,#settingsMenu){
+ box-shadow:var(--vsr-overlay-shadow);
+}
+#districtDialog,#projectOverlay{border-radius:var(--vsr-overlay-radius)}
+#districtClose,#closeProject,#closePanel{
+ min-width:44px;
+ min-height:44px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:50%;
+}
+#districtDialog{max-width:calc(100vw - 32px);box-sizing:border-box}
+#projectOverlay{max-width:calc(100vw - 32px);box-sizing:border-box}
+.vsr-quick-open{overscroll-behavior:contain}
+@media(max-width:760px){
+ #districtDialog{padding:22px;max-height:calc(100dvh - 36px)}
+ #projectOverlay{padding:24px;max-height:calc(100dvh - 130px);overflow:auto}
+ .vsr-quick-panel{max-height:100dvh}
+}
+@media(prefers-reduced-motion:reduce){
+ :is(.district-body,.room-body) :is(button,a,summary),
+ .vsr-quick-toggle{transition:none!important;animation:none!important}
+}

@@ -15,6 +15,7 @@ on:
       - 'tests/**'
       - 'portfolio-guide.js'
       - 'portfolio-guide.css'
+      - 'interface-system.css'
       - 'work.html'
       - 'work-room.js'
       - 'work-room.css'
@@ -24,7 +25,7 @@ on:
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,13 +34,15 @@ jobs:
       - name: Install browser test dependencies
         run: |
           pip install playwright
-          python -m playwright install --with-deps chromium
+          python -m playwright install --with-deps chromium firefox webkit
       - name: Start static server
         run: |
           python -m http.server 8765 --bind 127.0.0.1 > /tmp/nyc-server.log 2>&1 &
           sleep 2
       - name: Browser smoke tests and screenshots
         run: python tests/browser_smoke.py
+      - name: Cross-browser keyboard and navigation smoke
+        run: python tests/cross_browser_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

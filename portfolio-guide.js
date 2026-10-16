@@ -18,7 +18,7 @@
  stops.forEach((stop,i)=>{const a=document.createElement("a");a.href=stop.url;a.innerHTML='<b>'+String(i+1).padStart(2,"0")+' · '+stop.name+'</b><small>'+stop.detail+'</small>';nav.append(a)});
  const close=panel.querySelector("#vsrQuickClose");
  let lastFocus=null;
- const set=open=>{panel.hidden=!open;toggle.setAttribute("aria-expanded",String(open));if(open){lastFocus=document.activeElement;panel.focus()}else if(lastFocus?.focus)lastFocus.focus()};
+ const set=open=>{panel.hidden=!open;toggle.setAttribute("aria-expanded",String(open));document.body.classList.toggle("vsr-quick-open",open);if(open){lastFocus=document.activeElement;close.focus()}else if(lastFocus?.focus)lastFocus.focus()};
  toggle.addEventListener("click",()=>set(panel.hidden));close.addEventListener("click",()=>set(false));
  skip.addEventListener("click",e=>{e.preventDefault();set(true)});
  document.addEventListener("keydown",e=>{
