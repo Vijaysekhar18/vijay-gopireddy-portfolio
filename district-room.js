@@ -205,7 +205,7 @@ if(safe==="about"){
   box(22.8,.2,.25,neon("#5663a8"),0,7.55,z);
   for(const x of [-8,0,8]){const l=new THREE.PointLight("#7dbaff",3,8);l.position.set(x,6.9,z);scene.add(l)}
  }
- textSign("AI QUEST","COLLECT · DISCOVER · BUILD",0,6.48,-9.35,13,1.2,{bg:"#122452",fg:"#effaff",edge:"#47dfe9"});
+ textSign("AI QUEST","COLLECT · DISCOVER · BUILD",0,6.85,-9.22,15,1.38,{bg:"#07152e",fg:"#ffffff",edge:"#ffe08c"});
  const tokens=[
   {x:-8.2,key:"openai",name:"OPENAI",sub:"CREDENTIALS",color:"#f4c45e"},
   {x:-2.7,key:"claude",name:"CLAUDE",sub:"EXPLORATION",color:"#ed9b7d"},
@@ -215,14 +215,16 @@ if(safe==="about"){
  const floating=[];
  for(const token of tokens){
   const material=neon(token.color);
-  const group=new THREE.Group();group.position.set(token.x,3.45,-5.9);scene.add(group);
+  const group=new THREE.Group();group.position.set(token.x,3.45,-3.6);scene.add(group);
   const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.28,48),material);coin.rotation.x=Math.PI/2;group.add(coin);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(.88,.085,12,48),mat("#fff3d2"));ring.position.z=.18;group.add(ring);
-  const symbol=textSign(token.name,token.sub,token.x,3.45,-5.5,2.3,.97,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
+  const art={openai:"assets/ai-chatgpt-badge.svg",claude:"assets/ai-claude-mark.svg",hackathon:"assets/ai-cognizant-mark.svg"}[token.key];
+  if(art){const texture=new THREE.TextureLoader().load(art);texture.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(2.18,2.18),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false}));face.position.z=.28;group.add(face);clickableProp(face,token.key);coin.visible=false;ring.visible=false;}
+  const symbol=textSign(token.name,token.sub,token.x,2.05,-3.23,2.55,.75,{bg:"#11243f",fg:"#ffffff",edge:token.color},token.key);
   clickableProp(coin,token.key);
-  box(3.55,.18,2.1,neon(token.color),token.x,.42,-6.1);
-  box(3.35,.3,1.9,navy,token.x,.65,-6.1);
-  textSign("DISCOVER",token.sub,token.x,1.26,-5.08,3.15,.87,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
+  box(3.55,.18,2.1,neon(token.color),token.x,.42,-3.95);
+  box(3.35,.3,1.9,navy,token.x,.65,-3.95);
+  textSign("DISCOVER",token.sub,token.x,1.18,-3.05,3.15,.87,{bg:"#14284a",fg:"#f5fcff",edge:token.color},token.key);
   floating.push({group,symbol,base:3.45,phase:token.x});
  }
  // The central hologram has a purpose: a glowing AI core and unlock status.
@@ -231,7 +233,7 @@ if(safe==="about"){
  const coreHalo=new THREE.PointLight("#7aeaff",4,6);coreHalo.position.set(0,3.8,-8.2);scene.add(coreHalo);
  textSign("AI CORE","FOUR DISCOVERIES",0,3.8,-7.62,2.15,.9,{bg:"#122752",fg:"#fff5c8",edge:"#54e6db"});
  // Keep the unlock instruction high above floating tokens, never hidden behind them.
- textSign("INNOVATION VAULT","DISCOVER ALL 4 TO UNLOCK",0,5.34,-9.31,9.3,.8,{bg:"#17335a",fg:"#fff6d9",edge:"#f5c665"});
+ textSign("INNOVATION VAULT","DISCOVER ALL 4 TO UNLOCK",0,5.45,-9.13,12.4,1.14,{bg:"#07152e",fg:"#fffdf4",edge:"#f5c665"});
 
  // Original human game character: proportioned head, hair, face, jacket, arms, legs and sneakers.
  const rider=new THREE.Group();scene.add(rider);
@@ -408,9 +410,9 @@ function updateAiQuest(now){
   aiProgress=Math.min(elapsed/26,1);
   const p=aiReduced?aiProgress:aiProgress*aiProgress*(3-2*aiProgress);
   const x=-8.7+p*17.4;
-  const dest=new THREE.Vector3(x,3.3,3.6);
+  const dest=new THREE.Vector3(x,3.3,5.4);
   camera.position.lerp(dest,aiReduced?1:.055);
-  camera.lookAt(x*.94,3.1,-5.9);
+  camera.lookAt(x*.94,3.1,-3.6);
   if(aiProgress>=1)aiSetMode("idle");
  }else{
   const dt=Math.min((now-(aiLast||now))/1000,.06);aiLast=now;
