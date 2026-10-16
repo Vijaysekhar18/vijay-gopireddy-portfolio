@@ -260,8 +260,9 @@ if(safe==="about"){
  // The central hologram has a purpose: a glowing AI core and unlock status.
  const portal=new THREE.Mesh(new THREE.TorusGeometry(1.27,.16,16,64),neon("#54e6db"));portal.position.set(0,3.8,-8.53);scene.add(portal);
  const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.77,1),neon("#f5c665"));core.position.set(0,3.8,-8.5);scene.add(core);
+ const coreInner=new THREE.Mesh(new THREE.IcosahedronGeometry(.5,0),new THREE.MeshBasicMaterial({color:"#fff4ba"}));coreInner.position.set(0,3.8,-8.34);scene.add(coreInner);
  const coreHalo=new THREE.PointLight("#7aeaff",4,6);coreHalo.position.set(0,3.8,-8.2);scene.add(coreHalo);
- textSign("AI CORE","FOUR DISCOVERIES",0,3.8,-7.62,2.15,.9,{bg:"#122752",fg:"#fff5c8",edge:"#54e6db"});
+ textSign("AI CORE","FOUR DISCOVERIES",0,1.9,-7.62,2.15,.9,{bg:"#122752",fg:"#fff5c8",edge:"#54e6db"});
  // Keep the unlock instruction high above floating tokens, never hidden behind them.
  textSign("INNOVATION VAULT","DISCOVER ALL 4 TO UNLOCK",0,5.45,-9.13,12.4,1.14,{bg:"#07152e",fg:"#fffdf4",edge:"#f5c665"});
 
@@ -284,11 +285,11 @@ if(safe==="about"){
   box(.33,.18,.47,shoe,x,.18,.13,rider);
  }
  rider.position.set(-8.2,.65,7.5);
- window.__aiQuestWorld={tokens,floating,portal,core,rider,aiLaneXs,coreHalo};
+ window.__aiQuestWorld={tokens,floating,portal,core,coreInner,rider,aiLaneXs,coreHalo};
  window.__aiVaultAnimate=()=>{
   const t=performance.now()*.001;
   for(const item of floating){item.group.position.y=item.base+Math.sin(t*1.5+item.phase)*.17;item.group.rotation.y=Math.sin(t*.7+item.phase)*.23;item.symbol.position.y=2.05+Math.sin(t*1.5+item.phase)*.08}
-  portal.rotation.z=t*.15;core.rotation.y=t*.45;core.rotation.x=t*.2;coreHalo.intensity=3+Math.sin(t*2)*.9;
+  portal.rotation.z=t*.15;core.rotation.y=t*.45;core.rotation.x=t*.2;coreInner.rotation.y=-t*.33;coreInner.rotation.z=t*.18;coreHalo.intensity=3+Math.sin(t*2)*.9;
   const running=window.__aiQuestPlaying===true;const stride=running?Math.sin(t*9)*.27:0;
   for(const part of rider.children){if(part.name==="leftArm"||part.name==="rightLeg")part.rotation.x=stride;else if(part.name==="rightArm"||part.name==="leftLeg")part.rotation.x=-stride}
   rider.position.y=.65+Math.sin(t*(running?9:3))*(running?.07:.025);
@@ -386,7 +387,7 @@ function updateJourney(now){
 }
 // Guided cinematic tour and optional keyboard/touch challenge.
 const aiKeys=["openai","claude","hackathon","innovation"];
-let aiMode="idle",aiStart=0,aiLane=0,aiProgress=0,aiCollected=new Set(),aiLast=0,aiStage=0,aiStageHold=0,aiVaultOpen=false;
+let aiMode="idle",aiStart=0,aiLane=0,aiProgress=0,aiCollected=new Set(),aiLast=0,aiStage=0,aiStageHold=0,aiVaultOpen=false,aiManualLane=false;
 let aiAudioEnabled=false,aiAudioContext=null;
 const aiHud=document.getElementById("aiQuestHud");
 const aiPassport=aiHud?.querySelector("#aiQuestPassport");
@@ -465,7 +466,7 @@ function aiSound(kind){
 }
 function aiSetMode(mode){
  if(!aiHud)return;
- aiMode=mode;window.__aiQuestPlaying=mode==="play";aiStageHold=0;aiStage=0;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=0;aiProgress=0;
+ aiMode=mode;window.__aiQuestPlaying=mode==="play";aiStageHold=0;aiStage=0;aiManualLane=false;if(mode!=="idle")aiSound("start");aiStart=performance.now();aiLast=0;aiLane=0;aiProgress=0;
  aiHud.querySelector("#aiQuestTour").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestPlay").hidden=mode!=="idle";
  aiHud.querySelector("#aiQuestExit").hidden=mode==="idle";
@@ -483,8 +484,8 @@ if(aiHud){
  aiHud.querySelector("#aiQuestPlay").onclick=()=>aiSetMode("play");
  aiHud.querySelector("#aiQuestExit").onclick=()=>aiSetMode("idle");
  aiHud.querySelector("#aiQuestSound").onclick=()=>{aiAudioEnabled=!aiAudioEnabled;const b=aiHud.querySelector("#aiQuestSound");b.textContent=aiAudioEnabled?"🔊 SOUND ON":"🔇 SOUND OFF";b.setAttribute("aria-pressed",String(aiAudioEnabled));if(aiAudioEnabled)aiSound("start")};
- aiHud.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{aiLane=THREE.MathUtils.clamp(aiLane+Number(b.dataset.move),0,3);aiSound("move")});
- window.addEventListener("keydown",e=>{if(aiMode!=="play"||dialog.open)return;if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();aiLane=Math.max(0,aiLane-1);aiSound("move")}if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();aiLane=Math.min(3,aiLane+1);aiSound("move")}if(e.key==="Escape")aiSetMode("idle")});
+ aiHud.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>{aiLane=THREE.MathUtils.clamp(aiLane+Number(b.dataset.move),0,3);aiManualLane=true;aiSound("move")});
+ window.addEventListener("keydown",e=>{if(aiMode!=="play"||dialog.open)return;if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();aiLane=Math.max(0,aiLane-1);aiManualLane=true;aiSound("move")}if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();aiLane=Math.min(3,aiLane+1);aiManualLane=true;aiSound("move")}if(e.key==="Escape")aiSetMode("idle")});
  dialog.addEventListener("close",()=>{if(aiMode==="tour")aiStart=performance.now()-aiProgress*26000;if(aiMode==="play"&&aiStageHold===1)aiStageHold=2});
 }
 function updateAiQuest(now){
@@ -525,7 +526,7 @@ function updateAiQuest(now){
     aiStage++;
     aiStageHold=0;window.__aiQuestPlaying=true;
     if(aiStage===4){aiSetMode("idle");aiUnlockVault()}
-    else aiHud.querySelector("#aiQuestHint").textContent="NEXT CHECKPOINT · "+tokens[aiStage].name+" · Switch lanes!";
+    else{if(!aiManualLane)aiLane=aiStage;aiManualLane=false;aiHud.querySelector("#aiQuestHint").textContent="AUTO-SWITCHING → "+tokens[aiStage].name+" · Use arrows to steer manually.";}
    }
   }
 
