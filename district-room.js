@@ -2,7 +2,7 @@ import * as THREE from "https://esm.sh/three@0.170.0";
 const room=new URLSearchParams(location.search).get("room")||"about";
 const safe=["about","services","ai","contact"].includes(room)?room:"about";
 const configs={
- about:{title:"THE STORY GALLERY",kicker:"01 / ABOUT",subtitle:"From Hyderabad to New York · Engineering, curiosity and the journey between",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
+ about:{title:"THE STORY STATION",kicker:"01 / ABOUT",subtitle:"VSR Express · Four stops through a life of curiosity and engineering",wall:"#e5d5b6",floor:"#b78e65",accent:"#d5a82f"},
  services:{title:"SPACE RESERVED",kicker:"03 / SERVICES",subtitle:"A new district is being designed. Explore the room for now.",wall:"#e3ddd0",floor:"#aaa89d",accent:"#d8ad59"},
  ai:{title:"THE INNOVATION LAB",kicker:"04 / AI LAB",subtitle:"Ideas, experiments, learning and AI Field Notes",wall:"#b8d0d5",floor:"#607e89",accent:"#63c5e7"},
  contact:{title:"COFFEE & CONNECTIONS",kicker:"05 / CONTACT",subtitle:"Four tables. Endless conversations. Welcome to my NYC café.",wall:"#dbc6a9",floor:"#8b694e",accent:"#a4b78a"}
@@ -31,6 +31,10 @@ const content={
  journey:{k:"ABOUT / THE JOURNEY",t:"From Hyderabad to New York",html:"<p><strong>HYDERABAD → NEW YORK</strong></p><p>My story connects Hyderabad, where my roots are, with the New York area, where I've built a new chapter in my engineering career.</p><p>My professional experience includes TD Bank (current chapter), LPL Financial, DBS, Wells Fargo and Cognizant, across quality strategy, cloud technology, test automation and engineering delivery.</p><p>Explore the WORK Studio for company-specific details.</p><p><a href='work.html'>Visit the WORK Studio ↗</a></p>"},
  credentials:{k:"ABOUT / MILESTONES",t:"Recognition & Continuous Learning",html:"<p><strong>RECOGNITION</strong></p><p>Super Techie · Performer of the Year · Associate of the Month (August 2025) · Star of the Month (April 2026).</p><p><strong>LEARNING</strong></p><p>OpenAI Technical Practitioner · ChatGPT Solutions Practitioner · Codex Solutions Practitioner · Introduction to Artificial Intelligence · Learning Cloud Computing: Core Concepts.</p><p>These are credentials shared for this portfolio; verification links and official badge art can be added once confirmed.</p>"},
  personal:{k:"ABOUT / OUTSIDE THE SCREEN",t:"Curiosity Has No Off Switch",html:"<p>When I'm not building software, I enjoy exploring cities, long drives, badminton, swimming and trying new vegetarian dishes—from pasta and Korean-inspired cooking to whatever recipe is trending.</p><p>I've tried scuba diving, love discovering new places, and have a personal goal of trying solo skydiving someday.</p><p>Travel, food, learning and a willingness to try something unfamiliar all influence how I approach engineering.</p>"},
+ openai:{k:"AI / OPENAI",t:"OpenAI Learning Collection",html:"<p><strong>Completed credentials</strong></p><p>OpenAI Technical Practitioner · ChatGPT Solutions Practitioner · Codex Solutions Practitioner.</p><p>Verification links can be added when supplied. This is an original collectible, not an official OpenAI badge.</p>"},
+ claude:{k:"AI / ANTHROPIC",t:"Claude Learning Journey",html:"<p>Exploration and learning involving Claude, Claude Code, Model Context Protocol (MCP), and AI-assisted engineering.</p><p>Individual course completions and official credentials will be listed after confirmation. Claude Certified Architect — Foundations has been a learning goal, not a claimed completed certification.</p>"},
+ hackathon:{k:"AI / EVENTS",t:"Cognizant Vibe Coding Hackathon",html:"<p>A place to document the Cognizant Vibe Coding Hackathon experience.</p><p>Project, participation status and any recognition will be added after details are confirmed. No award or placement is claimed here.</p>"},
+ innovation:{k:"AI / BUILDING",t:"Engineering Innovations",html:"<p>Explore my API Migration Testing Tool for comparing old and new API responses across hundreds of combinations, and my AI-assisted XPath Extractor for element discovery.</p><p>Public demonstrations will use synthetic data and won't expose client systems.</p>"},
  experiments:{k:"AI / EXPERIMENTS",t:"Engineering Experiments",html:"<p>Exploring AI-assisted quality engineering, Playwright automation, element discovery and practical engineering tools.</p>"},
  writing:{k:"AI / WRITING",t:"AI Field Notes",html:'<p>Notes on AI tools, engineering and learning.</p><p><a href="https://aiinsights80.wordpress.com/" target="_blank" rel="noopener">Explore AI Field Notes ↗</a></p>'},
  learning:{k:"AI / LEARNING",t:"Continuous Learning",html:"<p>Experimenting with modern AI tools and workflows, from automation assistants to model context protocols.</p>"},
@@ -102,59 +106,83 @@ function libertySculpture(x,z){
 }
 
 if(safe==="about"){
- // Museum-like composition: four readable exhibits, one central sculptural bench, generous open floor.
- const galleryWalnut=mat("#624b3c"),galleryBrass=mat("#b99b69"),galleryInk=mat("#293d45");
- const galleryPaper=mat("#f4ead7");
- function galleryCard(title,sub,x,y,z,w,h,action){
-  box(w+.19,h+.2,.15,galleryWalnut,x,y,z);
-  box(w+.08,h+.09,.16,galleryBrass,x,y,z+.085);
-  textSign(title,sub,x,y,z+.18,w,h,{bg:"#f6eddf",fg:"#34454b",edge:"#c3a578"},action);
-  const light=new THREE.SpotLight("#ffe8bc",7,6,.5,.7);
-  light.position.set(x,y+1.6,z+1.6);scene.add(light);
+ // NYC Story Station: a tiled subway concourse, transit board, route tokens and turnstiles.
+ const navy=mat("#203e50"),tile=mat("#e7e0d1"),brass=mat("#d8aa57"),rail=mat("#77848b"),terracotta=mat("#b86b53");
+ // Ceramic subway tile rhythm and brass grout along the rear wall.
+ for(let y=.65;y<7.6;y+=.68)for(let x=-11.6;x<11.8;x+=1.28){
+  box(1.23,.62,.045,(Math.round(x*3+y*2)%7===0)?mat("#d5d8d0"):tile,x,y,-9.73);
  }
- // Three large framed exhibits on the rear wall.
- galleryCard("MY STORY","ENGINEER · EXPLORER · BUILDER",-7.45,4.35,-9.44,5.1,2.35,"story");
- galleryCard("MY JOURNEY","HYDERABAD → NEW YORK",0,4.35,-9.44,5.1,2.35,"journey");
- galleryCard("MILESTONES","AWARDS & LEARNING",7.45,4.35,-9.44,5.1,2.35,"credentials");
- // A fourth framed exhibit on a low reading lectern.
- box(5.2,.2,2.2,galleryWalnut,0,1.17,2.5);
- box(4.8,.12,1.9,galleryBrass,0,1.31,2.5);
- box(.25,1.2,1.4,galleryWalnut,-1.85,.6,2.5);box(.25,1.2,1.4,galleryWalnut,1.85,.6,2.5);
- const personalLabel=textSign("BEYOND WORK","TRAVEL · FOOD · CURIOSITY",0,1.7,3.05,3.95,.95,{bg:"#f4ead7",fg:"#34454b",edge:"#c3a578"},"personal");
- personalLabel.rotation.x=-.45;
- // Signature quiet seating, rather than cluttered display stands.
- chair(-5.2,3.2,.18,galleryWalnut);chair(5.2,3.2,-.18,galleryWalnut);
- planter(-10,6.5);planter(10,6.5);
- // Editorial headline on the rear upper wall.
- textSign("VIJAY SEKHAR REDDY","A STORY STILL BEING WRITTEN",0,7.1,-9.55,10.5,.82,{bg:"#efe1c8",fg:"#4b4139",edge:"#b99b69"});
- // Two original architectural prints, each positioned on an opposite side wall.
- function cityPrint(city){
-  const c=document.createElement("canvas");c.width=640;c.height=800;const g=c.getContext("2d");
-  const sky=g.createLinearGradient(0,0,0,800);sky.addColorStop(0,city==="nyc"?"#28495c":"#698b91");sky.addColorStop(1,"#f1c99b");g.fillStyle=sky;g.fillRect(0,0,640,800);
-  g.fillStyle="#f8e2b4";g.beginPath();g.arc(480,150,65,0,Math.PI*2);g.fill();
-  if(city==="nyc"){
-   for(let i=0;i<24;i++){const x=i*28,h=130+i*53%240;g.fillStyle=i%2?"#304b58":"#46606b";g.fillRect(x,630-h,27,h)}
-   g.fillStyle="#273f50";g.fillRect(285,200,62,430);g.fillRect(304,155,25,55);g.fillRect(315,100,4,58);
-  }else{
-   g.fillStyle="#d6a77d";g.fillRect(145,355,350,285);
-   for(const x of [140,500]){g.fillStyle="#efc79a";g.fillRect(x-30,210,60,430);g.fillStyle="#b17f59";for(const y of [285,420,550])g.fillRect(x-38,y,76,14);g.fillStyle="#e5ba8c";g.beginPath();g.arc(x,205,36,Math.PI,0);g.fill()}
-   g.fillStyle="#996b51";for(const x of [245,395]){g.beginPath();g.arc(x,485,53,Math.PI,0);g.fill();g.fillRect(x-53,485,106,155)}
-  }
-  g.fillStyle="#f6ecdc";g.fillRect(0,665,640,135);g.textAlign="center";g.fillStyle="#40505a";g.font="bold 42px Georgia";g.fillText(city==="nyc"?"NEW YORK":"HYDERABAD",320,725);g.font="20px Arial";g.fillText(city==="nyc"?"THE CITY OF IDEAS":"CHARMINAR · ROOTS",320,761);
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide});
+ // Dark enamel NYC station fascia with classic route medallions.
+ box(22.6,1.1,.18,navy,0,7.15,-9.65);
+ textSign("VSR EXPRESS","THE STORY STATION  ·  HYDERABAD  ↔  NEW YORK",0,7.15,-9.52,15.5,.85,{bg:"#203e50",fg:"#fff4d6",edge:"#d5ab59"});
+ // Four station stops arranged as a coherent route on a large destination board.
+ box(21.8,3.85,.28,navy,0,4.48,-9.36);
+ const stops=[
+  {x:-8.1,code:"H",name:"ROOTS",sub:"HYDERABAD",key:"story",color:"#e3ad48"},
+  {x:-2.7,code:"N",name:"JOURNEY",sub:"NEW YORK",key:"journey",color:"#70a8be"},
+  {x:2.7,code:"A",name:"MILESTONES",sub:"AWARDS & LEARNING",key:"credentials",color:"#a7c18e"},
+  {x:8.1,code:"X",name:"BEYOND WORK",sub:"LIFE & CURIOSITY",key:"personal",color:"#d18b78"}
+ ];
+ box(17,.075,.09,brass,0,4.78,-9.09);
+ for(const stop of stops){
+  const disc=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.13,48),mat(stop.color));
+  disc.rotation.x=Math.PI/2;disc.position.set(stop.x,4.78,-8.94);scene.add(disc);clickableProp(disc,stop.key);
+  textSign(stop.code,"",stop.x,4.78,-8.85,.75,.75,{bg:stop.color,fg:"#1c2f39",edge:"#f4e2b7"},stop.key);
+  textSign(stop.name,stop.sub,stop.x,3.55,-9.08,4.8,1.28,{bg:"#243e4d",fg:"#f9edcf",edge:stop.color},stop.key);
  }
- function sideFrame(x,rotation,city){
-  const g=new THREE.Group();g.position.set(x,4.4,-1.6);g.rotation.y=rotation;scene.add(g);
-  box(3.8,4.65,.15,galleryWalnut,0,0,0,g);
-  const print=new THREE.Mesh(new THREE.PlaneGeometry(3.53,4.38),cityPrint(city));print.position.z=.09;g.add(print);
+ // Four floor-level subway navigation markers create the game-like discovery path.
+ for(const [i,stop] of stops.entries()){
+  const token=new THREE.Mesh(new THREE.TorusGeometry(.55,.13,10,40),mat(stop.color));token.rotation.x=Math.PI/2;token.position.set(stop.x,.08,1.8+(i%2)*1.5);scene.add(token);
  }
- sideFrame(-11.75,Math.PI/2,"hyd");sideFrame(11.75,-Math.PI/2,"nyc");
+ // Vintage station clock and a compact ticket kiosk, with the floor mostly open.
+ const clockFace=new THREE.Mesh(new THREE.CircleGeometry(.76,40),new THREE.MeshBasicMaterial({color:"#fff1d8"}));
+ clockFace.position.set(0,5.95,-9.03);scene.add(clockFace);
+ const clockRim=new THREE.Mesh(new THREE.TorusGeometry(.77,.08,8,40),brass);clockRim.position.set(0,5.95,-8.99);scene.add(clockRim);
+ for(let i=0;i<12;i++){const angle=i*Math.PI/6;const mark=box(.045,.15,.02,navy,Math.sin(angle)*.62,5.95+Math.cos(angle)*.62,-8.96);mark.rotation.z=-angle}
+ const hour=box(.055,.43,.025,navy,-.1,6.12,-8.94);hour.rotation.z=.48;
+ const minute=box(.04,.58,.025,navy,.18,6.17,-8.93);minute.rotation.z=-.8;
+ box(3.1,1.75,1.3,navy,-9.6,.88,5.8);textSign("VSR","STORY TICKETS",-9.6,1.43,6.5,2.7,.8,{bg:"#e9c17a",fg:"#243c4a",edge:"#fff0cc"},"story");
+ // Three brass subway turnstiles on the right, visually quiet and non-obstructive.
+ for(const z of [3.7,5.1,6.5]){box(.2,1.05,.22,rail,9.4,.55,z);box(1.7,.08,.09,brass,9.0,1.08,z);box(.08,.68,.08,brass,8.3,.75,z)}
+ // Framed stylized city prints evoke the two cities, not personal photo galleries.
+ for(const [x,rot,title,sub] of [[-11.73,Math.PI/2,"HYDERABAD","WHERE MY STORY BEGAN"],[11.73,-Math.PI/2,"NEW YORK","THE CITY OF IDEAS"]]){
+  const group=new THREE.Group();group.position.set(x,4.05,-1.6);group.rotation.y=rot;scene.add(group);
+  box(4.4,3.2,.14,navy,0,0,0,group);
+  const p=textSign(title,sub,0,0,0,4,2.85,{bg:"#e9d5b2",fg:"#294759",edge:"#cba15c"});
+  scene.remove(p);group.add(p);p.position.set(0,0,.09);
+ }
+ planter(-10,7.8);planter(10,7.8);
 }else if(safe==="services"){
  plaque("COMING SOON","A space for future ideas",0,3,-9.27,null);planter(-9,4);planter(9,4);for(let x of [-7,7]){cyl(1,1,1.2,trim,x,.6,-5);box(2,1.2,2,accent,x,1.8,-5)}
 }else if(safe==="ai"){
- for(let x of [-7,0,7]){box(4.4,2.8,.35,dark,x,3,-9.3);box(4.6,.2,1.5,trim,x,.8,-8.5)}
- plaque("AI EXPERIMENTS","Tools and prototypes",-7,3,-9.05,"experiments");plaque("AI FIELD NOTES","Writing and ideas",0,3,-9.05,"writing");plaque("LEARNING LAB","What's next?",7,3,-9.05,"learning");
- for(let x of [-6,6]){box(4,.25,2,trim,x,.8,1);box(.3,1.2,.3,dark,x-1.5,.1,1);box(.3,1.2,.3,dark,x+1.5,.1,1);monitor(x,2,0.5);chair(x,3,Math.PI);box(1.2,3.8,1.3,dark,x,2,-6);for(let y of [1,2,3])box(.8,.13,.1,accent,x,y,-5.28)}planter(10,5)
+ // AI Collectibles Vault: floating, gently rotating category tokens with clickable detail cards.
+ const vaultNavy=mat("#183748"),vaultSteel=mat("#4c7181"),vaultGold=mat("#e5bb63");
+ box(22,4.2,.25,vaultNavy,0,5.2,-9.54);
+ textSign("THE COLLECTIBLES VAULT","LEARN · BUILD · EXPERIMENT",0,6.8,-9.33,12.5,1.1,{bg:"#173749",fg:"#d8f5ff",edge:"#64b9ce"});
+ const tokens=[
+  {x:-7.7,key:"openai",name:"OPENAI",sub:"CERTIFICATIONS",color:"#e4bc64"},
+  {x:-2.55,key:"claude",name:"CLAUDE",sub:"LEARNING",color:"#d78b6b"},
+  {x:2.55,key:"hackathon",name:"HACKATHON",sub:"COGNIZANT",color:"#78b9d0"},
+  {x:7.7,key:"innovation",name:"INNOVATION",sub:"ENGINEERING",color:"#8ac5a2"}
+ ];
+ const floatingTokens=[];
+ for(const token of tokens){
+  const metal=new THREE.MeshStandardMaterial({color:token.color,metalness:.64,roughness:.25,emissive:token.color,emissiveIntensity:.14});
+  const group=new THREE.Group();group.position.set(token.x,3.45,-6.3);scene.add(group);
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(1.13,1.13,.27,56),metal);coin.rotation.x=Math.PI/2;group.add(coin);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(.89,.075,12,56),vaultGold);rim.position.z=.16;group.add(rim);
+  const label=textSign(token.name,token.sub,token.x,3.45,-5.99,2.3,1.1,{bg:"#193b4a",fg:"#fff0d5",edge:token.color},token.key);
+  label.userData.action=token.key;
+  clickableProp(coin,token.key);
+  // Clickable backing gives touch users a larger hit area.
+  const backing=box(3.35,2.1,.12,vaultNavy,token.x,1.3,-7.25);
+  textSign("EXPLORE",token.sub,token.x,1.3,-7.14,3.1,1.2,{bg:"#203f4e",fg:"#d7edf0",edge:token.color},token.key);
+  floatingTokens.push({group,label,base:3.45,phase:token.x});
+ }
+ // Animated collectible tokens; no extra floating objects or giant podiums.
+ const previousAnimate=window.__aiVaultAnimate;
+ window.__aiVaultAnimate=()=>{const t=performance.now()*.001;for(const token of floatingTokens){token.group.position.y=token.base+Math.sin(t*1.1+token.phase)*.16;token.group.rotation.y=Math.sin(t*.65+token.phase)*.2;token.label.position.y=token.group.position.y}};
+ for(const x of [-10.5,10.5])planter(x,6.7);
 }else{
  // Four generously spaced contact stations: all props are real raycast targets.
  tableScene(-6.8,1,"linkedin","LINKEDIN");
@@ -189,6 +217,13 @@ if(safe==="about"){
  }
  document.body.append(quick);
 }
+if(safe==="ai"){
+ const quick=document.createElement("nav");quick.id="aiQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","AI collectibles");
+ for(const [key,label] of [["openai","OpenAI"],["claude","Claude"],["hackathon","Hackathon"],["innovation","Innovations"]]){
+  const button=document.createElement("button");button.type="button";button.dataset.collectible=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
+ }
+ document.body.append(quick);
+}
 if(safe==="contact"){
  const quick=document.createElement("nav");quick.id="contactQuickActions";quick.className="cafe-quick-actions";quick.setAttribute("aria-label","Accessible contact café shortcuts");
  for(const [key,label] of [["linkedin","in LinkedIn"],["email","✉ Email"],["phone","☎ Phone"],["location","⌖ New York"],["menu","☕ Coffee Menu"]]){
@@ -208,4 +243,4 @@ renderer.domElement.addEventListener("pointercancel",()=>drag=null);
 renderer.domElement.addEventListener("pointermove",e=>{if(drag)return;const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(e.clientX/root.clientWidth*2-1,-e.clientY/root.clientHeight*2+1),camera);renderer.domElement.style.cursor=ray.intersectObjects(clickable).length?"pointer":"grab"});
 renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();desiredRadius=THREE.MathUtils.clamp(desiredRadius+Math.sign(e.deltaY)*1.3,10,60)},{passive:false});
 document.getElementById("districtReset").onclick=()=>{desiredTheta=.12;desiredPhi=1.38;desiredRadius=root.clientWidth<600?30:20};
-function animate(){requestAnimationFrame(animate);update();renderer.render(scene,camera)}animate();
+function animate(){requestAnimationFrame(animate);update();window.__aiVaultAnimate?.();renderer.render(scene,camera)}animate();
