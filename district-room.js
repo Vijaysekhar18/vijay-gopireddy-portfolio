@@ -24,7 +24,22 @@ function plaque(title,sub,x,y,z,action){
  const c=document.createElement("canvas");c.width=768;c.height=360;const ctx=c.getContext("2d");ctx.fillStyle="#fff8e6";ctx.fillRect(0,0,768,360);ctx.strokeStyle="#c9a04d";ctx.lineWidth=12;ctx.strokeRect(8,8,752,344);ctx.fillStyle="#253541";ctx.textAlign="center";ctx.font="bold 44px sans-serif";ctx.fillText(title,384,151);ctx.font="27px sans-serif";ctx.fillText(sub,384,215);
  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(3.7,1.74),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));mesh.position.set(x,y,z);scene.add(mesh);mesh.userData.action=action;clickable.push(mesh);return mesh
 }
-box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);/* Open-front cutaway: no opaque roof, so visitors can see into the room. */box(24,.18,.28,trim,0,.2,-9.7);
+if(safe==="services"){
+ // Curved open-front pavilion inspired by the supplied round-room reference.
+ const shellMat=new THREE.MeshStandardMaterial({color:"#d8e3e9",roughness:.82,side:THREE.DoubleSide});
+ const roundFloor=new THREE.Mesh(new THREE.CylinderGeometry(12.65,12.65,.48,96),floor);
+ roundFloor.position.y=-.26;roundFloor.receiveShadow=true;scene.add(roundFloor);
+ const roundRim=new THREE.Mesh(new THREE.TorusGeometry(12.56,.13,12,96),mat("#e0b878"));
+ roundRim.rotation.x=Math.PI/2;roundRim.position.y=.045;scene.add(roundRim);
+ const curvedWall=new THREE.Mesh(new THREE.CylinderGeometry(12.6,12.6,7.9,96,1,true,Math.PI/2,Math.PI),shellMat);
+ curvedWall.position.y=4;curvedWall.receiveShadow=true;scene.add(curvedWall);
+ const topRail=new THREE.Mesh(new THREE.TorusGeometry(12.58,.12,10,96,Math.PI),mat("#d5ad6b"));
+ topRail.rotation.x=Math.PI/2;topRail.rotation.z=0;topRail.position.y=7.94;scene.add(topRail);
+ // No front wall or roof: the four exhibits remain visible in the cutaway.
+}else{
+ box(24,.5,20,floor,0,-.25,0);box(24,8,.4,wall,0,4,-10);box(.4,8,20,wall,-12,4,0);box(.4,8,20,wall,12,4,0);
+ box(24,.18,.28,trim,0,.2,-9.7);
+}
 for(let x=-8;x<=8;x+=8){const l=new THREE.PointLight("#ffe7b8",18,11);l.position.set(x,7.4,0);scene.add(l);cyl(.65,.65,.12,accent,x,7.8,0)}
 const content={
  story:{k:"ABOUT / THE PERSON",t:"Engineer. Explorer. Builder.",html:"<p>I'm Vijay Sekhar Reddy, a software engineer and quality engineering leader with a master's degree in computer science and experience across banking, financial services and healthcare.</p><p>I love turning complicated engineering challenges into practical tools, reliable systems and memorable experiences. This miniature NYC is one of those experiments.</p><p>My curiosity doesn't stop at work: I enjoy travel, experimenting with vegetarian recipes and exploring new technologies.</p>"},
@@ -198,16 +213,20 @@ if(safe==="about"){
  const animated=[];
  const glow=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,metalness:.26,roughness:.4});
  // Architectural shell: illuminated floor inlays, exhibition portals and Manhattan-window backdrop.
- box(23.4,.13,18,stone,0,.02,-.25);
- for(let z=-8;z<=7;z+=1.2)box(22.2,.018,.024,mat("#5e7888"),0,.1,z);
- for(let x=-11;x<=11;x+=1.1)box(.024,.018,16,mat("#5e7888"),x,.11,-.2);
+ const insetFloor=new THREE.Mesh(new THREE.CylinderGeometry(11.9,11.9,.12,96),stone);
+ insetFloor.position.y=.07;insetFloor.receiveShadow=true;scene.add(insetFloor);
+ for(const r of [6.5,10.9]){
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.035,8,96),mat("#607b8c"));
+  ring.rotation.x=Math.PI/2;ring.position.y=.15;scene.add(ring);
+ }
+ // A circular walkway, with four exhibit islands instead of a rectangular grid.
  box(22.5,1.45,.18,navy,0,6.92,-9.52);
  textSign("VSR INNOVATION CENTER","THE ENGINEERING STUDIO",0,6.91,-9.31,17.7,1.08,{bg:"#10263d",fg:"#fff5df",edge:"#e7be75"});
  for(const x of [-10.95,10.95]){
   box(.38,7.65,.42,steel,x,3.83,-5.8);
   box(.32,7.65,.38,navy,x,3.83,3.7);
  }
- for(let x=-10.6;x<=10.6;x+=2.1){
+ for(let x=-9.5;x<=9.5;x+=1.9){
   box(1.72,3.6,.11,navy,x,3.42,-9.4);
   box(1.53,3.28,.12,mat("#4b718b"),x,3.42,-9.3);
   for(let j=0;j<3;j++)box(.15,.35,.14,cream,x+Math.sin(x*3+j)*.45,2.5+j*.72,-9.18);
