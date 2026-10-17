@@ -507,6 +507,14 @@ const dialog=document.getElementById("districtDialog");
 function openDetail(key){const d=content[key];if(!d)return;if(safe==="ai")aiQuestDiscover(key);if(safe==="services"){window.__servicesFocus?.(key);if(servicesTour)setServicesTour(false);servicesFocusTarget=key;}document.getElementById("districtDetailKicker").textContent=d.k;document.getElementById("districtDetailTitle").textContent=d.t;document.getElementById("districtDetailBody").innerHTML=d.html;dialog.showModal()}
 document.getElementById("districtClose").onclick=()=>dialog.close();
 if(safe==="about"){
+ // Acknowledges creative inspiration without implying affiliation or endorsement.
+ const credit=document.createElement("aside");
+ credit.className="about-inspiration-credit";
+ credit.setAttribute("aria-label","Inspiration and credits");
+ credit.innerHTML='<span>INSPIRATION &amp; CREDITS</span><p>Inspired in part by the interactive storytelling approach of <a href="https://persona-studio.com/" target="_blank" rel="noopener noreferrer">Persona Studio ↗</a>. This NYC-themed portfolio is an independent project.</p>';
+ document.body.append(credit);
+}
+if(safe==="about"){
  const quick=document.createElement("nav");quick.id="aboutQuickActions";quick.className="about-quick-actions";quick.setAttribute("aria-label","About gallery exhibits");
  for(const [key,label] of [["story","My Story"],["journey","Journey"],["credentials","Milestones"],["personal","Beyond Work"]]){
   const button=document.createElement("button");button.type="button";button.dataset.about=key;button.textContent=label;button.addEventListener("click",()=>openDetail(key));quick.append(button);
