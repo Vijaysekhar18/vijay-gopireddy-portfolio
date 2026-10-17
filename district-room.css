@@ -126,3 +126,22 @@
 .services-hud:has(.services-focus-status) button:focus-visible{outline:3px solid #ffe2a1;outline-offset:2px}
 @media(max-width:760px){.services-focus-status{margin-bottom:6px!important;font-size:9px!important}}
 @media(prefers-reduced-motion:reduce){.services-hud:has(.services-focus-status) .services-hud-grid button{transition:none}}
+
+/* Quiet editorial credit on ABOUT only, clear of Quick View and Reset View. */
+.about-inspiration-credit{
+ position:fixed;z-index:4;left:max(16px,env(safe-area-inset-left));
+ bottom:max(78px,calc(env(safe-area-inset-bottom) + 78px));
+ max-width:min(330px,calc(100vw - 32px));
+ padding:11px 14px;border-radius:12px;
+ background:#fff9e9e8;border:1px solid #5e53452e;
+ box-shadow:0 6px 20px #1d273019;
+ color:#34404a;font:500 11px/1.5 "DM Sans",system-ui,sans-serif;
+ backdrop-filter:blur(8px);
+}
+.about-inspiration-credit span{font-size:9px;letter-spacing:.12em;font-weight:800;color:#7b6443}
+.about-inspiration-credit p{margin:4px 0 0}
+.about-inspiration-credit a{color:#294f6b;text-decoration:underline;text-underline-offset:2px}
+.about-inspiration-credit a:focus-visible{outline:3px solid #f0b429;outline-offset:3px}
+@media(max-width:760px){
+ .about-inspiration-credit{bottom:max(68px,calc(env(safe-area-inset-bottom) + 68px));max-width:min(255px,calc(100vw - 32px));padding:8px 10px;font-size:10px}
+}

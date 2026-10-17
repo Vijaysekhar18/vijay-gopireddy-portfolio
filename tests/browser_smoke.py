@@ -37,6 +37,18 @@ with sync_playwright() as p:
         page.screenshot(path=f"test-screenshots/{room}.png",full_page=True)
         assert not errors, f"{room}: {errors}"
         page.close()
+    # ABOUT attribution is visible and correctly linked, without appearing in other rooms.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height})
+        page.goto(URL+"district.html?room=about",wait_until="domcontentloaded")
+        credit=page.locator(".about-inspiration-credit")
+        credit.wait_for(state="visible")
+        assert credit.locator('a[href="https://persona-studio.com/"]').count()==1
+        assert "independent project" in credit.inner_text()
+        page.goto(URL+"district.html?room=services",wait_until="domcontentloaded")
+        assert page.locator(".about-inspiration-credit").count()==0
+        page.close()
+
     # ABOUT gallery exhibits should be accessible on both desktop and mobile.
     for width,height in [(1440,900),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height})
