@@ -42,3 +42,15 @@ body.night-mode .bottom-nav,body.night-mode .bottom-left,body.night-mode .bottom
 
 /* Subway station street-level discovery */
 .subway-hover-card{position:absolute;z-index:18;transform:translate(-50%,-110%);pointer-events:none;min-width:210px;max-width:260px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:17px 21px;border:2px solid #253541;border-radius:15px;background:#fff9e8f2;box-shadow:0 16px 34px #182a2c55;text-align:center;color:#26353e}.subway-hover-card[hidden]{display:none}.subway-hover-card strong{font:900 19px "Space Grotesk",sans-serif;letter-spacing:.05em}.subway-hover-card span:not(.subway-hover-icon){font:800 10px "DM Sans",sans-serif;letter-spacing:.15em}.subway-hover-card small{font:800 9px "DM Sans",sans-serif;margin-top:7px;color:#52646a}.subway-hover-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#e5bb3d;border:3px solid #26353e;color:#26353e;font-size:29px}.subway-entrance-hint{background:#fff9e8e8;border:1px solid #26353e66}
+
+/* Small, non-interactive Central Park hover title; follows the park in the 3D scene. */
+.central-park-hover{
+ position:absolute;z-index:8;pointer-events:none;
+ transform:translate(-50%,-100%);
+ padding:7px 12px;border:1px solid #d5c8a8;border-radius:999px;
+ background:#f7f2dfed;color:#264b34;
+ font:800 10px/1.2 "DM Sans",system-ui,sans-serif;
+ letter-spacing:.12em;white-space:nowrap;
+ box-shadow:0 6px 16px #122d242c;
+}
+.central-park-hover[hidden]{display:none!important}
