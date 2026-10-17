@@ -83,8 +83,55 @@ building(11,-3,5.3,5.4,12.6,M.gold,203,"services");box(4.5,.4,4.5,M.goldSide,11,
 building(1,-13,6,5.3,10.6,M.gold,204,"about");box(4,.4,3,M.goldSide,1,11.1,-13);
 building(16,11,4.5,5.1,8.3,M.gold,205,"contact");
 for(const [key,p]of Object.entries(points)){const sphere=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),M.glow);sphere.position.set(p.x,p.y+.8,p.z);sphere.userData.project=key;city.add(sphere);interact.push(sphere)}
-// Urban park with pond, trees and little bridge.
-box(12,.07,8,mat("#a7aa84"),-27,.02,12,city,false);const pond=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.5,.07,36),M.water);pond.position.set(-27,.09,12);pond.scale.z=.6;city.add(pond);for(let i=0;i<12;i++){let a=i*Math.PI*2/12;tree(-27+4.3*Math.cos(a),12+3.2*Math.sin(a),.65+random(i+7)*.35)}
+// Central Park-inspired miniature replaces the earlier generic urban park.
+// Fits an existing green plot without blocking the five district buildings or road grid.
+const centralPark=new THREE.Group();centralPark.position.set(-27,.05,12);city.add(centralPark);
+const parkGrass=mat("#63954c"),parkGrassLight=mat("#87b66a"),parkPath=mat("#d7c5a0"),parkWater=mat("#65aeb4",{roughness:.26,metalness:.12}),parkWood=mat("#886b4a"),parkLeaves=[mat("#4e8752"),mat("#679e55"),mat("#8aaf61")];
+const parkPart=(w,h,d,m,x,y,z)=>box(w,h,d,m,x,y,z,centralPark,false);
+parkPart(12,.10,8,parkGrass,0,.02,0);
+for(const [x,z,w,d] of [[-3.8,-2.6,3.1,1.7],[3.9,2.5,2.4,1.6],[-.5,2.6,2.7,1.2]])parkPart(w,.016,d,parkGrassLight,x,.084,z);
+// Gently winding paths assembled from short segments, leaving a quiet central pond.
+function parkTrail(points,width=.62){
+ for(let i=1;i<points.length;i++){
+  const [ax,az]=points[i-1],[bx,bz]=points[i],dx=bx-ax,dz=bz-az;
+  const path=parkPart(width,.025,Math.hypot(dx,dz),parkPath,(ax+bx)/2,.105,(az+bz)/2);
+  path.rotation.y=Math.atan2(dx,dz);
+ }
+}
+parkTrail([[-5.9,-2.9],[-4.4,-1.6],[-3.1,-.3],[-1.8,1.6],[-.3,3.9]]);
+parkTrail([[5.9,2.8],[4.5,1.4],[3.3,.3],[2.3,-1.8],[.8,-3.9]]);
+parkTrail([[-5.9,2.7],[-4.3,1.8],[-3.2,2.1],[-1.9,3.8]],.48);
+const parkPond=new THREE.Mesh(new THREE.CylinderGeometry(1.65,1.65,.065,32),parkWater);
+parkPond.position.set(.25,.13,-.1);parkPond.scale.set(1.18,1,.72);centralPark.add(parkPond);
+const pondRim=new THREE.Mesh(new THREE.TorusGeometry(1.65,.075,7,36),parkPath);
+pondRim.rotation.x=Math.PI/2;pondRim.scale.set(1.18,.72,1);pondRim.position.set(.25,.172,-.1);centralPark.add(pondRim);
+// Small wooden footbridge and two unobtrusive benches.
+parkPart(2.65,.14,.70,parkWood,.25,.38,-.1);
+for(const x of [-.83,1.33])for(const z of [-.27,.27])parkPart(.09,.37,.09,parkWood,x,.21,z);
+for(const [x,z,angle] of [[-4.3,-2.4,.38],[4.4,2.3,-.5]]){
+ const seat=parkPart(1.05,.10,.35,parkWood,x,.32,z);seat.rotation.y=angle;
+ const back=parkPart(1.05,.55,.09,parkWood,x,.62,z-.21);back.rotation.y=angle;
+ for(const offset of [-.38,.38])parkPart(.09,.27,.10,M.dark,x+offset,.18,z);
+}
+// Sixteen varied miniature trees arranged away from the paths and pond.
+const parkTrees=[[-5,-3.3],[-5,-.7],[-5,1.3],[-4.1,3.25],[-3.25,-2.9],[-3.1,3.3],[-1.85,-3.2],[-1.5,-1.8],[.1,3.15],[1.55,2.85],[3.1,3.2],[4.95,3.2],[4.85,-3.15],[3.25,-3.2],[1.6,-3.15],[5.2,-.5]];
+parkTrees.forEach(([x,z],i)=>{
+ const size=.53+random(i+812)*.27;
+ const trunk=parkPart(.21*size,1.38*size,.21*size,M.trunk,x,.75*size,z);trunk.castShadow=true;
+ const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(.91*size,1),parkLeaves[i%parkLeaves.length]);
+ crown.position.set(x,1.68*size,z);crown.castShadow=true;centralPark.add(crown);
+});
+// Warm low-profile pathway fixtures glow in night mode without expensive point lights.
+const parkLampMaterial=new THREE.MeshStandardMaterial({color:"#fff2c6",emissive:"#ffcd70",emissiveIntensity:.15});
+for(const [x,z] of [[-4.6,-1.3],[-2.3,2.5],[3.8,1.2],[2.5,-2.4]]){
+ parkPart(.10,.48,.10,M.dark,x,.29,z);
+ parkPart(.28,.15,.28,parkLampMaterial,x,.59,z);
+}
+const parkHit=new THREE.Mesh(new THREE.BoxGeometry(12,.14,8),new THREE.MeshBasicMaterial({visible:false}));
+parkHit.position.set(0,.09,0);centralPark.add(parkHit);
+const parkHoverLabel=document.createElement("div");parkHoverLabel.className="central-park-hover";parkHoverLabel.textContent="CENTRAL PARK";parkHoverLabel.hidden=true;document.getElementById("home").append(parkHoverLabel);
+let parkHovered=false;
+function setParkHover(on){parkHovered=on;parkHoverLabel.hidden=!on}
 for(let i=0;i<65;i++){const x=-37+random(i+330)*74,z=-37+random(i+500)*74;if(roadCenters.some(r=>Math.abs(x-r)<2.5)||[-23,-8,7,22].some(r=>Math.abs(z-r)<2.5))continue;if(i%2===0)tree(x,z,.65+random(i+8)*.35);else streetlamp(x,z)}
 // A simplified suspension bridge along the eastern waterfront.
 box(3,.3,20,M.road,32,2.2,-5);for(const z of [-12,2]){box(.45,7,.45,M.stone,30.5,4.8,z);box(.45,7,.45,M.stone,33.5,4.8,z);box(4,.35,.45,M.stone,32,8.1,z)}for(let z=-15;z<5;z+=1.5){box(.06,2,.06,M.stone,30.5,3.3,z);box(.06,2,.06,M.stone,33.5,3.3,z)}
@@ -117,8 +164,8 @@ function pinchDistance(){const a=[...pointers.values()];return a.length<2?0:Math
 mount.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY,sx:e.clientX,sy:e.clientY});if(pointers.size>1)gestureMoved=true;lastPinch=pinchDistance();try{mount.setPointerCapture(e.pointerId)}catch{}});
 mount.addEventListener("pointermove",e=>{const p=pointers.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;if(Math.hypot(p.x-p.sx,p.y-p.sy)>7)gestureMoved=true;if(pointers.size>1){const d=pinchDistance();if(lastPinch&&d){zoom((lastPinch-d)*.12);if(Math.abs(lastPinch-d)>1)stopTour()}lastPinch=d;gestureMoved=true;return}if(!gestureMoved)return;desiredTheta-=dx*.005;desiredPhi=THREE.MathUtils.clamp(desiredPhi+dy*.004,.38,1.45);stopTour()});
 function release(e,cancel){const p=pointers.get(e.pointerId);if(!p)return;const tap=!cancel&&!gestureMoved&&pointers.size===1&&Math.hypot(e.clientX-p.sx,e.clientY-p.sy)<7;pointers.delete(e.pointerId);lastPinch=pinchDistance();if(!pointers.size)gestureMoved=false;if(!tap)return;const rect=mount.getBoundingClientRect();const pointer=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(pointer,autotour?cityLife.perspective:camera);const hit=ray.intersectObjects(interact,false)[0];if(hit?.object.userData.project)openProject(hit.object.userData.project)}
-mount.addEventListener("pointermove",e=>{if(e.pointerType==="touch"||pointers.size)return;const rect=mount.getBoundingClientRect();const pointer=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(pointer,autotour?cityLife.perspective:camera);const hits=ray.intersectObject(entranceHit,false);setSubwayHover(hits.length>0)});
-mount.addEventListener("pointerleave",()=>setSubwayHover(false));
+mount.addEventListener("pointermove",e=>{if(e.pointerType==="touch"||pointers.size)return;const rect=mount.getBoundingClientRect();const pointer=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);const ray=new THREE.Raycaster();ray.setFromCamera(pointer,autotour?cityLife.perspective:camera);const hits=ray.intersectObject(entranceHit,false);setSubwayHover(hits.length>0);setParkHover(!hits.length&&ray.intersectObject(parkHit,false).length>0)});
+mount.addEventListener("pointerleave",()=>{setSubwayHover(false);setParkHover(false)});
 subwayHoverCard.addEventListener("click",()=>openProject("subway"));
 mount.addEventListener("pointerup",e=>release(e,false));mount.addEventListener("pointercancel",e=>release(e,true));mount.addEventListener("lostpointercapture",e=>release(e,true));
 mount.addEventListener("wheel",e=>{e.preventDefault();zoom(Math.sign(e.deltaY)*3);stopTour()},{passive:false});
@@ -130,5 +177,5 @@ document.getElementById("tour").onclick=()=>{if(window.matchMedia("(prefers-redu
 document.getElementById("help").onclick=()=>{const toast=document.getElementById("toast");toast.textContent="Drag to orbit · Pinch or scroll to zoom · Tap gold buildings to explore";setTimeout(()=>toast.textContent="",5500)};
 document.getElementById("sound").onclick=()=>{const toast=document.getElementById("toast");toast.textContent="Sound is off by design";setTimeout(()=>toast.textContent="",2500)};
 const worldPos=new THREE.Vector3(),clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);if(document.hidden)return;frame++;if(autotour&&!dialog.open){walkingProgress+=dt/cityLife.tourStepDuration(walkingProgress);if(walkingProgress>=cityLife.routeLength){walkingProgress=0;cityLife.resetTour()}}mainRotor.rotation.y+=dt*11;tailRotor.rotation.x+=dt*17;if(arrivalGlow.visible){arrivalGlow.material.opacity=.55+.35*Math.sin(clock.elapsedTime*4);arrivalGlow.rotation.z+=dt*.25}cameraUpdate(dt);updateLighting(dt);const tourCamera=cityLife.update(clock.elapsedTime,autotour,walkingProgress,dt);const activeCamera=tourCamera||camera;
-if(subwayHovered){const p=new THREE.Vector3(-1,4.5,14.5).project(activeCamera);subwayHoverCard.style.left=(p.x*.5+.5)*mount.clientWidth+"px";subwayHoverCard.style.top=(-p.y*.5+.5)*mount.clientHeight+"px"}
+if(parkHovered){const p=new THREE.Vector3(-27,2.8,12).project(activeCamera);parkHoverLabel.style.left=(p.x*.5+.5)*mount.clientWidth+"px";parkHoverLabel.style.top=(-p.y*.5+.5)*mount.clientHeight+"px";parkHoverLabel.hidden=autotour||p.z>1}if(subwayHovered){const p=new THREE.Vector3(-1,4.5,14.5).project(activeCamera);subwayHoverCard.style.left=(p.x*.5+.5)*mount.clientWidth+"px";subwayHoverCard.style.top=(-p.y*.5+.5)*mount.clientHeight+"px"}
 for(const label of labels){const p=points[label.dataset.project];worldPos.copy(p).project(activeCamera);label.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";label.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";label.style.display=worldPos.z>1?"none":"block"}for(const {el,f} of landmarkButtons){worldPos.copy(f.position).project(activeCamera);el.style.left=(worldPos.x*.5+.5)*mount.clientWidth+"px";el.style.top=(-worldPos.y*.5+.5)*mount.clientHeight+"px";el.style.display=(autotour||worldPos.z>1||worldPos.x < -1||worldPos.x>1||worldPos.y < -1||worldPos.y>1)?"none":"block"}renderer.render(scene,activeCamera)}animate();document.getElementById("loading").remove();
