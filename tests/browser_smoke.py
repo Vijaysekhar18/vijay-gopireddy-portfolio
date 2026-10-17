@@ -37,6 +37,18 @@ with sync_playwright() as p:
         page.screenshot(path=f"test-screenshots/{room}.png",full_page=True)
         assert not errors, f"{room}: {errors}"
         page.close()
+    # Central Park is scenery, not a sixth destination or clickable navigation.
+    for width,height in [(1440,900),(390,844)]:
+        page=browser.new_page(viewport={"width":width,"height":height})
+        page.goto(URL,wait_until="domcontentloaded")
+        park=page.locator(".central-park-hover")
+        park.wait_for(state="attached",timeout=15000)
+        assert park.inner_text()=="CENTRAL PARK"
+        assert park.get_attribute("hidden") is not None
+        assert park.evaluate("(el)=>getComputedStyle(el).pointerEvents")=="none"
+        assert page.locator(".central-park-hover button,.central-park-hover a").count()==0
+        page.close()
+
     # ABOUT attribution is visible and correctly linked, without appearing in other rooms.
     for width,height in [(1440,900),(390,844)]:
         page=browser.new_page(viewport={"width":width,"height":height})
